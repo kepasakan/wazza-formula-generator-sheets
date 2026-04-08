@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=1024">
     <title>Wazza Immersive Generator - Fixed UI</title>
     <style>
         :root {
@@ -29,6 +29,8 @@
             display: flex;
             overflow: hidden;
             background: var(--bg-right);
+            min-width: 1024px;
+            overflow-x: auto;
         }
 
         /* LEFT SIDE */
@@ -279,7 +281,6 @@
             padding: 0 20px;
         }
 
-        /* FIX: BORDERLESS DYNAMIC INPUT */
         .ms-display-input {
             font-size: 56px;
             font-weight: 800;
@@ -289,18 +290,15 @@
             margin-top: 4px;
             text-align: center;
             border: none;
-            /* Removed border */
             background: transparent;
             width: 100%;
             outline: none;
             text-transform: uppercase;
             transition: color 0.2s;
-            /* Only transition color, not background/border */
         }
 
         .ms-display-input:focus {
             color: var(--primary-hover);
-            /* Give subtle feedback when typing */
         }
 
         /* RIGHT SIDE */
@@ -405,6 +403,7 @@
             justify-content: center;
             gap: 10px;
             box-shadow: 0 10px 15px -3px rgba(79, 70, 229, 0.3);
+            margin-bottom: 24px;
         }
 
         .btn-copy:hover {
@@ -418,13 +417,13 @@
 
         /* PREVIEW TABLE */
         .preview-table-card {
-            margin-top: 24px;
             background: rgba(15, 23, 42, 0.6);
             backdrop-filter: blur(10px);
             border: 1px solid rgba(255, 255, 255, 0.1);
             border-radius: 12px;
             overflow: hidden;
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            margin-bottom: 24px;
         }
 
         .preview-header-title {
@@ -486,6 +485,43 @@
             font-style: italic;
         }
 
+        /* KOTAK GIF TUTORIAL */
+        .tutorial-gif-box {
+            background: rgba(15, 23, 42, 0.6);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            text-align: center;
+        }
+
+        .tutorial-gif-header {
+            padding: 14px 16px;
+            background: rgba(0, 0, 0, 0.4);
+            font-size: 10px;
+            color: #94a3b8;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-weight: 800;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .tutorial-gif-content {
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: #0f172a;
+        }
+
+        .tutorial-gif-content img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 8px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
         .kw {
             color: #c678dd;
             font-weight: bold;
@@ -501,20 +537,6 @@
 
         .var {
             color: #e06c75;
-        }
-
-        @media (max-width: 1000px) {
-            body {
-                flex-direction: column;
-                overflow-y: auto;
-            }
-
-            .left-panel,
-            .right-panel {
-                width: 100%;
-                height: auto;
-                padding: 40px 24px;
-            }
         }
     </style>
 </head>
@@ -625,12 +647,18 @@
                 </table>
             </div>
 
+            <div class="tutorial-gif-box">
+                <div class="tutorial-gif-header">📹 CARA TAMPAL FORMULA DI GOOGLE SHEETS</div>
+                <div class="tutorial-gif-content">
+                    <img src="https://via.placeholder.com/600x300.png?text=Letak+GIF+Tampal+Formula+Di+Sini"
+                        alt="Tutorial GIF">
+                </div>
+            </div>
+
         </div>
     </div>
 
     <script>
-        // FIX: Removed accordion auto-close logic entirely so they operate independently
-
         const ALPHABET = Array.from(Array(26)).map((e, i) => i + 65);
         const COLUMNS = ALPHABET.map((x) => String.fromCharCode(x));
         const ROWS = Array.from({ length: 1000 }, (_, i) => i + 1);
@@ -690,6 +718,7 @@
                 };
                 rowContainer.appendChild(div);
             });
+
             updateCellDisplay();
         }
 

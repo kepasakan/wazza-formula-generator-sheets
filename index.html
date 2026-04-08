@@ -1,300 +1,756 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ms">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sheets Formula Generator</title>
+    <title>Wazza Sheets Generator Pro</title>
     <style>
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #eef2f5;
-            color: #333;
-            margin: 0;
-            padding: 20px;
-            display: flex;
-            justify-content: center;
+        /* CSS Variables for Modern Theme */
+        :root {
+            --primary: #4f46e5;
+            --primary-hover: #4338ca;
+            --success: #10b981;
+            --bg-color: #f8fafc;
+            --surface: #ffffff;
+            --text-main: #0f172a;
+            --text-muted: #64748b;
+            --border: #e2e8f0;
+            --code-bg: #1e293b;
         }
 
-        .container {
-            background-color: #fff;
-            max-width: 650px;
-            width: 100%;
-            padding: 30px;
-            border-radius: 12px;
-            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.05);
-        }
-
-        h2 {
-            text-align: center;
-            color: #2c3e50;
-            margin-bottom: 30px;
-            border-bottom: 2px solid #eee;
-            padding-bottom: 15px;
-        }
-
-        .step-box {
-            background-color: #f8fbfd;
-            border-left: 4px solid #3498db;
-            padding: 15px 20px;
-            margin-bottom: 25px;
-            border-radius: 4px;
-        }
-
-        .step-title {
-            font-size: 1.1em;
-            font-weight: bold;
-            color: #2980b9;
-            margin-bottom: 15px;
-        }
-
-        label {
-            font-weight: bold;
-            display: block;
-            margin-bottom: 8px;
-            color: #444;
-        }
-
-        input[type="text"],
-        select {
-            width: 100%;
-            padding: 12px;
-            margin-bottom: 5px;
-            border: 1px solid #dce1e6;
-            border-radius: 6px;
+        * {
             box-sizing: border-box;
-            font-size: 15px;
-            transition: border-color 0.3s;
+            margin: 0;
+            padding: 0;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
         }
 
-        input[type="text"]:focus,
-        select:focus {
-            border-color: #3498db;
-            outline: none;
+        body {
+            background: var(--bg-color);
+            color: var(--text-main);
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
         }
 
-        .helper-text {
-            font-size: 0.85em;
-            color: #7f8c8d;
-            margin-bottom: 15px;
-            display: block;
+        /* Top Navigation */
+        header {
+            background: var(--surface);
+            padding: 16px 32px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+            z-index: 10;
+            flex-shrink: 0;
         }
 
-        /* Accordion Tutorial Style */
-        details {
-            background-color: #fff3cd;
-            border: 1px solid #ffeeba;
-            color: #856404;
-            padding: 10px 15px;
-            border-radius: 6px;
-            margin-bottom: 15px;
-            cursor: pointer;
-        }
-
-        summary {
-            font-weight: bold;
-            outline: none;
-        }
-
-        .tutorial-content {
-            margin-top: 10px;
-            font-size: 0.9em;
-            line-height: 1.5;
-        }
-
-        .tutorial-img-placeholder {
-            width: 100%;
-            height: 150px;
-            background-color: #ffd8a8;
+        .logo-badge {
+            background: linear-gradient(135deg, var(--primary), #818cf8);
+            color: white;
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
             display: flex;
             align-items: center;
             justify-content: center;
-            border-radius: 4px;
-            margin-top: 10px;
-            color: #d9480f;
             font-weight: bold;
-            border: 2px dashed #f59f00;
+            font-size: 20px;
+            box-shadow: 0 4px 6px rgba(79, 70, 229, 0.2);
         }
 
-        .btn-generate {
-            background-color: #2ecc71;
-            color: white;
-            padding: 15px;
-            border: none;
-            border-radius: 6px;
-            cursor: pointer;
+        header h1 {
             font-size: 18px;
-            font-weight: bold;
-            width: 100%;
-            margin-top: 10px;
-            margin-bottom: 20px;
-            transition: background-color 0.3s;
-            box-shadow: 0 4px 6px rgba(46, 204, 113, 0.2);
+            font-weight: 700;
+            color: var(--text-main);
+            display: flex;
+            align-items: center;
+            gap: 8px;
         }
 
-        .btn-generate:hover {
-            background-color: #27ae60;
+        header p {
+            font-size: 13px;
+            color: var(--text-muted);
+            margin-top: 2px;
         }
 
-        textarea {
-            width: 100%;
-            padding: 15px;
-            height: 180px;
-            border: 1px solid #dce1e6;
-            border-radius: 6px;
-            box-sizing: border-box;
-            resize: none;
-            background-color: #fdfdfd;
-            font-family: 'Courier New', Courier, monospace;
-            font-size: 14px;
+        /* Main Layout */
+        main {
+            display: grid;
+            grid-template-columns: 400px 1fr;
+            flex: 1;
+            height: calc(100vh - 73px);
         }
 
-        .btn-copy {
-            background-color: #3498db;
-            color: white;
-            padding: 12px;
-            border: none;
-            border-radius: 6px;
+        /* Left Panel (Accordions) */
+        .sidebar-panel {
+            background: var(--surface);
+            border-right: 1px solid var(--border);
+            padding: 24px;
+            overflow-y: auto;
+        }
+
+        /* Accordion Style */
+        .accordion-item {
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            margin-bottom: 16px;
+            overflow: hidden;
+            background: var(--surface);
+            transition: all 0.3s ease;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
+        }
+
+        .accordion-item[open] {
+            border-color: var(--primary);
+            box-shadow: 0 4px 6px -1px rgba(79, 70, 229, 0.1);
+        }
+
+        .accordion-header {
+            padding: 16px 20px;
             cursor: pointer;
-            font-size: 16px;
-            font-weight: bold;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-weight: 700;
+            font-size: 14px;
+            color: var(--text-main);
+            background: var(--bg-color);
+            user-select: none;
+        }
+
+        .accordion-item[open] .accordion-header {
+            background: #eef2ff;
+            color: var(--primary);
+            border-bottom: 1px solid #e0e7ff;
+        }
+
+        .accordion-content {
+            padding: 20px;
+        }
+
+        summary::-webkit-details-marker {
+            display: none;
+        }
+
+        summary {
+            list-style: none;
+            outline: none;
+        }
+
+        .chevron {
+            transition: transform 0.3s ease;
+            width: 20px;
+            height: 20px;
+            color: var(--text-muted);
+        }
+
+        .accordion-item[open] .chevron {
+            transform: rotate(180deg);
+            color: var(--primary);
+        }
+
+        /* Forms */
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group:last-child {
+            margin-bottom: 0;
+        }
+
+        label {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 13px;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: var(--text-main);
+        }
+
+        .hint {
+            display: block;
+            font-size: 12px;
+            color: var(--text-muted);
+            margin-top: 4px;
+        }
+
+        input[type="text"],
+        input[type="number"],
+        select {
             width: 100%;
-            margin-top: 10px;
-            transition: background-color 0.3s;
+            padding: 10px 14px;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            font-size: 14px;
+            color: var(--text-main);
+            transition: all 0.2s ease;
+            background: var(--surface);
+        }
+
+        input[type="text"]:focus,
+        select:focus,
+        input[type="number"]:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+        }
+
+        /* MINI SPREADSHEET UI */
+        .mini-sheet-wrapper {
+            border: 1px solid #cbd5e1;
+            border-radius: 8px;
+            overflow: hidden;
+            background: white;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+            margin-bottom: 12px;
+        }
+
+        .ms-header-row {
+            display: flex;
+            background: #f1f5f9;
+            border-bottom: 1px solid #cbd5e1;
+        }
+
+        .ms-corner {
+            width: 36px;
+            background: #e2e8f0;
+            border-right: 1px solid #cbd5e1;
+            flex-shrink: 0;
+        }
+
+        .ms-cols-container {
+            display: flex;
+            overflow-x: auto;
+            scroll-behavior: smooth;
+        }
+
+        .ms-cols-container::-webkit-scrollbar {
+            height: 6px;
+        }
+
+        .ms-cols-container::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 4px;
+        }
+
+        .ms-col {
+            min-width: 50px;
+            text-align: center;
+            padding: 8px 0;
+            font-size: 12px;
+            font-weight: 600;
+            color: #475569;
+            border-right: 1px solid #cbd5e1;
+            cursor: pointer;
+            user-select: none;
+            transition: background 0.2s;
+        }
+
+        .ms-col:hover {
+            background: #e2e8f0;
+        }
+
+        .ms-col.active {
+            background: #e0e7ff;
+            color: var(--primary);
+            border-bottom: 2px solid var(--primary);
+        }
+
+        .ms-body-row {
+            display: flex;
+            align-items: center;
+            background: white;
+        }
+
+        .ms-row-indicator {
+            width: 36px;
+            text-align: center;
+            font-size: 12px;
+            font-weight: 600;
+            color: #475569;
+            background: #f1f5f9;
+            border-right: 1px solid #cbd5e1;
+            padding: 12px 0;
+            flex-shrink: 0;
+        }
+
+        .ms-cell-area {
+            padding: 0 12px;
+            flex: 1;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* Right Panel */
+        .content-area {
+            padding: 32px 40px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+            background: var(--bg-color);
+        }
+
+        .panel-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 28px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+        }
+
+        .section-label {
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--primary);
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* Editor */
+        .editor-container {
+            background: var(--code-bg);
+            border-radius: 12px;
+            overflow: hidden;
+            margin-bottom: 24px;
+            box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        .editor-header {
+            background: rgba(0, 0, 0, 0.2);
+            padding: 10px 16px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .editor-dots {
+            display: flex;
+            gap: 6px;
+        }
+
+        .dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+        }
+
+        .dot.r {
+            background: #ef4444;
+        }
+
+        .dot.y {
+            background: #eab308;
+        }
+
+        .dot.g {
+            background: #10b981;
+        }
+
+        .editor-title {
+            color: #94a3b8;
+            font-size: 12px;
+            font-family: monospace;
+        }
+
+        .formula-display {
+            padding: 20px;
+            font-family: 'Fira Code', 'Courier New', monospace;
+            font-size: 14px;
+            line-height: 1.6;
+            color: #e2e8f0;
+            white-space: pre-wrap;
+            word-break: break-all;
+            max-height: 250px;
+            overflow-y: auto;
+        }
+
+        .kw {
+            color: #c678dd;
+            font-weight: bold;
+        }
+
+        .fn {
+            color: #61afef;
+        }
+
+        .str {
+            color: #98c379;
+        }
+
+        .var {
+            color: #e06c75;
+        }
+
+        .op {
+            color: #56b6c2;
+        }
+
+        /* Buttons */
+        .btn-copy {
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            padding: 14px 24px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            width: 100%;
+            justify-content: center;
+            transition: all 0.2s;
+            box-shadow: 0 4px 6px rgba(79, 70, 229, 0.2);
         }
 
         .btn-copy:hover {
-            background-color: #2980b9;
+            background: var(--primary-hover);
+            transform: translateY(-1px);
+        }
+
+        .btn-copy.success {
+            background: var(--success);
+            box-shadow: 0 4px 6px rgba(16, 185, 129, 0.2);
+        }
+
+        /* Interactive Tester */
+        .tester-box {
+            background: #f8fafc;
+            border: 1px dashed #cbd5e1;
+            border-radius: 12px;
+            padding: 24px;
+            text-align: center;
+        }
+
+        .tester-input {
+            font-size: 18px !important;
+            text-align: center;
+            padding: 16px !important;
+            margin-bottom: 16px;
+            border: 2px solid var(--border) !important;
+            background: white !important;
+        }
+
+        .tester-input:focus {
+            border-color: var(--primary) !important;
+        }
+
+        .tester-result {
+            background: white;
+            border: 1px solid #e0e7ff;
+            border-radius: 8px;
+            padding: 16px;
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--primary);
+            display: inline-block;
+            min-width: 60%;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.02);
+            word-break: break-all;
+        }
+
+        .tester-result.wa-mode {
+            color: #25D366;
+        }
+
+        /* Utilities */
+        .hidden {
+            display: none !important;
+        }
+
+        @media (max-width: 900px) {
+            body {
+                overflow: auto;
+                height: auto;
+            }
+
+            main {
+                grid-template-columns: 1fr;
+                height: auto;
+            }
+
+            .sidebar-panel {
+                border-right: none;
+                border-bottom: 1px solid var(--border);
+            }
+
+            .content-area {
+                padding: 20px;
+            }
         }
     </style>
 </head>
 
 <body>
 
-    <div class="container">
-        <h2>🛠️ Sheets Formula Generator</h2>
-
-        <div class="step-box">
-            <div class="step-title">Langkah 1: Tetapkan Asas</div>
-
-            <label for="formulaType">Pilih Jenis Formula:</label>
-            <select id="formulaType" onchange="updateDefaultHeader()">
-                <option value="whatsapp">1. Pautan Link WhatsApp</option>
-                <option value="nombor">2. Nombor Standard Sahaja (60...)</option>
-            </select>
-            <span class="helper-text">Pilih output yang anda mahukan di Google Sheets nanti.</span>
-
-            <label for="headerName">Nama Tajuk Column (Header):</label>
-            <input type="text" id="headerName" value="PAUTAN WHATSAPP">
-            <span class="helper-text">Nama ini akan berada di paling atas jadual anda.</span>
+    <header>
+        <div class="logo-badge">W</div>
+        <div>
+            <h1>Generator Formula Wazza</h1>
+            <p>Alat pembersihan data nombor telefon automatik</p>
         </div>
+    </header>
 
-        <div class="step-box">
-            <div class="step-title">Langkah 2: Kenalpasti Kedudukan Data</div>
+    <main>
+        <aside class="sidebar-panel">
+            <div style="margin-bottom: 24px;">
+                <h2 style="font-size: 16px; color: var(--text-main);">Konfigurasi Data</h2>
+                <p style="font-size: 12px; color: var(--text-muted);">Buka atau tutup menu di bawah sesuka hati anda.
+                </p>
+            </div>
 
-            <label for="columnRange">Kolum Nombor Telefon Anda (Range):</label>
-            <input type="text" id="columnRange" placeholder="Contoh: B2:B" value="A2:A">
-            <span class="helper-text">Jika nombor telefon pelanggan anda berada di kolum C, taip
-                <strong>C2:C</strong></span>
-
-            <details>
-                <summary>💡 Tak pasti macam mana nak cari "Range"? Klik sini.</summary>
-                <div class="tutorial-content">
-                    Buka Google Sheets anda, tengok huruf di bahagian atas sekali (A, B, C). Cari di mana terletaknya
-                    senarai nombor telefon anda.<br>
-                    <div class="tutorial-img-placeholder">
-                        [ Letak GIF / Gambar / Video Tutorial Di Sini Nanti ]
+            <details class="accordion-item" open>
+                <summary class="accordion-header">
+                    1. Asas & Output Formula
+                    <svg class="chevron" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                    </svg>
+                </summary>
+                <div class="accordion-content">
+                    <div class="form-group">
+                        <label>Jenis Output</label>
+                        <select id="typeSelect" onchange="updateAll()">
+                            <option value="wa">🔗 Pautan WhatsApp (wa.me/...)</option>
+                            <option value="std">📱 Nombor Standard Sahaja (60...)</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Nama Tajuk Kolum Baru</label>
+                        <input type="text" id="headerInput" value="PAUTAN WHATSAPP" oninput="updateAll()">
                     </div>
                 </div>
             </details>
-        </div>
 
-        <button class="btn-generate" onclick="generateFormula()">⚙️ Generate Formula</button>
+            <details class="accordion-item" open>
+                <summary class="accordion-header">
+                    2. Lokasi Data Mentah
+                    <svg class="chevron" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                    </svg>
+                </summary>
+                <div class="accordion-content">
 
-        <div class="step-box" style="border-left-color: #2ecc71;">
-            <div class="step-title">Langkah 3: Copy & Paste di Sheets</div>
+                    <span class="hint" style="margin-bottom: 8px; margin-top: 0;">Pilih kolum data anda seperti dalam
+                        Google Sheets:</span>
 
-            <textarea id="resultFormula" readonly placeholder="Formula anda akan keluar di sini..."></textarea>
-            <button class="btn-copy" id="copyBtn" onclick="copyFormula()">📋 Copy Formula</button>
-            <span class="helper-text" style="text-align: center; margin-top:10px;">Paste formula ini di kotak kosong
-                baris pertama (Row 1) bersebelahan data anda.</span>
-        </div>
-    </div>
+                    <div class="mini-sheet-wrapper">
+                        <div class="ms-header-row">
+                            <div class="ms-corner"></div>
+                            <div class="ms-cols-container" id="msColsContainer">
+                            </div>
+                        </div>
+                        <div class="ms-body-row">
+                            <div class="ms-row-indicator">Baris</div>
+                            <div class="ms-cell-area">
+                                <span style="font-size: 13px; color: #64748b; font-weight:600;">Mula dari:</span>
+                                <input type="number" id="rowInput" value="2" min="1"
+                                    style="width: 70px; padding: 6px 10px; margin: 8px 0;" oninput="updateAll()">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div style="display: flex; gap: 8px; align-items: center;">
+                        <span style="font-size: 12px; color: var(--text-muted);">Kolum Terpilih:</span>
+                        <input type="text" id="colManual" value="A" maxlength="2"
+                            style="text-transform: uppercase; text-align: center; width: 60px; padding: 6px; font-weight: bold;"
+                            oninput="handleManualCol()">
+                    </div>
+
+                </div>
+            </details>
+
+            <details class="accordion-item" id="msgAccordion">
+                <summary class="accordion-header">
+                    3. Tetapan Tambahan (Pilihan)
+                    <svg class="chevron" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                    </svg>
+                </summary>
+                <div class="accordion-content">
+                    <div class="form-group">
+                        <label>Mesej Auto (Pre-filled Text)</label>
+                        <input type="text" id="msgInput" placeholder="Cth: Hai, saya berminat..." oninput="updateAll()">
+                        <span class="hint">Ayat ini akan auto-tertaip bila pelanggan klik pautan WhatsApp.</span>
+                    </div>
+                </div>
+            </details>
+        </aside>
+
+        <section class="content-area">
+
+            <div class="panel-card">
+                <div class="section-label">💻 Kod Formula Generasi</div>
+
+                <div class="editor-container">
+                    <div class="editor-header">
+                        <div class="editor-dots">
+                            <div class="dot r"></div>
+                            <div class="dot y"></div>
+                            <div class="dot g"></div>
+                        </div>
+                        <div class="editor-title">formula.gs</div>
+                    </div>
+                    <div class="formula-display" id="codeDisplay"></div>
+                </div>
+
+                <button class="btn-copy" id="copyBtn" onclick="copyFormula()">
+                    <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                        xmlns="http://www.w3.org/2000/svg">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z">
+                        </path>
+                    </svg>
+                    <span id="copyText">Salin Formula ke Clipboard</span>
+                </button>
+            </div>
+
+            <div class="panel-card">
+                <div class="section-label">🧪 Penguji Data (Live Tester)</div>
+                <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 16px;">
+                    Taip nombor bersepah kat bawah ni untuk tengok macam mana formula ni bersihkan data anda.
+                </p>
+                <div class="tester-box">
+                    <input type="text" id="testInput" class="tester-input" placeholder="Cth: +60 12- 345 6789"
+                        value="+60 19- 888 7777" oninput="runTester()">
+                    <div>
+                        <span
+                            style="font-size: 12px; color: var(--text-muted); display: block; margin-bottom: 8px;">Hasil
+                            Bersih:</span>
+                        <div id="testResult" class="tester-result wa-mode">https://wa.me/60198887777</div>
+                    </div>
+                </div>
+            </div>
+
+        </section>
+    </main>
 
     <script>
-        function updateDefaultHeader() {
-            let type = document.getElementById("formulaType").value;
-            let headerInput = document.getElementById("headerName");
+        // Generate A-Z for Mini Sheet
+        const ALPHABET = Array.from(Array(26)).map((e, i) => i + 65);
+        const COLUMNS = ALPHABET.map((x) => String.fromCharCode(x));
 
-            if (type === "whatsapp") {
-                headerInput.value = "PAUTAN WHATSAPP";
-            } else if (type === "nombor") {
-                headerInput.value = "NOMBOR STANDARD";
-            }
+        const state = { col: 'A', row: 2, type: 'wa', header: 'PAUTAN WHATSAPP', msg: '' };
+
+        function buildMiniSheet() {
+            const container = document.getElementById('msColsContainer');
+            container.innerHTML = '';
+            COLUMNS.forEach(c => {
+                const div = document.createElement('div');
+                div.className = 'ms-col' + (c === state.col ? ' active' : '');
+                div.textContent = c;
+                div.onclick = () => {
+                    document.getElementById('colManual').value = c;
+                    handleManualCol();
+
+                    // Auto scroll to active column
+                    div.scrollIntoView({ behavior: "smooth", block: "nearest", inline: "center" });
+                };
+                container.appendChild(div);
+            });
         }
 
-        function generateFormula() {
-            let type = document.getElementById("formulaType").value;
-            let range = document.getElementById("columnRange").value.trim().toUpperCase(); // Auto huruf besar
-            let header = document.getElementById("headerName").value.trim();
-
-            if (range === "") range = "A2:A";
-            if (header === "") header = (type === "whatsapp") ? "PAUTAN WHATSAPP" : "NOMBOR STANDARD";
-
-            let formula = "";
-
-            if (type === "whatsapp") {
-                formula = `=LET(
-nota, "tukar 'columntelefon' kepada range yang sesuai, cth columntelefon, A2:A kepada columntelefon, B2:B",
-columntelefon, ${range},
-
-namaheader,"${header}",
-
-formulawhatsapp,ARRAYFORMULA(IF(columntelefon="", "", "https://wa.me/" & REGEXREPLACE(REGEXREPLACE(TO_TEXT(columntelefon), "\\D+", ""), "^(60)?0*", "60"))),
-
-VSTACK(namaheader,formulawhatsapp)
-)`;
-            } else if (type === "nombor") {
-                formula = `=LET(
-nota, "tukar 'columntelefon' kepada range yang sesuai, cth columntelefon, A2:A kepada columntelefon, B2:B",
-columntelefon, ${range},
-
-namaheader,"${header}",
-
-formulanombor,ARRAYFORMULA(IF(columntelefon="", "", REGEXREPLACE(REGEXREPLACE(TO_TEXT(columntelefon), "\\D+", ""), "^(60)?0*", "60"))),
-
-VSTACK(namaheader,formulanombor)
-)`;
-            }
-
-            document.getElementById("resultFormula").value = formula;
+        function handleManualCol() {
+            const val = document.getElementById('colManual').value.replace(/[^a-zA-Z]/g, '').toUpperCase();
+            if (val) { state.col = val; buildMiniSheet(); updateAll(); }
         }
 
-        function copyFormula() {
-            let textarea = document.getElementById("resultFormula");
+        function getRange() { return `${state.col}${state.row}:${state.col}`; }
 
-            if (textarea.value === "") {
-                alert("Sila klik 'Generate Formula' dahulu!");
+        function getRawFormula() {
+            const range = getRange();
+            const header = state.header || "TAJUK KOSONG";
+
+            let msgFormula = state.msg ? ` & "?text=" & ENCODEURL("${state.msg}")` : "";
+            let baseWaLink = `"https://wa.me/" & REGEXREPLACE(REGEXREPLACE(TO_TEXT(columntelefon), "\\D+", ""), "^(60)?0*", "60")` + msgFormula;
+
+            let logicPart = state.type === 'wa'
+                ? `formuladata, ARRAYFORMULA(IF(columntelefon="", "", ${baseWaLink})),\n`
+                : `formuladata, ARRAYFORMULA(IF(columntelefon="", "", REGEXREPLACE(REGEXREPLACE(TO_TEXT(columntelefon), "\\D+", ""), "^(60)?0*", "60"))),\n`;
+
+            return `=LET(\nnota, "Format dijana oleh Wazza Digital",\ncolumntelefon, ${range},\n\nnamaheader, "${header}",\n\n${logicPart}\nVSTACK(namaheader, formuladata)\n)`;
+        }
+
+        function highlightSyntax(code) {
+            let s = code.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+            s = s.replace(/\b(LET|ARRAYFORMULA|IF|REGEXREPLACE|TO_TEXT|VSTACK|ENCODEURL)\b/g, '<span class="fn">$1</span>');
+            s = s.replace(/\b(nota|columntelefon|namaheader|formuladata)\b/g, '<span class="var">$1</span>');
+            s = s.replace(/"(?:[^"\\]|\\.)*"/g, m => `<span class="str">${m}</span>`);
+            const range = getRange(); s = s.replace(new RegExp(`\\b${range}\\b`, 'g'), `<span class="kw">${range}</span>`);
+            s = s.replace(/^=/, '<span class="op">=</span>');
+            return s;
+        }
+
+        function runTester() {
+            const inputVal = document.getElementById('testInput').value;
+            const resultBox = document.getElementById('testResult');
+
+            if (!inputVal.trim()) {
+                resultBox.textContent = "-";
                 return;
             }
 
-            textarea.select();
-            textarea.setSelectionRange(0, 99999);
+            let cleanNum = inputVal.replace(/\D/g, '').replace(/^(60)?0*/, '60');
 
-            navigator.clipboard.writeText(textarea.value).then(() => {
-                let btn = document.getElementById("copyBtn");
-                btn.innerHTML = "✅ Berjaya Di-copy!";
-                btn.style.backgroundColor = "#27ae60";
+            if (state.type === 'wa') {
+                let msgPreview = state.msg ? `?text=${encodeURIComponent(state.msg)}` : '';
+                resultBox.textContent = `https://wa.me/${cleanNum}${msgPreview}`;
+                resultBox.className = 'tester-result wa-mode';
+            } else {
+                resultBox.textContent = cleanNum;
+                resultBox.className = 'tester-result';
+            }
+        }
 
-                // Reset button text after 2 seconds
-                setTimeout(() => {
-                    btn.innerHTML = "📋 Copy Formula";
-                    btn.style.backgroundColor = "#3498db";
-                }, 2000);
-            }).catch(err => {
-                console.error('Gagal copy: ', err);
+        // JS EXCLUSIVITY DIBUANG: Accordion sekarang bebas dibuka/ditutup tanpa paksaan
+
+        function updateAll() {
+            state.type = document.getElementById('typeSelect').value;
+            state.header = document.getElementById('headerInput').value;
+            state.row = parseInt(document.getElementById('rowInput').value) || 2;
+            state.msg = document.getElementById('msgInput').value.trim();
+
+            const msgAccordion = document.getElementById('msgAccordion');
+
+            if (state.type === 'std') {
+                msgAccordion.classList.add('hidden');
+                if (state.header === 'PAUTAN WHATSAPP') {
+                    document.getElementById('headerInput').value = 'NOMBOR TELEFON'; state.header = 'NOMBOR TELEFON';
+                }
+            } else {
+                msgAccordion.classList.remove('hidden');
+                if (state.header === 'NOMBOR TELEFON') {
+                    document.getElementById('headerInput').value = 'PAUTAN WHATSAPP'; state.header = 'PAUTAN WHATSAPP';
+                }
+            }
+
+            document.getElementById('codeDisplay').innerHTML = highlightSyntax(getRawFormula());
+            runTester();
+        }
+
+        function copyFormula() {
+            navigator.clipboard.writeText(getRawFormula()).then(() => {
+                const btn = document.getElementById('copyBtn'); const txt = document.getElementById('copyText');
+                btn.classList.add('success'); txt.textContent = "Berjaya Disalin!";
+                setTimeout(() => { btn.classList.remove('success'); txt.textContent = "Salin Formula ke Clipboard"; }, 2000);
             });
         }
+
+        // Initialize
+        buildMiniSheet();
+        updateAll();
     </script>
 
 </body>

@@ -1,0 +1,531 @@
+<!DOCTYPE html>
+<html lang="ms">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wazza Canvas Builder</title>
+    <style>
+        :root {
+            --primary: #6366f1;
+            --primary-hover: #4f46e5;
+            --success: #10b981;
+            --bg-canvas: #f9fafb;
+            --dot-color: #cbd5e1;
+            --surface: #ffffff;
+            --text-main: #1e293b;
+            --text-muted: #64748b;
+            --border: #e2e8f0;
+            --node-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.01);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Inter', -apple-system, sans-serif;
+        }
+
+        /* Canvas Background */
+        body {
+            background-color: var(--bg-canvas);
+            background-image: radial-gradient(var(--dot-color) 1px, transparent 1px);
+            background-size: 24px 24px;
+            color: var(--text-main);
+            height: 100vh;
+            overflow: hidden;
+            display: flex;
+        }
+
+        /* Floating Toolbar (Left) */
+        .toolbar {
+            position: fixed;
+            left: 24px;
+            top: 24px;
+            bottom: 24px;
+            width: 64px;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            box-shadow: var(--node-shadow);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px 0;
+            z-index: 50;
+        }
+
+        .logo {
+            background: var(--primary);
+            color: white;
+            width: 40px;
+            height: 40px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 900;
+            font-size: 20px;
+            margin-bottom: auto;
+        }
+
+        .tool-btn {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-muted);
+            cursor: pointer;
+            transition: all 0.2s;
+            margin-bottom: 12px;
+        }
+
+        .tool-btn:hover {
+            background: #f1f5f9;
+            color: var(--primary);
+        }
+
+        /* Workspace / Canvas Area */
+        .canvas-area {
+            flex: 1;
+            margin-left: 100px;
+            display: flex;
+            align-items: center;
+            padding: 40px;
+            overflow-x: auto;
+            scroll-behavior: smooth;
+        }
+
+        .workflow-container {
+            display: flex;
+            align-items: flex-start;
+            gap: 16px;
+            margin: auto;
+            padding-bottom: 40px;
+        }
+
+        /* Node Blocks */
+        .node {
+            background: var(--surface);
+            width: 320px;
+            border-radius: 16px;
+            border: 1px solid var(--border);
+            box-shadow: var(--node-shadow);
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .node:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+        }
+
+        .node-header {
+            padding: 16px 20px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            border-radius: 16px 16px 0 0;
+            font-weight: 700;
+            font-size: 15px;
+        }
+
+        .node-body {
+            padding: 20px;
+        }
+
+        /* Node Header Colors */
+        .node-source .node-header {
+            border-top: 4px solid #f59e0b;
+        }
+
+        .node-logic .node-header {
+            border-top: 4px solid #8b5cf6;
+        }
+
+        .node-output .node-header {
+            border-top: 4px solid #10b981;
+            width: 400px;
+        }
+
+        /* Connecting Arrows */
+        .connector {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100px;
+            color: #94a3b8;
+        }
+
+        .connector svg {
+            width: 32px;
+            height: 32px;
+            stroke-width: 1.5;
+        }
+
+        /* Inputs */
+        .input-block {
+            margin-bottom: 20px;
+        }
+
+        .input-block:last-child {
+            margin-bottom: 0;
+        }
+
+        .input-label {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-muted);
+            margin-bottom: 8px;
+            display: block;
+        }
+
+        .canvas-input {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            font-size: 14px;
+            color: var(--text-main);
+            background: #f8fafc;
+            transition: all 0.2s;
+            outline: none;
+        }
+
+        .canvas-input:focus {
+            background: white;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+        }
+
+        select.canvas-input {
+            cursor: pointer;
+        }
+
+        /* Code Block */
+        .code-display {
+            background: #1e293b;
+            color: #f8fafc;
+            font-family: 'Fira Code', monospace;
+            font-size: 13px;
+            padding: 16px;
+            border-radius: 8px;
+            white-space: pre-wrap;
+            word-break: break-all;
+            line-height: 1.5;
+            margin-bottom: 16px;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+
+        .btn-copy {
+            width: 100%;
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 12px;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 14px;
+            cursor: pointer;
+            transition: background 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .btn-copy:hover {
+            background: var(--primary-hover);
+        }
+
+        .btn-copy.success {
+            background: var(--success);
+        }
+
+        /* KEMASKINI: Tester Layout (Susun Atas Ke Bawah) */
+        .live-tester {
+            margin-top: 24px;
+            border-top: 1px solid var(--border);
+            padding-top: 20px;
+        }
+
+        .tester-container {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .tester-input {
+            width: 100%;
+            padding: 12px;
+            border: 1px dashed var(--border);
+            border-radius: 8px;
+            font-size: 14px;
+            outline: none;
+            text-align: center;
+            background: #ffffff;
+            transition: border-color 0.2s;
+        }
+
+        .tester-input:focus {
+            border-color: var(--primary);
+        }
+
+        .tester-arrow {
+            text-align: center;
+            color: #94a3b8;
+            font-size: 16px;
+        }
+
+        .tester-result {
+            width: 100%;
+            padding: 14px;
+            background: #f1f5f9;
+            border-radius: 8px;
+            font-weight: 700;
+            font-size: 14px;
+            color: var(--primary);
+            word-break: break-all;
+            text-align: center;
+            border: 1px solid var(--border);
+        }
+
+        /* Utilities */
+        .hidden {
+            display: none !important;
+        }
+
+        .kw {
+            color: #c678dd;
+        }
+
+        .fn {
+            color: #61afef;
+        }
+
+        .str {
+            color: #98c379;
+        }
+
+        .var {
+            color: #e06c75;
+        }
+
+        @media (max-width: 1024px) {
+            .workflow-container {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .connector {
+                transform: rotate(90deg);
+                height: 40px;
+                margin: 10px 0;
+            }
+
+            .node-output {
+                width: 320px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="toolbar">
+        <div class="logo">W</div>
+        <div class="tool-btn" title="Pilih Node">
+            <svg width="24" height="24" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M15 15l-2 5L9 9l11 4-5 2zm0 0l5 5M7.188 2.239l.777 2.897M5.136 7.965l-2.898-.777M13.95 4.05l-2.122 2.122m-5.657 5.656l-2.12 2.122">
+                </path>
+            </svg>
+        </div>
+        <div class="tool-btn" title="Tetapkan Semula" onclick="location.reload()">
+            <svg width="24" height="24" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15">
+                </path>
+            </svg>
+        </div>
+    </div>
+
+    <div class="canvas-area">
+        <div class="workflow-container">
+
+            <div class="node node-source">
+                <div class="node-header"><span style="font-size: 20px;">🗄️</span> Sumber Data</div>
+                <div class="node-body">
+                    <div class="input-block">
+                        <label class="input-label">Kolum Nombor Telefon</label>
+                        <input type="text" id="colInput" class="canvas-input" value="A" maxlength="2"
+                            style="text-transform: uppercase;" oninput="updateAll()">
+                    </div>
+                    <div class="input-block">
+                        <label class="input-label">Bermula Baris Ke-</label>
+                        <input type="number" id="rowInput" class="canvas-input" value="2" min="1" oninput="updateAll()">
+                    </div>
+                </div>
+            </div>
+
+            <div class="connector">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3"></path>
+                </svg>
+            </div>
+
+            <div class="node node-logic">
+                <div class="node-header"><span style="font-size: 20px;">⚙️</span> Pemprosesan</div>
+                <div class="node-body">
+                    <div class="input-block">
+                        <label class="input-label">Jenis Output</label>
+                        <select id="typeSelect" class="canvas-input" onchange="updateAll()">
+                            <option value="wa">Pautan WhatsApp (wa.me)</option>
+                            <option value="std">Nombor Standard (60...)</option>
+                        </select>
+                    </div>
+                    <div class="input-block">
+                        <label class="input-label">Nama Tajuk Kolum</label>
+                        <input type="text" id="headerInput" class="canvas-input" value="PAUTAN WHATSAPP"
+                            oninput="updateAll()">
+                    </div>
+                    <div class="input-block" id="msgBlock">
+                        <label class="input-label">Mesej Auto (Pilihan)</label>
+                        <input type="text" id="msgInput" class="canvas-input" placeholder="Cth: Hai, nak order..."
+                            oninput="updateAll()">
+                    </div>
+                </div>
+            </div>
+
+            <div class="connector">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3"></path>
+                </svg>
+            </div>
+
+            <div class="node node-output">
+                <div class="node-header"><span style="font-size: 20px;">🚀</span> Hasil & Ujian</div>
+                <div class="node-body">
+                    <div class="code-display" id="codeDisplay"></div>
+
+                    <button class="btn-copy" id="copyBtn" onclick="copyCode()">
+                        <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z">
+                            </path>
+                        </svg>
+                        <span id="copyText">Salin Formula</span>
+                    </button>
+
+                    <div class="live-tester">
+                        <label class="input-label" style="text-align: center; margin-bottom: 12px;">🧪 Ujian
+                            Langsung</label>
+                        <div class="tester-container">
+                            <input type="text" id="testInput" class="tester-input" value="+60 19- 888 7777"
+                                oninput="runTester()">
+                            <div class="tester-arrow">⬇️ Output Akhir</div>
+                            <div id="testResult" class="tester-result"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <script>
+        const state = { col: 'A', row: 2, type: 'wa', header: 'PAUTAN WHATSAPP', msg: '' };
+
+        function getRange() { return `${state.col}${state.row}:${state.col}`; }
+
+        function getRawFormula() {
+            const range = getRange();
+            const header = state.header || "TAJUK KOSONG";
+
+            let msgFormula = state.msg ? ` & "?text=" & ENCODEURL("${state.msg}")` : "";
+            let baseWaLink = `"https://wa.me/" & REGEXREPLACE(REGEXREPLACE(TO_TEXT(columntelefon), "\\D+", ""), "^(60)?0*", "60")` + msgFormula;
+
+            let logicPart = state.type === 'wa'
+                ? `formuladata, ARRAYFORMULA(IF(columntelefon="", "", ${baseWaLink})),\n`
+                : `formuladata, ARRAYFORMULA(IF(columntelefon="", "", REGEXREPLACE(REGEXREPLACE(TO_TEXT(columntelefon), "\\D+", ""), "^(60)?0*", "60"))),\n`;
+
+            return `=LET(\nnota, "Format dijana oleh Wazza Digital",\ncolumntelefon, ${range},\n\nnamaheader, "${header}",\n\n${logicPart}\nVSTACK(namaheader, formuladata)\n)`;
+        }
+
+        function highlightSyntax(code) {
+            let s = code.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+            s = s.replace(/\b(LET|ARRAYFORMULA|IF|REGEXREPLACE|TO_TEXT|VSTACK|ENCODEURL)\b/g, '<span class="fn">$1</span>');
+            s = s.replace(/\b(nota|columntelefon|namaheader|formuladata)\b/g, '<span class="var">$1</span>');
+            s = s.replace(/"(?:[^"\\]|\\.)*"/g, m => `<span class="str">${m}</span>`);
+            const range = getRange(); s = s.replace(new RegExp(`\\b${range}\\b`, 'g'), `<span class="kw">${range}</span>`);
+            s = s.replace(/^=/, '<span class="op">=</span>');
+            return s;
+        }
+
+        function runTester() {
+            const inputVal = document.getElementById('testInput').value;
+            const resultBox = document.getElementById('testResult');
+            if (!inputVal.trim()) { resultBox.textContent = "-"; return; }
+
+            let cleanNum = inputVal.replace(/\D/g, '').replace(/^(60)?0*/, '60');
+            if (state.type === 'wa') {
+                let msgPreview = state.msg ? `?text=${encodeURIComponent(state.msg)}` : '';
+                resultBox.textContent = `wa.me/${cleanNum}${msgPreview}`;
+                resultBox.style.color = "#10b981"; // Success green matching the output node header
+            } else {
+                resultBox.textContent = cleanNum;
+                resultBox.style.color = "var(--primary)";
+            }
+        }
+
+        function updateAll() {
+            state.col = document.getElementById('colInput').value.toUpperCase() || 'A';
+            state.row = parseInt(document.getElementById('rowInput').value) || 2;
+            state.type = document.getElementById('typeSelect').value;
+            state.header = document.getElementById('headerInput').value;
+            state.msg = document.getElementById('msgInput').value.trim();
+
+            const msgBlock = document.getElementById('msgBlock');
+
+            if (state.type === 'std') {
+                msgBlock.classList.add('hidden');
+                if (state.header === 'PAUTAN WHATSAPP') {
+                    document.getElementById('headerInput').value = 'NOMBOR TELEFON'; state.header = 'NOMBOR TELEFON';
+                }
+            } else {
+                msgBlock.classList.remove('hidden');
+                if (state.header === 'NOMBOR TELEFON') {
+                    document.getElementById('headerInput').value = 'PAUTAN WHATSAPP'; state.header = 'PAUTAN WHATSAPP';
+                }
+            }
+
+            document.getElementById('codeDisplay').innerHTML = highlightSyntax(getRawFormula());
+            runTester();
+        }
+
+        function copyCode() {
+            navigator.clipboard.writeText(getRawFormula()).then(() => {
+                const btn = document.getElementById('copyBtn');
+                const ogHtml = btn.innerHTML;
+                btn.classList.add('success');
+                btn.innerHTML = `✓ Berjaya Disalin!`;
+                setTimeout(() => {
+                    btn.classList.remove('success');
+                    btn.innerHTML = ogHtml;
+                }, 2000);
+            });
+        }
+
+        // Init
+        updateAll();
+    </script>
+
+</body>
+
+</html>

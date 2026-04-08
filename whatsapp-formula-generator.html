@@ -1,0 +1,719 @@
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Jana Formula WhatsApp — Google Sheets</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    background: #f0faf4;
+    color: #1a2e22;
+    min-height: 100vh;
+  }
+
+  /* Header */
+  header {
+    background: #25D366;
+    color: white;
+    padding: 20px 32px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    box-shadow: 0 2px 12px rgba(37,211,102,0.25);
+  }
+  .logo {
+    width: 44px; height: 44px;
+    background: white;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 24px;
+    flex-shrink: 0;
+  }
+  header h1 {
+    font-size: 20px;
+    font-weight: 700;
+    line-height: 1.2;
+  }
+  header p {
+    font-size: 13px;
+    opacity: 0.88;
+    margin-top: 2px;
+  }
+
+  /* Steps banner */
+  .steps {
+    background: white;
+    border-bottom: 1px solid #d4f0e0;
+    padding: 14px 32px;
+    display: flex;
+    align-items: center;
+    gap: 0;
+    overflow-x: auto;
+  }
+  .step {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-shrink: 0;
+  }
+  .step-num {
+    width: 26px; height: 26px;
+    background: #25D366;
+    color: white;
+    border-radius: 50%;
+    font-size: 13px;
+    font-weight: 700;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+  }
+  .step-text {
+    font-size: 13px;
+    font-weight: 600;
+    color: #1a6636;
+    white-space: nowrap;
+  }
+  .step-sub {
+    font-size: 11px;
+    color: #5a8a6a;
+    white-space: nowrap;
+  }
+  .step-arrow {
+    color: #25D366;
+    font-size: 18px;
+    margin: 0 12px;
+    flex-shrink: 0;
+  }
+
+  /* Main layout */
+  main {
+    display: grid;
+    grid-template-columns: 340px 1fr;
+    gap: 0;
+    min-height: calc(100vh - 130px);
+  }
+
+  /* Controls panel */
+  .controls {
+    background: white;
+    border-right: 1px solid #d4f0e0;
+    padding: 28px 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+  }
+
+  .section-title {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: #25D366;
+    margin-bottom: 12px;
+  }
+
+  .field-label {
+    font-size: 13px;
+    font-weight: 600;
+    color: #1a2e22;
+    margin-bottom: 6px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .field-hint {
+    font-size: 11px;
+    color: #6b8f78;
+    font-weight: 400;
+  }
+
+  /* Column picker */
+  .col-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 5px;
+    margin-bottom: 10px;
+  }
+  .col-btn {
+    aspect-ratio: 1;
+    border: 2px solid #d4f0e0;
+    background: #f8fdf9;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 700;
+    color: #2d6a4f;
+    cursor: pointer;
+    transition: all 0.15s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .col-btn:hover {
+    border-color: #25D366;
+    background: #e8fbf0;
+    transform: translateY(-1px);
+  }
+  .col-btn.active {
+    background: #25D366;
+    border-color: #25D366;
+    color: white;
+    box-shadow: 0 2px 8px rgba(37,211,102,0.4);
+    transform: translateY(-1px);
+  }
+
+  /* Or type manually */
+  .or-divider {
+    text-align: center;
+    font-size: 11px;
+    color: #8aab96;
+    margin: 6px 0;
+    position: relative;
+  }
+  .or-divider::before, .or-divider::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    width: 40%;
+    height: 1px;
+    background: #d4f0e0;
+  }
+  .or-divider::before { left: 0; }
+  .or-divider::after { right: 0; }
+
+  .text-input {
+    width: 100%;
+    border: 2px solid #d4f0e0;
+    border-radius: 10px;
+    padding: 10px 14px;
+    font-size: 15px;
+    font-weight: 700;
+    color: #1a2e22;
+    background: #f8fdf9;
+    transition: border-color 0.15s;
+    text-transform: uppercase;
+  }
+  .text-input:focus {
+    outline: none;
+    border-color: #25D366;
+    background: white;
+  }
+
+  /* Row input */
+  .row-input-wrap {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .row-input {
+    width: 90px;
+    border: 2px solid #d4f0e0;
+    border-radius: 10px;
+    padding: 10px 14px;
+    font-size: 15px;
+    font-weight: 700;
+    color: #1a2e22;
+    background: #f8fdf9;
+    transition: border-color 0.15s;
+  }
+  .row-input:focus {
+    outline: none;
+    border-color: #25D366;
+    background: white;
+  }
+  .row-label {
+    font-size: 12px;
+    color: #6b8f78;
+    line-height: 1.4;
+  }
+
+  /* Info box */
+  .info-box {
+    background: #f0faf4;
+    border: 1px solid #c3e6d0;
+    border-radius: 10px;
+    padding: 14px;
+    font-size: 12px;
+    color: #2d6a4f;
+    line-height: 1.6;
+  }
+  .info-box strong {
+    display: block;
+    margin-bottom: 4px;
+    color: #1a6636;
+  }
+
+  /* Right panel */
+  .output-panel {
+    display: flex;
+    flex-direction: column;
+    padding: 28px 32px;
+    gap: 24px;
+  }
+
+  /* Preview box */
+  .preview-box {
+    background: white;
+    border: 1px solid #d4f0e0;
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 2px 12px rgba(37,211,102,0.08);
+  }
+  .preview-header {
+    background: #f0faf4;
+    border-bottom: 1px solid #d4f0e0;
+    padding: 10px 18px;
+    font-size: 11px;
+    font-weight: 700;
+    color: #25D366;
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .formula-display {
+    padding: 20px 20px;
+    font-family: 'Courier New', 'Cascadia Code', monospace;
+    font-size: 13px;
+    line-height: 1.9;
+    white-space: pre-wrap;
+    word-break: break-all;
+    color: #1a2e22;
+    background: white;
+  }
+
+  /* Syntax colors */
+  .kw  { color: #0d6efd; font-weight: 700; }
+  .fn  { color: #6f42c1; font-weight: 700; }
+  .str { color: #d63384; }
+  .rng { color: #e67e22; font-weight: 700; }
+  .var { color: #198754; }
+  .punc { color: #6c757d; }
+
+  /* Copy button */
+  .copy-wrap {
+    padding: 16px 20px;
+    border-top: 1px solid #d4f0e0;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    background: #f8fdf9;
+  }
+  .copy-btn {
+    background: #25D366;
+    color: white;
+    border: none;
+    border-radius: 10px;
+    padding: 12px 28px;
+    font-size: 15px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.15s;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-shrink: 0;
+    box-shadow: 0 2px 8px rgba(37,211,102,0.35);
+  }
+  .copy-btn:hover {
+    background: #1ebe58;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 14px rgba(37,211,102,0.45);
+  }
+  .copy-btn:active {
+    transform: translateY(0);
+  }
+  .copy-btn.copied {
+    background: #198754;
+  }
+  .copy-hint {
+    font-size: 12px;
+    color: #6b8f78;
+    line-height: 1.5;
+  }
+
+  /* Sample output */
+  .sample-box {
+    background: white;
+    border: 1px solid #d4f0e0;
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 2px 12px rgba(37,211,102,0.08);
+  }
+  .sample-header {
+    background: #f0faf4;
+    border-bottom: 1px solid #d4f0e0;
+    padding: 10px 18px;
+    font-size: 11px;
+    font-weight: 700;
+    color: #25D366;
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .sample-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+  }
+  .sample-table th {
+    background: #25D366;
+    color: white;
+    padding: 10px 16px;
+    text-align: left;
+    font-weight: 700;
+    font-size: 12px;
+  }
+  .sample-table td {
+    padding: 9px 16px;
+    border-bottom: 1px solid #edf7f1;
+    color: #1a2e22;
+  }
+  .sample-table tr:last-child td { border-bottom: none; }
+  .sample-table tr:nth-child(even) td { background: #f8fdf9; }
+  .wa-link {
+    color: #25D366;
+    font-weight: 600;
+    text-decoration: none;
+    font-family: monospace;
+    font-size: 12px;
+  }
+  .wa-link:hover { text-decoration: underline; }
+  .col-highlight {
+    background: #fff3cd !important;
+    font-weight: 700;
+    color: #e67e22;
+  }
+
+  /* Current selection display */
+  .selection-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: #e8fbf0;
+    border: 1.5px solid #25D366;
+    border-radius: 20px;
+    padding: 4px 12px;
+    font-size: 13px;
+    font-weight: 700;
+    color: #1a6636;
+  }
+
+  /* Responsive */
+  @media (max-width: 768px) {
+    main { grid-template-columns: 1fr; }
+    .controls { border-right: none; border-bottom: 1px solid #d4f0e0; }
+    header { padding: 16px 20px; }
+    .steps { padding: 12px 20px; }
+    .output-panel { padding: 20px; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">📱</div>
+  <div>
+    <h1>Jana Pautan WhatsApp — Google Sheets</h1>
+    <p>Tukar nombor telefon kepada pautan WhatsApp automatik • Auto WhatsApp Link Generator</p>
+  </div>
+</header>
+
+<div class="steps">
+  <div class="step">
+    <div class="step-num">1</div>
+    <div>
+      <div class="step-text">Pilih Kolum</div>
+      <div class="step-sub">Kolum nombor telefon</div>
+    </div>
+  </div>
+  <div class="step-arrow">→</div>
+  <div class="step">
+    <div class="step-num">2</div>
+    <div>
+      <div class="step-text">Jana Formula</div>
+      <div class="step-sub">Auto dijana untuk anda</div>
+    </div>
+  </div>
+  <div class="step-arrow">→</div>
+  <div class="step">
+    <div class="step-num">3</div>
+    <div>
+      <div class="step-text">Copy &amp; Paste</div>
+      <div class="step-sub">Tampal ke Google Sheets</div>
+    </div>
+  </div>
+</div>
+
+<main>
+  <!-- Controls -->
+  <div class="controls">
+
+    <div>
+      <div class="section-title">⚙️ Tetapan Formula</div>
+
+      <div class="field-label">
+        Kolum nombor telefon
+        <span class="field-hint">— Phone number column</span>
+      </div>
+      <div class="col-grid" id="colGrid"></div>
+
+      <div class="or-divider">atau taip sendiri</div>
+
+      <input
+        type="text"
+        class="text-input"
+        id="colInput"
+        maxlength="3"
+        placeholder="cth: A, B, C..."
+        value="A"
+      />
+    </div>
+
+    <div>
+      <div class="field-label">
+        Mula dari baris ke
+        <span class="field-hint">— Start from row</span>
+      </div>
+      <div class="row-input-wrap">
+        <input type="number" class="row-input" id="rowInput" min="1" max="9999" value="2" />
+        <div class="row-label">
+          Biasanya baris 2<br>
+          <span style="color:#25D366">(baris 1 = tajuk/header)</span>
+        </div>
+      </div>
+    </div>
+
+    <div>
+      <div class="field-label">Tetapan semasa</div>
+      <div id="selectionBadge" class="selection-badge">
+        📊 Kolum A, bermula baris 2
+      </div>
+    </div>
+
+    <div class="info-box">
+      <strong>💡 Apa yang formula ini buat?</strong>
+      Formula ini <b>secara automatik</b> menukar semua nombor telefon dalam kolum yang anda pilih kepada pautan WhatsApp yang boleh diklik terus.<br><br>
+      Format nombor apa pun pun boleh — ada +60, 60, atau 0 di depan, ada sempang atau spasi — semuanya akan dibetulkan automatik.<br><br>
+      <span style="color:#25D366;font-weight:600;">Letak formula ni dalam mana-mana kolum kosong je! ✅</span>
+    </div>
+
+  </div>
+
+  <!-- Output panel -->
+  <div class="output-panel">
+
+    <!-- Formula preview -->
+    <div class="preview-box">
+      <div class="preview-header">
+        📋 Formula anda — sedia untuk ditampal ke Google Sheets
+      </div>
+      <div class="formula-display" id="formulaDisplay"></div>
+      <div class="copy-wrap">
+        <button class="copy-btn" id="copyBtn" onclick="copyFormula()">
+          <span id="copyIcon">📋</span>
+          <span id="copyText">Salin Formula</span>
+        </button>
+        <div class="copy-hint">
+          Klik butang ni, kemudian pergi ke Google Sheets,<br>
+          klik pada sel kosong, tekan <b>Ctrl+V</b> (atau Cmd+V di Mac), tekan <b>Enter</b>.
+        </div>
+      </div>
+    </div>
+
+    <!-- Sample output table -->
+    <div class="sample-box">
+      <div class="sample-header">
+        👀 Contoh output — Ini yang akan muncul dalam Google Sheets anda
+      </div>
+      <table class="sample-table">
+        <thead>
+          <tr>
+            <th id="thColNum"># Baris</th>
+            <th id="thColPhone">Kolum A (nombor telefon)</th>
+            <th>Kolum hasil formula (PAUTAN WHATSAPP)</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><b>1</b></td>
+            <td class="col-highlight" id="sampleHeader">NOMBOR TELEFON</td>
+            <td style="color:#25D366;font-weight:700;">PAUTAN WHATSAPP</td>
+          </tr>
+          <tr>
+            <td>2</td>
+            <td id="sampleR2">0123456789</td>
+            <td><a href="#" class="wa-link">https://wa.me/60123456789</a></td>
+          </tr>
+          <tr>
+            <td>3</td>
+            <td id="sampleR3">+60 11-2345 6789</td>
+            <td><a href="#" class="wa-link">https://wa.me/601123456789</a></td>
+          </tr>
+          <tr>
+            <td>4</td>
+            <td id="sampleR4">601-9876-5432</td>
+            <td><a href="#" class="wa-link">https://wa.me/60198765432</a></td>
+          </tr>
+          <tr>
+            <td>5</td>
+            <td id="sampleR5"><i style="color:#aaa;">(kosong)</i></td>
+            <td><i style="color:#aaa;">(kosong — formula skip automatik)</i></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+  </div>
+</main>
+
+<script>
+  const COLUMNS = ['A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z'];
+
+  const state = {
+    col: 'A',
+    row: 2
+  };
+
+  // Build column grid (A–Z)
+  function buildGrid() {
+    const grid = document.getElementById('colGrid');
+    grid.innerHTML = '';
+    COLUMNS.forEach(c => {
+      const btn = document.createElement('button');
+      btn.className = 'col-btn' + (c === state.col ? ' active' : '');
+      btn.textContent = c;
+      btn.onclick = () => {
+        state.col = c;
+        document.getElementById('colInput').value = c;
+        updateAll();
+      };
+      grid.appendChild(btn);
+    });
+  }
+
+  function getRange() {
+    const col = state.col.toUpperCase();
+    const row = Math.max(1, state.row);
+    return `${col}${row}:${col}`;
+  }
+
+  function generateFormula() {
+    const range = getRange();
+    const col = state.col.toUpperCase();
+    const row = state.row;
+    const nota = `"tukar 'columntelefon' kepada range yang sesuai, cth columntelefon, A2:A kepada columntelefon, ${col}${row}:${col}"`;
+
+    return `=LET(\nnota, ${nota},\ncolumntelefon, ${range},\n\nnamaheader,"PAUTAN WHATSAPP",\n\nformulawhatsapp,ARRAYFORMULA(IF(columntelefon="", "", "https://wa.me/" & REGEXREPLACE(REGEXREPLACE(TO_TEXT(columntelefon), "\\D+", ""), "^(60)?0*", "60"))),\n\nVSTACK(namaheader,formulawhatsapp)\n)`;
+  }
+
+  function syntaxHighlight(formula) {
+    // Escape HTML first
+    let s = formula
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;');
+
+    // Highlight functions
+    s = s.replace(/\b(LET|ARRAYFORMULA|IF|REGEXREPLACE|TO_TEXT|VSTACK)\b/g, '<span class="fn">$1</span>');
+
+    // Highlight keywords/names
+    s = s.replace(/\b(nota|columntelefon|namaheader|formulawhatsapp)\b/g, '<span class="var">$1</span>');
+
+    // Highlight the range (e.g. A2:A)
+    const range = getRange().replace(/([.*+?^=!:${}()|[\]\/\\])/g, '\\$1');
+    s = s.replace(new RegExp(range, 'g'), `<span class="rng">${getRange()}</span>`);
+
+    // Highlight strings
+    s = s.replace(/"(?:[^"\\]|\\.)*"/g, m => `<span class="str">${m}</span>`);
+
+    // Highlight = sign
+    s = s.replace(/^=/, '<span class="kw">=</span>');
+
+    return s;
+  }
+
+  function renderFormula() {
+    const formula = generateFormula();
+    const highlighted = syntaxHighlight(formula);
+    document.getElementById('formulaDisplay').innerHTML = highlighted;
+  }
+
+  function updateSampleTable() {
+    const col = state.col.toUpperCase();
+    document.getElementById('thColPhone').textContent = `Kolum ${col} (nombor telefon)`;
+    document.getElementById('sampleHeader').textContent = 'NOMBOR TELEFON';
+  }
+
+  function updateBadge() {
+    const col = state.col.toUpperCase();
+    const row = state.row;
+    document.getElementById('selectionBadge').textContent = `📊 Kolum ${col}, bermula baris ${row}`;
+  }
+
+  function updateAll() {
+    // Sync grid highlight
+    document.querySelectorAll('.col-btn').forEach(btn => {
+      btn.classList.toggle('active', btn.textContent === state.col.toUpperCase());
+    });
+    renderFormula();
+    updateSampleTable();
+    updateBadge();
+  }
+
+  // Column text input
+  document.getElementById('colInput').addEventListener('input', function() {
+    const val = this.value.replace(/[^a-zA-Z]/g, '').toUpperCase().slice(0, 2);
+    if (val.length > 0) {
+      state.col = val;
+      updateAll();
+    }
+  });
+
+  // Row input
+  document.getElementById('rowInput').addEventListener('input', function() {
+    const val = parseInt(this.value) || 2;
+    state.row = Math.max(1, val);
+    updateAll();
+  });
+
+  // Copy button
+  function copyFormula() {
+    const formula = generateFormula();
+    navigator.clipboard.writeText(formula).then(() => {
+      const btn = document.getElementById('copyBtn');
+      const icon = document.getElementById('copyIcon');
+      const text = document.getElementById('copyText');
+      btn.classList.add('copied');
+      icon.textContent = '✅';
+      text.textContent = 'Disalin!';
+      setTimeout(() => {
+        btn.classList.remove('copied');
+        icon.textContent = '📋';
+        text.textContent = 'Salin Formula';
+      }, 2200);
+    }).catch(() => {
+      // Fallback
+      const ta = document.createElement('textarea');
+      ta.value = formula;
+      document.body.appendChild(ta);
+      ta.select();
+      document.execCommand('copy');
+      document.body.removeChild(ta);
+      const text = document.getElementById('copyText');
+      text.textContent = 'Disalin! ✅';
+      setTimeout(() => { text.textContent = 'Salin Formula'; }, 2000);
+    });
+  }
+
+  // Init
+  buildGrid();
+  updateAll();
+</script>
+
+</body>
+</html>

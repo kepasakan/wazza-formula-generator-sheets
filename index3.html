@@ -1,0 +1,552 @@
+<!DOCTYPE html>
+<html lang="ms">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wazza Command Center</title>
+    <style>
+        :root {
+            --bg-dark: #0f172a;
+            --glass-bg: rgba(30, 41, 59, 0.75);
+            --glass-border: rgba(255, 255, 255, 0.15);
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --primary: #6366f1;
+            --primary-hover: #4f46e5;
+            --accent: #10b981;
+            --danger: #ef4444;
+            --item-hover: rgba(255, 255, 255, 0.08);
+            --input-bg: rgba(15, 23, 42, 0.6);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Inter', -apple-system, sans-serif;
+        }
+
+        /* Animated Mesh Background */
+        body {
+            background-color: var(--bg-dark);
+            background-image:
+                radial-gradient(at 0% 0%, rgba(99, 102, 241, 0.15) 0, transparent 50%),
+                radial-gradient(at 100% 100%, rgba(16, 185, 129, 0.1) 0, transparent 50%);
+            color: var(--text-main);
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        /* Floating Window (Glassmorphism) */
+        .command-center {
+            width: 100%;
+            max-width: 750px;
+            background: var(--glass-bg);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            border: 1px solid var(--glass-border);
+            border-radius: 16px;
+            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(255, 255, 255, 0.05) inset;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            animation: floatIn 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        @keyframes floatIn {
+            0% {
+                opacity: 0;
+                transform: scale(0.95) translateY(10px);
+            }
+
+            100% {
+                opacity: 1;
+                transform: scale(1) translateY(0);
+            }
+        }
+
+        /* Top Search / Header Bar */
+        .cc-header {
+            padding: 16px 20px;
+            border-bottom: 1px solid var(--glass-border);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .cc-logo {
+            background: var(--primary);
+            color: white;
+            width: 24px;
+            height: 24px;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 900;
+            font-size: 14px;
+        }
+
+        .cc-breadcrumb {
+            background: transparent;
+            border: none;
+            color: var(--text-main);
+            font-size: 18px;
+            font-weight: 500;
+            width: 100%;
+            outline: none;
+        }
+
+        /* Body Container */
+        .cc-body {
+            max-height: 60vh;
+            overflow-y: auto;
+            position: relative;
+        }
+
+        .cc-body::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .cc-body::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 3px;
+        }
+
+        /* Views */
+        .view {
+            display: none;
+            padding: 12px;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .view.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+
+            to {
+                opacity: 1;
+            }
+        }
+
+        /* View 1: List Menu */
+        .cmd-list {
+            list-style: none;
+        }
+
+        .cmd-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 14px 16px;
+            margin-bottom: 4px;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .cmd-item:hover {
+            background: var(--item-hover);
+        }
+
+        .cmd-left {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .cmd-icon {
+            font-size: 20px;
+        }
+
+        .cmd-title {
+            font-size: 15px;
+            font-weight: 500;
+        }
+
+        .cmd-subtitle {
+            font-size: 13px;
+            color: var(--text-muted);
+        }
+
+        .cmd-shortcut {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 4px 8px;
+            border-radius: 6px;
+            font-size: 12px;
+            font-family: monospace;
+            color: var(--text-muted);
+        }
+
+        /* View 2: Form Configuration */
+        .config-grid {
+            padding: 12px 20px;
+            display: grid;
+            gap: 20px;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 200px 1fr;
+            align-items: center;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            padding-bottom: 16px;
+        }
+
+        .form-row:last-child {
+            border-bottom: none;
+        }
+
+        .label-col {
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--text-muted);
+        }
+
+        .cc-input {
+            background: var(--input-bg);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: white;
+            padding: 10px 14px;
+            border-radius: 8px;
+            font-size: 14px;
+            width: 100%;
+            transition: all 0.2s;
+            outline: none;
+        }
+
+        .cc-input:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.2);
+        }
+
+        /* View 3: Result */
+        .result-view {
+            padding: 20px;
+        }
+
+        .code-box {
+            background: #000000;
+            border-radius: 12px;
+            padding: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            font-family: 'Fira Code', 'Courier New', monospace;
+            font-size: 14px;
+            line-height: 1.6;
+            color: #e2e8f0;
+            white-space: pre-wrap;
+            word-break: break-all;
+            margin-bottom: 20px;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        .kw {
+            color: #c678dd;
+            font-weight: bold;
+        }
+
+        .fn {
+            color: #61afef;
+        }
+
+        .str {
+            color: #98c379;
+        }
+
+        .var {
+            color: #e06c75;
+        }
+
+        .op {
+            color: #56b6c2;
+        }
+
+        .live-tester-cc {
+            background: var(--input-bg);
+            border-radius: 12px;
+            padding: 16px;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            border: 1px dashed rgba(255, 255, 255, 0.2);
+        }
+
+        .tester-input-cc {
+            background: transparent;
+            border: none;
+            color: white;
+            font-size: 16px;
+            width: 50%;
+            outline: none;
+            padding: 8px;
+            border-right: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .tester-result-cc {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--accent);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            padding-left: 8px;
+        }
+
+        /* Footer / Hotkeys */
+        .cc-footer {
+            padding: 12px 20px;
+            border-top: 1px solid var(--glass-border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(0, 0, 0, 0.2);
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+
+        .hotkey-group {
+            display: flex;
+            gap: 16px;
+        }
+
+        .hotkey {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        kbd {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: monospace;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            color: white;
+        }
+
+        /* Utility */
+        .hidden {
+            display: none !important;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="command-center">
+        <div class="cc-header">
+            <div class="cc-logo">W</div>
+            <input type="text" class="cc-breadcrumb" id="ccTitle" value="Pilih Tindakan..." readonly>
+        </div>
+
+        <div class="cc-body">
+
+            <div class="view active" id="view-menu">
+                <ul class="cmd-list">
+                    <li class="cmd-item" onclick="selectType('wa')">
+                        <div class="cmd-left">
+                            <div class="cmd-icon">🔗</div>
+                            <div>
+                                <div class="cmd-title">Jana Pautan WhatsApp</div>
+                                <div class="cmd-subtitle">Tukar data kepada wa.me/60...</div>
+                            </div>
+                        </div>
+                        <div class="cmd-shortcut">Enter</div>
+                    </li>
+                    <li class="cmd-item" onclick="selectType('std')">
+                        <div class="cmd-left">
+                            <div class="cmd-icon">📱</div>
+                            <div>
+                                <div class="cmd-title">Jana Nombor Standard</div>
+                                <div class="cmd-subtitle">Bersihkan nombor jadi 6012...</div>
+                            </div>
+                        </div>
+                        <div class="cmd-shortcut">Enter</div>
+                    </li>
+                </ul>
+            </div>
+
+            <div class="view" id="view-config">
+                <div class="config-grid">
+                    <div class="form-row">
+                        <div class="label-col">Nama Tajuk Kolum</div>
+                        <div><input type="text" class="cc-input" id="headerInput" value="PAUTAN WHATSAPP" autofocus>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="label-col">Kolum Data Mentah</div>
+                        <div><input type="text" class="cc-input" id="colInput" value="A" maxlength="2"
+                                style="text-transform: uppercase;"></div>
+                    </div>
+                    <div class="form-row">
+                        <div class="label-col">Mula Baris Ke-</div>
+                        <div><input type="number" class="cc-input" id="rowInput" value="2" min="1"></div>
+                    </div>
+                    <div class="form-row" id="msgRow">
+                        <div class="label-col">Mesej Auto (Pilihan)</div>
+                        <div><input type="text" class="cc-input" id="msgInput" placeholder="Taip mesej auto di sini...">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="view" id="view-result">
+                <div class="result-view">
+                    <div class="code-box" id="codeDisplay"></div>
+
+                    <div class="live-tester-cc">
+                        <input type="text" class="tester-input-cc" id="testInput" placeholder="Uji nombor bersepah..."
+                            value="+60 12- 345 67 89" oninput="runTester()">
+                        <div class="tester-result-cc" id="testResult"></div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <div class="cc-footer">
+            <div id="footerLeft">Gunakan tetikus atau papan kekunci</div>
+            <div class="hotkey-group" id="footerRight">
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const state = { view: 'menu', type: 'wa', header: '', col: 'A', row: 2, msg: '' };
+
+        function setView(viewName) {
+            document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+            document.getElementById(`view-${viewName}`).classList.add('active');
+            state.view = viewName;
+            updateFooter();
+        }
+
+        function selectType(type) {
+            state.type = type;
+            document.getElementById('headerInput').value = type === 'wa' ? 'PAUTAN WHATSAPP' : 'NOMBOR TELEFON';
+            document.getElementById('ccTitle').value = `Wazza / Konfigurasi / ${type === 'wa' ? 'Pautan WhatsApp' : 'Nombor Standard'}`;
+
+            if (type === 'std') document.getElementById('msgRow').classList.add('hidden');
+            else document.getElementById('msgRow').classList.remove('hidden');
+
+            setView('config');
+            document.getElementById('headerInput').focus();
+        }
+
+        function generate() {
+            state.header = document.getElementById('headerInput').value;
+            state.col = document.getElementById('colInput').value.toUpperCase() || 'A';
+            state.row = document.getElementById('rowInput').value || 2;
+            state.msg = document.getElementById('msgInput').value;
+
+            document.getElementById('ccTitle').value = `Wazza / Hasil / Formula Sedia`;
+            document.getElementById('codeDisplay').innerHTML = highlightSyntax(getRawFormula());
+            runTester();
+            setView('result');
+        }
+
+        function goBack() {
+            if (state.view === 'config') {
+                document.getElementById('ccTitle').value = 'Pilih Tindakan...';
+                setView('menu');
+            } else if (state.view === 'result') {
+                document.getElementById('ccTitle').value = `Wazza / Konfigurasi`;
+                setView('config');
+            }
+        }
+
+        function updateFooter() {
+            const right = document.getElementById('footerRight');
+            if (state.view === 'menu') {
+                right.innerHTML = `<span class="hotkey"><kbd>Klik</kbd> Pilih</span>`;
+            } else if (state.view === 'config') {
+                right.innerHTML = `
+                <span class="hotkey" style="cursor:pointer" onclick="goBack()"><kbd>Esc</kbd> Kembali</span>
+                <span class="hotkey" style="cursor:pointer; color: white;" onclick="generate()"><kbd>Enter</kbd> Jana Formula</span>
+            `;
+            } else if (state.view === 'result') {
+                right.innerHTML = `
+                <span class="hotkey" style="cursor:pointer" onclick="goBack()"><kbd>Esc</kbd> Kembali</span>
+                <span class="hotkey" style="cursor:pointer; color: var(--accent);" id="copyBtnFooter" onclick="copyCode()"><kbd>Enter</kbd> Salin Kod</span>
+            `;
+            }
+        }
+
+        // Keydown listeners for absolute Raycast feel
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') goBack();
+            if (e.key === 'Enter') {
+                if (state.view === 'config') generate();
+                else if (state.view === 'result') copyCode();
+            }
+        });
+
+        // Formula Logic
+        function getRange() { return `${state.col}${state.row}:${state.col}`; }
+
+        function getRawFormula() {
+            const range = getRange();
+            const header = state.header || "TAJUK KOSONG";
+
+            let msgFormula = state.msg ? ` & "?text=" & ENCODEURL("${state.msg}")` : "";
+            let baseWaLink = `"https://wa.me/" & REGEXREPLACE(REGEXREPLACE(TO_TEXT(columntelefon), "\\D+", ""), "^(60)?0*", "60")` + msgFormula;
+
+            let logicPart = state.type === 'wa'
+                ? `formuladata, ARRAYFORMULA(IF(columntelefon="", "", ${baseWaLink})),\n`
+                : `formuladata, ARRAYFORMULA(IF(columntelefon="", "", REGEXREPLACE(REGEXREPLACE(TO_TEXT(columntelefon), "\\D+", ""), "^(60)?0*", "60"))),\n`;
+
+            return `=LET(\nnota, "Format dijana oleh Wazza Digital",\ncolumntelefon, ${range},\n\nnamaheader, "${header}",\n\n${logicPart}\nVSTACK(namaheader, formuladata)\n)`;
+        }
+
+        function highlightSyntax(code) {
+            let s = code.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+            s = s.replace(/\b(LET|ARRAYFORMULA|IF|REGEXREPLACE|TO_TEXT|VSTACK|ENCODEURL)\b/g, '<span class="fn">$1</span>');
+            s = s.replace(/\b(nota|columntelefon|namaheader|formuladata)\b/g, '<span class="var">$1</span>');
+            s = s.replace(/"(?:[^"\\]|\\.)*"/g, m => `<span class="str">${m}</span>`);
+            const range = getRange(); s = s.replace(new RegExp(`\\b${range}\\b`, 'g'), `<span class="kw">${range}</span>`);
+            s = s.replace(/^=/, '<span class="op">=</span>');
+            return s;
+        }
+
+        function runTester() {
+            const inputVal = document.getElementById('testInput').value;
+            const resultBox = document.getElementById('testResult');
+            if (!inputVal.trim()) { resultBox.textContent = "-"; return; }
+
+            let cleanNum = inputVal.replace(/\D/g, '').replace(/^(60)?0*/, '60');
+            if (state.type === 'wa') {
+                let msgPreview = state.msg ? `?text=${encodeURIComponent(state.msg)}` : '';
+                resultBox.textContent = `https://wa.me/${cleanNum}${msgPreview}`;
+                resultBox.style.color = "var(--accent)";
+            } else {
+                resultBox.textContent = cleanNum;
+                resultBox.style.color = "var(--text-main)";
+            }
+        }
+
+        function copyCode() {
+            navigator.clipboard.writeText(getRawFormula()).then(() => {
+                const btn = document.getElementById('copyBtnFooter');
+                const ogHtml = btn.innerHTML;
+                btn.innerHTML = `<kbd>✓</kbd> Disalin!`;
+                setTimeout(() => { btn.innerHTML = ogHtml; }, 2000);
+            });
+        }
+
+        // Init
+        updateFooter();
+    </script>
+
+</body>
+
+</html>

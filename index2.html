@@ -1,0 +1,815 @@
+<!DOCTYPE html>
+<html lang="ms">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wazza Generator - Wizard Mode</title>
+    <style>
+        :root {
+            --primary: #4f46e5;
+            --primary-hover: #4338ca;
+            --bg-color: #fcfcfc;
+            --text-main: #111827;
+            --text-muted: #6b7280;
+            --border: #e5e7eb;
+            --surface: #ffffff;
+            --code-bg: #1e293b;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Inter', -apple-system, sans-serif;
+        }
+
+        body {
+            background: var(--bg-color);
+            color: var(--text-main);
+            height: 100vh;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Top Branding & Progress */
+        header {
+            padding: 24px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: absolute;
+            width: 100%;
+            top: 0;
+            z-index: 10;
+        }
+
+        .logo-badge {
+            font-weight: 900;
+            font-size: 18px;
+            color: var(--primary);
+            letter-spacing: -0.5px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .logo-badge span {
+            background: var(--primary);
+            color: white;
+            padding: 4px 8px;
+            border-radius: 6px;
+            font-size: 14px;
+        }
+
+        .progress-bar {
+            width: 100px;
+            height: 4px;
+            background: var(--border);
+            border-radius: 2px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: var(--primary);
+            width: 20%;
+            transition: width 0.4s ease;
+        }
+
+        /* Wizard Container */
+        .wizard-container {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            width: 100%;
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 0 24px;
+        }
+
+        /* Steps Animation */
+        .step {
+            position: absolute;
+            width: 100%;
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(20px);
+            transition: all 0.5s ease-in-out;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .step.active {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+            position: relative;
+        }
+
+        /* Typography */
+        h2 {
+            font-size: 32px;
+            font-weight: 700;
+            margin-bottom: 12px;
+            letter-spacing: -0.5px;
+        }
+
+        p.subtitle {
+            font-size: 16px;
+            color: var(--text-muted);
+            margin-bottom: 40px;
+        }
+
+        /* Big Choice Cards (Step 1) */
+        .choices {
+            display: flex;
+            gap: 20px;
+            width: 100%;
+            max-width: 600px;
+            justify-content: center;
+        }
+
+        .choice-card {
+            flex: 1;
+            background: var(--surface);
+            border: 2px solid var(--border);
+            padding: 32px 24px;
+            border-radius: 16px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .choice-card:hover {
+            border-color: var(--primary);
+            transform: translateY(-4px);
+            box-shadow: 0 10px 25px -5px rgba(79, 70, 229, 0.1);
+        }
+
+        .choice-icon {
+            font-size: 32px;
+            margin-bottom: 16px;
+        }
+
+        .choice-card h3 {
+            font-size: 18px;
+            margin-bottom: 8px;
+        }
+
+        .choice-card p {
+            font-size: 13px;
+            color: var(--text-muted);
+        }
+
+        /* Minimalist Inputs (Step 2 & 3) */
+        .minimal-input {
+            font-size: 32px;
+            border: none;
+            border-bottom: 2px solid var(--border);
+            background: transparent;
+            text-align: center;
+            padding: 12px;
+            width: 100%;
+            max-width: 500px;
+            color: var(--primary);
+            font-weight: 600;
+            transition: border-color 0.3s;
+            outline: none;
+            margin-bottom: 24px;
+        }
+
+        .minimal-input:focus {
+            border-color: var(--primary);
+        }
+
+        .minimal-input::placeholder {
+            color: #d1d5db;
+            font-weight: 400;
+        }
+
+        /* MINI SHEET (STEP 4) */
+        .ms-wrapper {
+            width: 100%;
+            max-width: 500px;
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            overflow: hidden;
+            background: white;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .ms-top-bar {
+            display: flex;
+            background: #f9fafb;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .ms-corner {
+            width: 60px;
+            flex-shrink: 0;
+            border-right: 1px solid var(--border);
+            background: #f3f4f6;
+        }
+
+        .ms-cols {
+            display: flex;
+            flex: 1;
+            overflow-x: auto;
+            scroll-behavior: smooth;
+        }
+
+        .ms-cols::-webkit-scrollbar {
+            display: none;
+        }
+
+        .ms-col {
+            min-width: 60px;
+            text-align: center;
+            padding: 12px 0;
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-muted);
+            border-right: 1px solid var(--border);
+            cursor: pointer;
+            user-select: none;
+            transition: all 0.2s;
+        }
+
+        .ms-col:hover {
+            background: #f3f4f6;
+        }
+
+        .ms-col.active {
+            background: #eef2ff;
+            color: var(--primary);
+            border-bottom: 3px solid var(--primary);
+        }
+
+        .ms-bottom-area {
+            display: flex;
+            height: 220px;
+        }
+
+        .ms-rows {
+            width: 60px;
+            flex-shrink: 0;
+            overflow-y: auto;
+            background: #f9fafb;
+            border-right: 1px solid var(--border);
+            scroll-behavior: smooth;
+        }
+
+        .ms-rows::-webkit-scrollbar {
+            display: none;
+        }
+
+        .ms-row {
+            padding: 12px 0;
+            text-align: center;
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-muted);
+            border-bottom: 1px solid var(--border);
+            cursor: pointer;
+            user-select: none;
+            transition: all 0.2s;
+        }
+
+        .ms-row:hover {
+            background: #f3f4f6;
+        }
+
+        .ms-row.active {
+            background: #eef2ff;
+            color: var(--primary);
+            border-right: 3px solid var(--primary);
+        }
+
+        .ms-display-area {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background: #ffffff;
+        }
+
+        .ms-display-text {
+            font-size: 64px;
+            font-weight: 800;
+            color: var(--primary);
+            letter-spacing: -2px;
+            line-height: 1;
+        }
+
+        /* Buttons */
+        .btn {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 16px 32px;
+            font-size: 16px;
+            font-weight: 600;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            box-shadow: 0 4px 12px rgba(79, 70, 229, 0.2);
+        }
+
+        .btn:hover {
+            background: var(--primary-hover);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(79, 70, 229, 0.3);
+        }
+
+        .btn-secondary {
+            background: white;
+            color: var(--text-main);
+            border: 1px solid var(--border);
+            box-shadow: none;
+        }
+
+        .btn-secondary:hover {
+            background: #f9fafb;
+            border-color: #d1d5db;
+            transform: translateY(0);
+            box-shadow: none;
+        }
+
+        .btn-nav-group {
+            display: flex;
+            gap: 12px;
+            margin-top: 16px;
+        }
+
+        /* Final Result (Step 5) */
+        .result-container {
+            width: 100%;
+            max-width: 800px;
+            text-align: left;
+            animation: fadeIn 0.8s;
+        }
+
+        .editor-container {
+            background: var(--code-bg);
+            border-radius: 12px;
+            overflow: hidden;
+            margin-bottom: 24px;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+        }
+
+        .editor-header {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 12px 16px;
+            display: flex;
+            gap: 6px;
+        }
+
+        .dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+        }
+
+        .dot.r {
+            background: #ef4444;
+        }
+
+        .dot.y {
+            background: #eab308;
+        }
+
+        .dot.g {
+            background: #10b981;
+        }
+
+        .formula-display {
+            padding: 24px;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            line-height: 1.6;
+            color: #e2e8f0;
+            white-space: pre-wrap;
+            word-break: break-all;
+        }
+
+        .kw {
+            color: #c678dd;
+            font-weight: bold;
+        }
+
+        .fn {
+            color: #61afef;
+        }
+
+        .str {
+            color: #98c379;
+        }
+
+        .var {
+            color: #e06c75;
+        }
+
+        .op {
+            color: #56b6c2;
+        }
+
+        .tester-box {
+            background: white;
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 24px;
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .tester-input {
+            flex: 1;
+            font-size: 16px;
+            padding: 12px 16px;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            outline: none;
+        }
+
+        .tester-input:focus {
+            border-color: var(--primary);
+        }
+
+        .tester-result {
+            flex: 1;
+            font-size: 16px;
+            font-weight: 700;
+            color: #25D366;
+            word-break: break-all;
+        }
+
+        /* GIF / Image Styles */
+        .tutorial-image-container {
+            width: 100%;
+            max-width: 450px;
+            height: 150px;
+            background-color: #f1f5f9;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            margin-top: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+        }
+
+        .tutorial-image-container img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            /* Adjusts image to fill the box nicely */
+        }
+
+        .layout-row {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            gap: 40px;
+            width: 100%;
+            justify-content: center;
+        }
+
+        .layout-col {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 100%;
+            max-width: 500px;
+        }
+
+        #step4 .layout-row {
+            align-items: flex-start;
+        }
+    </style>
+</head>
+
+<body>
+
+    <header>
+        <div class="logo-badge"><span>W</span> Wazza</div>
+        <div class="progress-bar">
+            <div class="progress-fill" id="progressFill"></div>
+        </div>
+    </header>
+
+    <div class="wizard-container">
+
+        <div class="step active" id="step1">
+            <h2>Apa jenis formula yang anda perlukan?</h2>
+            <p class="subtitle">Pilih format output untuk jadual Google Sheets anda.</p>
+            <div class="choices">
+                <div class="choice-card" onclick="setType('wa')">
+                    <div class="choice-icon">🔗</div>
+                    <h3>Pautan WhatsApp</h3>
+                    <p>Tukar nombor berterabur jadi link wa.me yang boleh diklik.</p>
+                </div>
+                <div class="choice-card" onclick="setType('std')">
+                    <div class="choice-icon">📱</div>
+                    <h3>Nombor Standard</h3>
+                    <p>Bersihkan nombor jadi format 6012... tanpa pautan.</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="step" id="step2">
+            <h2>Namakan tajuk kolum baru anda</h2>
+            <p class="subtitle">Tajuk ini akan diletakkan di baris paling atas jadual.</p>
+
+            <div class="layout-row">
+                <div class="layout-col">
+                    <input type="text" id="headerInput" class="minimal-input" value="PAUTAN WHATSAPP">
+                    <div class="btn-nav-group">
+                        <button class="btn btn-secondary" onclick="goToStep(1)">Kembali</button>
+                        <button class="btn" onclick="nextAfterHeader()">Seterusnya ➔</button>
+                    </div>
+                </div>
+
+                <div class="tutorial-image-container">
+                    <img src="dummy-animation2.gif" alt="Contoh Tajuk Header">
+                </div>
+            </div>
+        </div>
+
+        <div class="step" id="step3">
+            <h2>Nak tambah mesej auto? (Pilihan)</h2>
+            <p class="subtitle">Ayat ini akan sedia tertulis bila pelanggan klik pautan WhatsApp anda.</p>
+
+            <div class="layout-row">
+                <div class="layout-col">
+                    <input type="text" id="msgInput" class="minimal-input"
+                        placeholder="Cth: Hai, saya berminat nak tahu lebih lanjut...">
+                    <div class="btn-nav-group">
+                        <button class="btn btn-secondary" onclick="goToStep(2)">Kembali</button>
+                        <button class="btn" onclick="goToStep(4)">Teruskan ➔</button>
+                    </div>
+                </div>
+
+                <div class="tutorial-image-container">
+                    <img src="dummy-animation2.gif" alt="Contoh Mesej Auto">
+                </div>
+            </div>
+        </div>
+
+        <div class="step" id="step4">
+            <h2>Di mana lokasi nombor telefon asal?</h2>
+            <p class="subtitle">Pilih huruf kolum yang mengandungi data mentah pelanggan anda.</p>
+
+            <div class="layout-row">
+                <div class="layout-col">
+                    <div class="ms-wrapper">
+                        <div class="ms-top-bar">
+                            <div class="ms-corner"></div>
+                            <div class="ms-cols" id="msColsContainer"></div>
+                        </div>
+                        <div class="ms-bottom-area">
+                            <div class="ms-rows" id="msRowsContainer"></div>
+                            <div class="ms-display-area">
+                                <span
+                                    style="font-size: 13px; font-weight: 600; color: var(--text-muted); text-transform: uppercase;">Sel
+                                    Terpilih</span>
+                                <div class="ms-display-text" id="selDisplay">A2</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div
+                        style="margin-bottom: 24px; font-size: 13px; color: var(--text-muted); display: flex; align-items: center; justify-content: center; gap: 8px;">
+                        Atau taip baris manual:
+                        <input type="number" id="rowInputManual" value="2" min="1"
+                            style="width: 70px; padding: 6px; text-align: center; border-radius: 6px; border: 1px solid var(--border); outline: none;"
+                            oninput="handleManualRow()">
+                    </div>
+
+                    <div class="btn-nav-group">
+                        <button class="btn btn-secondary" onclick="backFromRange()">Kembali</button>
+                        <button class="btn" id="generateBtn" onclick="generateFormula()">Jana Formula Sekarang
+                            🚀</button>
+                    </div>
+                </div>
+
+                <div class="tutorial-image-container" style="height: 250px;">
+                    <img src="dummy-animation2.gif" alt="Contoh Lokasi Data">
+                </div>
+            </div>
+        </div>
+
+        <div class="step" id="step5">
+            <div class="result-container">
+                <h2 style="font-size: 24px; margin-bottom: 24px;">Siap! Ini formula anda.</h2>
+
+                <div class="editor-container">
+                    <div class="editor-header">
+                        <div class="dot r"></div>
+                        <div class="dot y"></div>
+                        <div class="dot g"></div>
+                    </div>
+                    <div class="formula-display" id="codeDisplay"></div>
+                </div>
+
+                <div style="display: flex; gap: 16px; margin-bottom: 40px;">
+                    <button class="btn" id="copyBtn" onclick="copyCode()"
+                        style="width: 100%; justify-content: center;">📋 Salin Formula</button>
+                    <button class="btn btn-secondary" onclick="resetWizard()">Mula Semula</button>
+                </div>
+
+                <h3
+                    style="font-size: 14px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 12px;">
+                    🧪 Penguji Formula Secara Live</h3>
+                <div class="tester-box">
+                    <input type="text" id="testInput" class="tester-input" placeholder="Cuba taip nombor bersepah..."
+                        value="+60 12- 345 67 89" oninput="runTester()">
+                    <div>➔</div>
+                    <div id="testResult" class="tester-result"></div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        const ALPHABET = Array.from(Array(26)).map((e, i) => i + 65);
+        const COLUMNS = ALPHABET.map((x) => String.fromCharCode(x));
+        const ROWS = Array.from({ length: 100 }, (_, i) => i + 1);
+
+        const state = { type: 'wa', header: 'PAUTAN WHATSAPP', msg: '', col: 'A', row: 2, currentStep: 1 };
+
+        function updateProgress(step) {
+            const totalSteps = 5;
+            document.getElementById('progressFill').style.width = `${(step / totalSteps) * 100}%`;
+        }
+
+        function goToStep(step) {
+            document.querySelectorAll('.step').forEach(el => el.classList.remove('active'));
+            document.getElementById(`step${step}`).classList.add('active');
+            state.currentStep = step;
+            updateProgress(step);
+        }
+
+        function setType(type) {
+            state.type = type;
+            if (type === 'std') {
+                document.getElementById('headerInput').value = 'NOMBOR TELEFON';
+            } else {
+                document.getElementById('headerInput').value = 'PAUTAN WHATSAPP';
+            }
+            goToStep(2);
+        }
+
+        function nextAfterHeader() {
+            state.header = document.getElementById('headerInput').value;
+            if (state.type === 'std') {
+                goToStep(4);
+            } else {
+                goToStep(3);
+            }
+        }
+
+        function backFromRange() {
+            if (state.type === 'std') goToStep(2);
+            else goToStep(3);
+        }
+
+        function updateCellDisplay() {
+            document.getElementById('selDisplay').textContent = `${state.col}${state.row}`;
+        }
+
+        function buildMiniSheet() {
+            const colContainer = document.getElementById('msColsContainer');
+            colContainer.innerHTML = '';
+            COLUMNS.forEach(c => {
+                const div = document.createElement('div');
+                div.className = 'ms-col' + (c === state.col ? ' active' : '');
+                div.textContent = c;
+                div.onclick = () => {
+                    state.col = c;
+                    updateCellDisplay();
+                    buildMiniSheet();
+                    div.scrollIntoView({ behavior: "smooth", block: "nearest", inline: "center" });
+                };
+                colContainer.appendChild(div);
+            });
+
+            const rowContainer = document.getElementById('msRowsContainer');
+            rowContainer.innerHTML = '';
+            ROWS.forEach(r => {
+                const div = document.createElement('div');
+                div.className = 'ms-row' + (r === state.row ? ' active' : '');
+                div.textContent = r;
+                div.onclick = () => {
+                    state.row = r;
+                    document.getElementById('rowInputManual').value = r;
+                    updateCellDisplay();
+                    buildMiniSheet();
+                    div.scrollIntoView({ behavior: "smooth", block: "center", inline: "nearest" });
+                };
+                rowContainer.appendChild(div);
+            });
+
+            updateCellDisplay();
+        }
+
+        function handleManualRow() {
+            const val = parseInt(document.getElementById('rowInputManual').value);
+            if (val && val > 0) {
+                state.row = val;
+                buildMiniSheet();
+            }
+        }
+
+        function getRange() { return `${state.col}${state.row}:${state.col}`; }
+
+        function getRawFormula() {
+            const range = getRange();
+            const header = state.header || "TAJUK KOSONG";
+
+            let msgFormula = state.msg ? ` & "?text=" & ENCODEURL("${state.msg}")` : "";
+            let baseWaLink = `"https://wa.me/" & REGEXREPLACE(REGEXREPLACE(TO_TEXT(columntelefon), "\\D+", ""), "^(60)?0*", "60")` + msgFormula;
+
+            let logicPart = state.type === 'wa'
+                ? `formuladata, ARRAYFORMULA(IF(columntelefon="", "", ${baseWaLink})),\n`
+                : `formuladata, ARRAYFORMULA(IF(columntelefon="", "", REGEXREPLACE(REGEXREPLACE(TO_TEXT(columntelefon), "\\D+", ""), "^(60)?0*", "60"))),\n`;
+
+            return `=LET(\nnota, "Format dijana oleh Wazza Digital",\ncolumntelefon, ${range},\n\nnamaheader, "${header}",\n\n${logicPart}\nVSTACK(namaheader, formuladata)\n)`;
+        }
+
+        function highlightSyntax(code) {
+            let s = code.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+            s = s.replace(/\b(LET|ARRAYFORMULA|IF|REGEXREPLACE|TO_TEXT|VSTACK|ENCODEURL)\b/g, '<span class="fn">$1</span>');
+            s = s.replace(/\b(nota|columntelefon|namaheader|formuladata)\b/g, '<span class="var">$1</span>');
+            s = s.replace(/"(?:[^"\\]|\\.)*"/g, m => `<span class="str">${m}</span>`);
+            const range = getRange(); s = s.replace(new RegExp(`\\b${range}\\b`, 'g'), `<span class="kw">${range}</span>`);
+            s = s.replace(/^=/, '<span class="op">=</span>');
+            return s;
+        }
+
+        function runTester() {
+            const inputVal = document.getElementById('testInput').value;
+            const resultBox = document.getElementById('testResult');
+            if (!inputVal.trim()) { resultBox.textContent = "-"; return; }
+
+            let cleanNum = inputVal.replace(/\D/g, '').replace(/^(60)?0*/, '60');
+            if (state.type === 'wa') {
+                let msgPreview = state.msg ? `?text=${encodeURIComponent(state.msg)}` : '';
+                resultBox.textContent = `https://wa.me/${cleanNum}${msgPreview}`;
+                resultBox.style.color = "#25D366";
+            } else {
+                resultBox.textContent = cleanNum;
+                resultBox.style.color = "var(--primary)";
+            }
+        }
+
+        function generateFormula() {
+            document.getElementById('codeDisplay').innerHTML = highlightSyntax(getRawFormula());
+            runTester();
+            goToStep(5);
+        }
+
+        function copyCode() {
+            navigator.clipboard.writeText(getRawFormula()).then(() => {
+                const btn = document.getElementById('copyBtn');
+                const originalText = btn.innerHTML;
+                btn.innerHTML = "✅ Berjaya Disalin!";
+                btn.style.background = "var(--success)";
+                setTimeout(() => {
+                    btn.innerHTML = originalText;
+                    btn.style.background = "";
+                }, 2000);
+            });
+        }
+
+        function resetWizard() {
+            state.col = 'A'; state.row = 2; state.msg = '';
+            document.getElementById('msgInput').value = '';
+            document.getElementById('rowInputManual').value = '2';
+            buildMiniSheet();
+            goToStep(1);
+        }
+
+        // Init
+        buildMiniSheet();
+        updateProgress(1);
+
+    </script>
+
+</body>
+
+</html>

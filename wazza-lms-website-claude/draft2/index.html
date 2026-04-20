@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="ms">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Wazza Academy – Kuasai Google Workspace</title>
+  <meta name="description"
+    content="Belajar Google Sheets, Looker Studio & Google Workspace dengan kursus praktikal dari Wazza Academy." />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Space+Grotesk:wght@400;500;600;700&display=swap"
+    rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+
+<body>
+
+  <!-- NAV -->
+  <nav id="navbar">
+    <div class="nav-inner">
+      <a href="index.html" class="logo">
+        <span class="logo-icon">
+          <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
+            <rect x="2" y="2" width="24" height="24" rx="6" fill="url(#g1)" />
+            <path d="M8 10h12M8 14h8M8 18h10" stroke="#fff" stroke-width="2" stroke-linecap="round" />
+            <defs>
+              <linearGradient id="g1" x1="2" y1="2" x2="26" y2="26">
+                <stop stop-color="#34A853" />
+                <stop offset="1" stop-color="#0D652D" />
+              </linearGradient>
+            </defs>
+          </svg>
+        </span>
+        <span class="logo-text">Wazza<span class="logo-dot">.</span>Academy</span>
+      </a>
+      <div class="nav-links" id="navLinks">
+        <a href="#courses">Kursus</a>
+        <a href="#features">Kenapa Kami</a>
+        <a href="#testimonials">Ulasan</a>
+        <a href="login.html" class="btn-nav btn-nav-outline">Log Masuk</a>
+        <a href="login.html#register" class="btn-nav btn-nav-fill">Mulakan</a>
+      </div>
+      <button class="hamburger" id="hamburger" onclick="document.getElementById('navLinks').classList.toggle('open')">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </nav>
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="hero-glow"></div>
+    <div class="hero-grid-bg"></div>
+    <div class="hero-content">
+      <div class="hero-badge-row">
+        <span class="hero-badge"><span class="pulse-dot"></span> Kini Menerima Pendaftaran — Batch 2026</span>
+      </div>
+      <h1>Kuasai <span class="gradient-text">Google Sheets</span>, Looker Studio & Workspace</h1>
+      <p class="hero-sub">Kursus praktikal berasaskan projek yang mengubah anda dari pemula kepada pakar. Bina dashboard
+        sebenar, automatikan aliran kerja, dan keluarkan sepenuh potensi Google Workspace.</p>
+      <div class="hero-ctas">
+        <a href="#courses" class="btn-primary" id="hero-browse-btn">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="11" cy="11" r="8" />
+            <path d="m21 21-4.35-4.35" />
+          </svg>
+          Lihat Kursus
+        </a>
+        <a href="login.html" class="btn-ghost" id="hero-signin-btn">Log Masuk →</a>
+      </div>
+      <div class="hero-stats">
+        <div class="hero-stat"><strong>2,400+</strong><span>Pelajar</span></div>
+        <div class="stat-divider"></div>
+        <div class="hero-stat"><strong>15+</strong><span>Kursus</span></div>
+        <div class="stat-divider"></div>
+        <div class="hero-stat"><strong>4.9★</strong><span>Penilaian</span></div>
+      </div>
+    </div>
+    <div class="hero-visual">
+      <div class="floating-card card-sheets">
+        <div class="fc-icon" style="background:linear-gradient(135deg,#34A853,#0D652D)">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+            <rect x="3" y="3" width="18" height="18" rx="2" stroke="#fff" stroke-width="1.5" />
+            <path d="M3 9h18M3 15h18M9 3v18" stroke="#fff" stroke-width="1.5" />
+          </svg>
+        </div>
+        <div>
+          <div class="fc-title">Google Sheets</div>
+          <div class="fc-sub">Formula Lanjutan</div>
+        </div>
+      </div>
+      <div class="floating-card card-looker">
+        <div class="fc-icon" style="background:linear-gradient(135deg,#4285F4,#1a3f7a)">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+            <rect x="4" y="13" width="4" height="7" rx="1" fill="#fff" />
+            <rect x="10" y="8" width="4" height="12" rx="1" fill="#fff" />
+            <rect x="16" y="4" width="4" height="16" rx="1" fill="#fff" />
+          </svg>
+        </div>
+        <div>
+          <div class="fc-title">Looker Studio</div>
+          <div class="fc-sub">Rekabentuk Dashboard</div>
+        </div>
+      </div>
+      <div class="floating-card card-workspace">
+        <div class="fc-icon" style="background:linear-gradient(135deg,#FBBC04,#c48f00)">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+            <circle cx="12" cy="12" r="9" stroke="#fff" stroke-width="1.5" />
+            <path d="M12 7v5l3 3" stroke="#fff" stroke-width="1.5" stroke-linecap="round" />
+          </svg>
+        </div>
+        <div>
+          <div class="fc-title">Google Workspace</div>
+          <div class="fc-sub">Automasi & Apps Script</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- TICKER -->
+  <div class="ticker">
+    <div class="ticker-track">
+      <div class="ticker-content">
+        <span>Google Sheets</span><span class="ticker-dot">◆</span>
+        <span>Looker Studio</span><span class="ticker-dot">◆</span>
+        <span>Apps Script</span><span class="ticker-dot">◆</span>
+        <span>Google Forms</span><span class="ticker-dot">◆</span>
+        <span>Visualisasi Data</span><span class="ticker-dot">◆</span>
+        <span>Jadual Pangsi</span><span class="ticker-dot">◆</span>
+        <span>Fungsi QUERY</span><span class="ticker-dot">◆</span>
+        <span>Rekabentuk Dashboard</span><span class="ticker-dot">◆</span>
+        <span>Google Sheets</span><span class="ticker-dot">◆</span>
+        <span>Looker Studio</span><span class="ticker-dot">◆</span>
+        <span>Apps Script</span><span class="ticker-dot">◆</span>
+        <span>Google Forms</span><span class="ticker-dot">◆</span>
+        <span>Visualisasi Data</span><span class="ticker-dot">◆</span>
+        <span>Jadual Pangsi</span><span class="ticker-dot">◆</span>
+        <span>Fungsi QUERY</span><span class="ticker-dot">◆</span>
+        <span>Rekabentuk Dashboard</span><span class="ticker-dot">◆</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- COURSES -->
+  <section class="courses-section" id="courses">
+    <div class="container">
+      <div class="section-header">
+        <span class="section-tag">Kursus Kami</span>
+        <h2>Pelajari Alat yang <span class="gradient-text">Kuasa Perniagaan</span></h2>
+        <p>Dari penguasaan formula hingga pembinaan dashboard penuh — pilih laluan anda.</p>
+      </div>
+      <!-- Kad kursus dirender secara dinamik dari courses.json -->
+      <div class="course-grid" id="course-grid">
+        <div style="grid-column:1/-1;text-align:center;color:var(--text2);padding:3rem 1rem;">Memuatkan kursus...</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FEATURES -->
+  <section class="features-section" id="features">
+    <div class="container">
+      <div class="section-header">
+        <span class="section-tag">Kenapa Wazza Academy</span>
+        <h2>Dibina untuk <span class="gradient-text">Hasil Nyata</span></h2>
+      </div>
+      <div class="features-grid">
+        <div class="feature-card">
+          <div class="feature-icon" style="background:linear-gradient(135deg,#34A853,#0D652D)">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2">
+              <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />
+              <path d="M22 4 12 14.01l-3-3" />
+            </svg>
+          </div>
+          <h3>Akses Seumur Hidup</h3>
+          <p>Beli sekali, belajar selama-lamanya. Semua kemaskini masa hadapan termasuk percuma.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon" style="background:linear-gradient(135deg,#4285F4,#1a3f7a)">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2">
+              <rect x="2" y="3" width="20" height="14" rx="2" />
+              <path d="M8 21h8M12 17v4" />
+            </svg>
+          </div>
+          <h3>Projek Praktikal</h3>
+          <p>Setiap kursus merangkumi projek dunia sebenar dengan templat yang boleh dimuat turun.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon" style="background:linear-gradient(135deg,#FBBC04,#c48f00)">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2">
+              <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
+              <circle cx="9" cy="7" r="4" />
+              <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
+              <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+            </svg>
+          </div>
+          <h3>Sokongan Komuniti</h3>
+          <p>Sertai kumpulan Telegram peribadi kami dengan 2,000+ pelajar & pengamal.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon" style="background:linear-gradient(135deg,#EA4335,#8b1a12)">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2">
+              <circle cx="12" cy="8" r="7" />
+              <path d="M8.21 13.89L7 23l5-3 5 3-1.21-9.12" />
+            </svg>
+          </div>
+          <h3>Sijil Penyelesaian</h3>
+          <p>Dapatkan sijil yang disahkan setelah menyelesaikan setiap kursus.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- TESTIMONIALS -->
+  <section class="testimonials-section" id="testimonials">
+    <div class="container">
+      <div class="section-header">
+        <span class="section-tag">Kata Pelajar</span>
+        <h2>Dipercayai oleh <span class="gradient-text">Ribuan</span></h2>
+      </div>
+      <div class="testimonial-grid">
+        <div class="testimonial-card">
+          <div class="stars">★★★★★</div>
+          <p>"Akhirnya faham fungsi QUERY! Kursus ni jimatkan saya berjam-jam kerja manual setiap minggu."</p>
+          <div class="testimonial-author">
+            <div class="author-avatar">SA</div>
+            <div><strong>Siti Aisyah</strong><span>Akauntan, KL</span></div>
+          </div>
+        </div>
+        <div class="testimonial-card">
+          <div class="stars">★★★★★</div>
+          <p>"Dah bina dashboard Looker Studio pertama saya untuk bos. Dapat naik pangkat dalam masa 3 bulan!"</p>
+          <div class="testimonial-author">
+            <div class="author-avatar" style="background:linear-gradient(135deg,#4285F4,#1a3f7a)">MR</div>
+            <div><strong>Muhammad Razif</strong><span>Pengurus Pemasaran</span></div>
+          </div>
+        </div>
+        <div class="testimonial-card">
+          <div class="stars">★★★★★</div>
+          <p>"Kursus Apps Script memang mengubah cara kerja saya. Saya automatikan keseluruhan saluran laporan kami."
+          </p>
+          <div class="testimonial-author">
+            <div class="author-avatar" style="background:linear-gradient(135deg,#FBBC04,#c48f00)">NF</div>
+            <div><strong>Nurul Farhana</strong><span>Penganalisis Data, Pulau Pinang</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section class="cta-section">
+    <div class="container">
+      <div class="cta-box">
+        <div class="cta-glow"></div>
+        <h2>Bersedia untuk Tingkatkan <span class="gradient-text">Kemahiran Spreadsheet</span> Anda?</h2>
+        <p>Sertai 2,400+ pelajar yang sedang menguasai alat Google Workspace hari ini.</p>
+        <a href="login.html#register" class="btn-primary btn-lg" id="cta-enroll-btn">Mula Belajar Percuma →</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="container footer-inner">
+      <div class="footer-brand">
+        <div class="logo">
+          <span class="logo-icon">
+            <svg width="24" height="24" viewBox="0 0 28 28" fill="none">
+              <rect x="2" y="2" width="24" height="24" rx="6" fill="url(#g2)" />
+              <path d="M8 10h12M8 14h8M8 18h10" stroke="#fff" stroke-width="2" stroke-linecap="round" />
+              <defs>
+                <linearGradient id="g2" x1="2" y1="2" x2="26" y2="26">
+                  <stop stop-color="#34A853" />
+                  <stop offset="1" stop-color="#0D652D" />
+                </linearGradient>
+              </defs>
+            </svg>
+          </span>
+          <span class="logo-text">Wazza<span class="logo-dot">.</span>Academy</span>
+        </div>
+        <p class="footer-desc">Pendidikan Google Workspace yang praktikal untuk profesional.</p>
+      </div>
+      <div class="footer-links">
+        <div class="footer-col">
+          <h4>Platform</h4>
+          <a href="#courses">Kursus</a>
+          <a href="login.html">Log Masuk</a>
+          <a href="login.html#register">Daftar</a>
+        </div>
+        <div class="footer-col">
+          <h4>Syarikat</h4>
+          <a href="#">Tentang Kami</a>
+          <a href="#">Privasi</a>
+          <a href="#">Terma</a>
+        </div>
+      </div>
+    </div>
+    <div class="footer-bottom container">
+      <p>© 2026 Wazza Academy. Hak cipta terpelihara.</p>
+    </div>
+  </footer>
+
+  <script src="app.js"></script>
+  <script>
+    // Navbar scroll
+    window.addEventListener('scroll', () => {
+      document.getElementById('navbar').classList.toggle('scrolled', window.scrollY > 50);
+    });
+
+    // Peta ikon SVG (sepadan dengan medan "icon" dalam courses.json)
+    const ICONS = {
+      grid: '<svg width="48" height="48" viewBox="0 0 24 24" fill="none"><rect x="3" y="3" width="18" height="18" rx="2" stroke="#fff" stroke-width="1.5"/><path d="M3 9h18M3 15h18M9 3v18" stroke="#fff" stroke-width="1.5"/></svg>',
+      formula: '<svg width="48" height="48" viewBox="0 0 24 24" fill="none"><path d="M4 6h16M4 10h16M4 14h10M4 18h13" stroke="#fff" stroke-width="1.5" stroke-linecap="round"/></svg>',
+      chart: '<svg width="48" height="48" viewBox="0 0 24 24" fill="none"><rect x="4" y="13" width="4" height="7" rx="1" fill="#fff"/><rect x="10" y="8" width="4" height="12" rx="1" fill="#fff"/><rect x="16" y="4" width="4" height="16" rx="1" fill="#fff"/></svg>',
+      code: '<svg width="48" height="48" viewBox="0 0 24 24" fill="none"><path d="M16 18l6-6-6-6M8 6l-6 6 6 6" stroke="#fff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>',
+      clock: '<svg width="48" height="48" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" stroke="#fff" stroke-width="1.5"/><path d="M12 7v5l3 3" stroke="#fff" stroke-width="1.5" stroke-linecap="round"/></svg>',
+      layers: '<svg width="48" height="48" viewBox="0 0 24 24" fill="none"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" stroke="#fff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>'
+    };
+    const BADGE_CLASS = { green: 'badge-green', blue: 'badge-blue', yellow: 'badge-yellow', red: 'badge-red' };
+
+    // Bina HTML butang daftar berdasarkan sesi/status pembelian
+    function btnHtml(course) {
+      const purchased = WazzaStore.isPurchased(course.id);
+      if (purchased) {
+        return `<a href="course.html?id=${course.id}" class="btn-card" style="background:var(--green);color:#fff;" id="btn-${course.id}">Teruskan →</a>`;
+      }
+      return `<a href="#" class="btn-card" id="btn-${course.id}" onclick="handleEnroll(event,'${course.id}','${course.isBundle || false}')">Daftar →</a>`;
+    }
+
+    // Render semua kursus secara dinamik
+    async function renderCourses() {
+      const courses = await WazzaCourses.loadAll();
+      const grid = document.getElementById('course-grid');
+      if (!courses.length) { grid.innerHTML = '<p style="color:var(--text2);text-align:center;padding:2rem;">Tiada kursus dijumpai.</p>'; return; }
+
+      grid.innerHTML = courses.map(c => {
+        const icon = ICONS[c.icon] || ICONS.grid;
+        const badge = c.badge ? `<span class="card-badge ${BADGE_CLASS[c.badgeColor] || 'badge-green'}">${c.badge}</span>` : '';
+        const lessons = WazzaCourses.getAllLessons(c);
+        const meta = c.isBundle
+          ? `${(c.bundleCourses || []).length} kursus`
+          : `${lessons.length} pelajaran`;
+        return `
+        <div class="course-card fade-up" id="course-${c.id}">
+          <div class="card-img">
+            <div class="card-img-placeholder ${c.thumbnail}">${icon}</div>
+            ${badge}
+          </div>
+          <div class="card-body">
+            <span class="card-cat">${c.category}</span>
+            <h3 class="card-title">${c.title}</h3>
+            <p class="card-desc">${c.description}</p>
+            <div class="card-footer">
+              <div class="card-price"><small>${meta} &middot; dari</small>${c.price}</div>
+              ${btnHtml(c)}
+            </div>
+          </div>
+        </div>`;
+      }).join('');
+
+      // Perhatikan semula kad baru untuk animasi fade-up
+      document.querySelectorAll('.course-card.fade-up').forEach(el => observer.observe(el));
+    }
+
+    // Pengendalian daftar — perlu log masuk; jika sudah log masuk, beli + redirect
+    function handleEnroll(e, courseId, isBundle) {
+      e.preventDefault();
+      const session = WazzaAuth.getSession();
+      if (!session) { window.location.href = 'login.html'; return; }
+      if (isBundle === 'true') {
+        // Beli semua kursus dalam bundle
+        WazzaCourses.loadAll().then(courses => {
+          const b = courses.find(c => c.id === courseId);
+          if (b && b.bundleCourses) b.bundleCourses.forEach(id => WazzaStore.purchaseCourse(id));
+          WazzaStore.purchaseCourse(courseId);
+          window.location.href = 'dashboard.html';
+        });
+      } else {
+        WazzaStore.purchaseCourse(courseId);
+        window.location.href = `course.html?id=${courseId}`;
+      }
+    }
+
+    // Pemerhati animasi skrol
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+    }, { threshold: 0.1 });
+    document.querySelectorAll('.feature-card, .testimonial-card, .section-header').forEach(el => {
+      el.classList.add('fade-up'); observer.observe(el);
+    });
+
+    renderCourses();
+  </script>
+</body>
+
+</html>

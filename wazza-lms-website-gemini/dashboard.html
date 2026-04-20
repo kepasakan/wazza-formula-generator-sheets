@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wazza Digital - My Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-50 text-gray-800 font-sans">
+
+    <nav class="bg-white shadow">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16">
+                <div class="flex items-center">
+                    <a href="index.html" class="text-2xl font-bold text-blue-600">Wazza Digital</a>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <span class="text-gray-600 font-medium">Welcome, User</span>
+                    <a href="index.html" class="text-sm bg-gray-200 hover:bg-gray-300 text-gray-800 py-1 px-3 rounded transition">Logout</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <main class="max-w-7xl mx-auto px-4 py-12">
+        <div class="border-b pb-4 mb-8">
+            <h1 class="text-3xl font-bold">My Learning Portal</h1>
+            <p class="text-gray-600 mt-2">Access your purchased products and video tutorials below.</p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            
+            <div class="bg-white rounded-lg shadow p-6 border-t-4 border-blue-600">
+                <h3 class="text-xl font-bold mb-2">BETA-Ofis Sheets</h3>
+                <p class="text-sm text-gray-500 mb-4">Purchased on: April 15, 2026</p>
+                
+                <div class="w-full bg-gray-200 rounded-full h-2 mb-4">
+                    <div class="bg-blue-600 h-2 rounded-full" style="width: 45%"></div>
+                </div>
+                <p class="text-xs text-right text-gray-500 mb-4">45% Completed</p>
+
+                <a href="course.html" class="block text-center w-full bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition">Continue Learning</a>
+            </div>
+
+            <div class="bg-gray-100 rounded-lg shadow-inner p-6 flex flex-col items-center justify-center border-2 border-dashed border-gray-300 text-center">
+                <svg class="h-12 w-12 text-gray-400 mb-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/>
+                </svg>
+                <h3 class="text-lg font-medium text-gray-900">Explore More</h3>
+                <p class="text-sm text-gray-500 mt-1 mb-4">Browse our catalog to find new tools.</p>
+                <a href="index.html" class="text-blue-600 hover:underline">Go to Catalog</a>
+            </div>
+
+        </div>
+    </main>
+
+</body>
+</html>

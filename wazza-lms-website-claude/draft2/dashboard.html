@@ -1,0 +1,833 @@
+<!DOCTYPE html>
+<html lang="ms">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Papan Pemuka – Wazza Academy</title>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Space+Grotesk:wght@400;500;600;700&display=swap"
+    rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+  <style>
+    body {
+      display: flex;
+      min-height: 100vh;
+    }
+
+    .app {
+      display: flex;
+      width: 100%;
+    }
+
+    /* ── BAR SISI ── */
+    .sidebar {
+      width: 250px;
+      background: var(--bg2);
+      border-right: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      position: fixed;
+      top: 0;
+      left: 0;
+      height: 100vh;
+      z-index: 40;
+      transition: transform 0.3s;
+      isolation: isolate;
+      contain: layout style;
+    }
+
+    .sb-logo {
+      flex-shrink: 0;
+      padding: 1.5rem;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .sb-nav {
+      flex: 1;
+      overflow-y: auto;
+      overflow-x: hidden;
+      padding: 1rem 0;
+      min-height: 0;
+    }
+
+    .sb-bottom {
+      flex-shrink: 0;
+      margin-top: auto;
+      padding: 1.25rem;
+      border-top: 1px solid var(--border);
+    }
+
+    .sb-label {
+      font-size: .65rem;
+      font-weight: 700;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: rgba(255, 255, 255, .25);
+      padding: .5rem 1.5rem;
+      margin-top: .75rem;
+    }
+
+    .sb-link {
+      display: flex;
+      align-items: center;
+      gap: .75rem;
+      padding: .65rem 1.5rem;
+      font-size: .875rem;
+      color: var(--text2);
+      transition: background 0.15s, color 0.15s, border-color 0.15s;
+      cursor: pointer;
+      border-left: 3px solid transparent;
+      width: 100%;
+      box-sizing: border-box;
+    }
+
+    .sb-link:hover {
+      color: #fff;
+      background: rgba(255, 255, 255, .04);
+    }
+
+    .sb-link.active {
+      color: #fff;
+      border-left-color: var(--green);
+      background: rgba(52, 168, 83, .08);
+    }
+
+    .sb-link .icon {
+      font-size: 1rem;
+      width: 20px;
+      text-align: center;
+    }
+
+    .user-pill {
+      display: flex;
+      align-items: center;
+      gap: .75rem;
+    }
+
+    .user-av {
+      width: 36px;
+      height: 36px;
+      border-radius: 10px;
+      background: linear-gradient(135deg, #34A853, #0D652D);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: .85rem;
+      color: #fff;
+      flex-shrink: 0;
+    }
+
+    .user-name {
+      font-size: .85rem;
+      font-weight: 600;
+    }
+
+    .user-email {
+      font-size: .72rem;
+      color: var(--text2);
+    }
+
+    .logout-btn {
+      margin-top: .75rem;
+      width: 100%;
+      background: transparent;
+      border: 1px solid var(--border);
+      color: var(--text2);
+      padding: .5rem;
+      border-radius: 8px;
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: .75rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all .2s;
+    }
+
+    .logout-btn:hover {
+      border-color: var(--red);
+      color: var(--red);
+    }
+
+    /* ── UTAMA ── */
+    .main {
+      margin-left: 250px;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      min-width: 0;
+    }
+
+    .topbar {
+      background: var(--bg);
+      border-bottom: 1px solid var(--border);
+      padding: 1rem 2rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: sticky;
+      top: 0;
+      z-index: 30;
+    }
+
+    .topbar h1 {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 1.1rem;
+      font-weight: 700;
+    }
+
+    .topbar-btn {
+      background: var(--green);
+      color: #fff;
+      padding: .5rem 1.1rem;
+      border-radius: 8px;
+      font-weight: 600;
+      font-size: .82rem;
+      transition: background .2s;
+    }
+
+    .topbar-btn:hover {
+      background: #2d9247;
+    }
+
+    .content {
+      padding: 2rem;
+      flex: 1;
+    }
+
+    /* ── PANEL ── */
+    .panel {
+      display: none;
+    }
+
+    .panel.active {
+      display: block;
+    }
+
+    /* ── STATISTIK ── */
+    .stats-row {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1rem;
+      margin-bottom: 2rem;
+    }
+
+    .stat-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 1.25rem;
+      transition: border-color .2s;
+    }
+
+    .stat-card:hover {
+      border-color: rgba(255, 255, 255, .12);
+    }
+
+    .stat-label {
+      font-size: .72rem;
+      font-weight: 600;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      color: var(--text2);
+      margin-bottom: .5rem;
+    }
+
+    .stat-val {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 2rem;
+      font-weight: 800;
+      line-height: 1;
+    }
+
+    .stat-val span {
+      font-size: .85rem;
+      font-weight: 400;
+      color: var(--text2);
+    }
+
+    .stat-trend {
+      font-size: .75rem;
+      color: var(--green);
+      margin-top: .3rem;
+    }
+
+    /* ── TAJUK BAHAGIAN ── */
+    .sec-title {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 1rem;
+      font-weight: 700;
+      margin-bottom: 1rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .sec-title a {
+      font-size: .78rem;
+      font-weight: 600;
+      color: var(--green);
+    }
+
+    /* ── KAD KURSUS ── */
+    .my-courses {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 1rem;
+      margin-bottom: 2.5rem;
+    }
+
+    .my-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      overflow: hidden;
+      transition: transform .3s, border-color .3s, box-shadow .3s;
+    }
+
+    .my-card:hover {
+      transform: translateY(-3px);
+      border-color: rgba(255, 255, 255, .12);
+      box-shadow: 0 12px 30px rgba(0, 0, 0, .3);
+    }
+
+    .my-thumb {
+      aspect-ratio: 16/9;
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .my-thumb::after {
+      content: '▶';
+      position: absolute;
+      right: .75rem;
+      bottom: .75rem;
+      background: var(--green);
+      color: #fff;
+      font-size: .55rem;
+      padding: .3rem .55rem;
+      border-radius: 4px;
+    }
+
+    .my-body {
+      padding: 1rem;
+    }
+
+    .my-cat {
+      font-size: .65rem;
+      font-weight: 700;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      color: var(--green);
+      margin-bottom: .3rem;
+    }
+
+    .my-title {
+      font-family: 'Space Grotesk', sans-serif;
+      font-weight: 700;
+      font-size: .95rem;
+      margin-bottom: .75rem;
+      line-height: 1.3;
+    }
+
+    .prog-wrap {
+      background: rgba(255, 255, 255, .08);
+      height: 4px;
+      border-radius: 2px;
+      margin-bottom: .4rem;
+      overflow: hidden;
+    }
+
+    .prog-fill {
+      height: 4px;
+      background: var(--green);
+      border-radius: 2px;
+      transition: width .5s ease;
+    }
+
+    .prog-meta {
+      display: flex;
+      justify-content: space-between;
+      font-size: .72rem;
+      color: var(--text2);
+      margin-bottom: .85rem;
+    }
+
+    .btn-continue {
+      display: block;
+      text-align: center;
+      background: var(--surface2);
+      color: var(--text);
+      padding: .55rem;
+      border-radius: 8px;
+      font-weight: 600;
+      font-size: .8rem;
+      transition: background .2s, color .2s;
+    }
+
+    .btn-continue:hover {
+      background: var(--green);
+      color: #fff;
+    }
+
+    /* ── AKTIVITI ── */
+    .activity-list {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      overflow: hidden;
+    }
+
+    .act-item {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      padding: .85rem 1.2rem;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .act-item:last-child {
+      border-bottom: none;
+    }
+
+    .act-icon {
+      width: 36px;
+      height: 36px;
+      background: var(--surface2);
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: .9rem;
+      flex-shrink: 0;
+    }
+
+    .act-text {
+      flex: 1;
+    }
+
+    .act-text strong {
+      font-size: .85rem;
+      font-weight: 600;
+      display: block;
+    }
+
+    .act-text small {
+      font-size: .75rem;
+      color: var(--text2);
+    }
+
+    .act-status {
+      font-size: .7rem;
+      font-weight: 700;
+      letter-spacing: .5px;
+      color: var(--green);
+    }
+
+    /* ── SIJIL ── */
+    .cert-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 1rem;
+    }
+
+    .cert-card {
+      background: var(--surface);
+      border: 1px solid rgba(52, 168, 83, .3);
+      border-radius: var(--radius-sm);
+      padding: 1.5rem;
+      display: flex;
+      align-items: flex-start;
+      gap: 1rem;
+    }
+
+    .cert-icon {
+      font-size: 2rem;
+      flex-shrink: 0;
+    }
+
+    .cert-course {
+      font-family: 'Space Grotesk', sans-serif;
+      font-weight: 700;
+      font-size: .95rem;
+      margin-bottom: .3rem;
+    }
+
+    .cert-meta {
+      font-size: .75rem;
+      color: var(--text2);
+    }
+
+    .cert-badge {
+      display: inline-block;
+      margin-top: .75rem;
+      background: rgba(52, 168, 83, .12);
+      color: var(--green);
+      border: 1px solid rgba(52, 168, 83, .3);
+      font-size: .7rem;
+      font-weight: 700;
+      padding: .3rem .75rem;
+      border-radius: 20px;
+    }
+
+    /* ── KEADAAN KOSONG ── */
+    .empty-state {
+      text-align: center;
+      padding: 3rem 1.5rem;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+    }
+
+    .empty-state p {
+      color: var(--text2);
+      font-size: .92rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .empty-state .btn-primary {
+      display: inline-flex;
+    }
+
+    /* ── TAJUK HALAMAN ── */
+    .page-title {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 1.4rem;
+      font-weight: 800;
+      margin-bottom: 1.75rem;
+    }
+
+    /* ── MUDAH ALIH ── */
+    .hamburger-dash {
+      display: none;
+      flex-direction: column;
+      gap: 5px;
+      cursor: pointer;
+      background: none;
+      border: none;
+      padding: 4px;
+    }
+
+    .hamburger-dash span {
+      display: block;
+      width: 22px;
+      height: 2px;
+      background: var(--text);
+      border-radius: 2px;
+    }
+
+    .sb-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, .5);
+      z-index: 39;
+    }
+
+    @media (max-width:768px) {
+      .sidebar {
+        transform: translateX(-100%);
+      }
+
+      .sidebar.open {
+        transform: translateX(0);
+      }
+
+      .sb-overlay.show {
+        display: block;
+      }
+
+      .main {
+        margin-left: 0;
+      }
+
+      .hamburger-dash {
+        display: flex;
+      }
+
+      .content {
+        padding: 1.25rem;
+      }
+
+      .my-courses {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="app">
+
+    <!-- BAR SISI -->
+    <aside class="sidebar" id="sidebar">
+      <div class="sb-logo">
+        <a href="index.html" class="logo">
+          <span class="logo-icon"><svg width="22" height="22" viewBox="0 0 28 28" fill="none">
+              <rect x="2" y="2" width="24" height="24" rx="6" fill="url(#g3)" />
+              <path d="M8 10h12M8 14h8M8 18h10" stroke="#fff" stroke-width="2" stroke-linecap="round" />
+              <defs>
+                <linearGradient id="g3" x1="2" y1="2" x2="26" y2="26">
+                  <stop stop-color="#34A853" />
+                  <stop offset="1" stop-color="#0D652D" />
+                </linearGradient>
+              </defs>
+            </svg></span>
+          <span class="logo-text" style="font-size:1.1rem;">Wazza<span class="logo-dot">.</span>Academy</span>
+        </a>
+      </div>
+      <nav class="sb-nav">
+        <div class="sb-label">Utama</div>
+        <a class="sb-link active" href="#" onclick="showPanel('home',this)"><span class="icon">📊</span> Papan
+          Pemuka</a>
+        <a class="sb-link" href="index.html#courses"><span class="icon">🛒</span> Semak Imbas Kursus</a>
+        <div class="sb-label">Pembelajaran Saya</div>
+        <a class="sb-link" href="#" onclick="goResume(event)"><span class="icon">▶</span> Teruskan Belajar</a>
+        <a class="sb-link" href="#" onclick="showPanel('completed',this)"><span class="icon">✓</span> Selesai</a>
+        <a class="sb-link" href="#" onclick="showPanel('certificates',this)"><span class="icon">📜</span> Sijil</a>
+        <div class="sb-label">Akaun</div>
+        <a class="sb-link" href="#"><span class="icon">⚙</span> Tetapan</a>
+        <a class="sb-link" href="#"><span class="icon">🧾</span> Sejarah Pembelian</a>
+      </nav>
+      <div class="sb-bottom">
+        <div class="user-pill">
+          <div class="user-av" id="user-av">??</div>
+          <div>
+            <div class="user-name" id="user-name">Memuatkan...</div>
+            <div class="user-email" id="user-email"></div>
+          </div>
+        </div>
+        <button class="logout-btn" onclick="WazzaAuth.logout()">← Log Keluar</button>
+      </div>
+    </aside>
+    <div class="sb-overlay" id="overlay" onclick="closeSidebar()"></div>
+
+    <!-- UTAMA -->
+    <div class="main">
+      <div class="topbar">
+        <div style="display:flex;align-items:center;gap:1rem;">
+          <button class="hamburger-dash" onclick="openSidebar()"><span></span><span></span><span></span></button>
+          <h1 id="topbar-title">Papan Pemuka Saya</h1>
+        </div>
+        <a href="index.html#courses" class="topbar-btn">+ Semak Imbas Kursus</a>
+      </div>
+
+      <div class="content">
+
+        <!-- ── PANEL: UTAMA ── -->
+        <div class="panel active" id="panel-home">
+          <div style="margin-bottom:2rem;">
+            <p id="date-display"
+              style="font-size:.78rem;color:var(--text2);text-transform:uppercase;letter-spacing:1.5px;font-weight:600;">
+            </p>
+            <h2 id="greeting"
+              style="font-family:'Space Grotesk';font-size:1.6rem;font-weight:800;letter-spacing:-.5px;margin-top:.2rem;">
+            </h2>
+            <p id="subtitle" style="color:var(--text2);font-size:.875rem;margin-top:.3rem;"></p>
+          </div>
+          <div class="stats-row" id="stats-row"></div>
+          <div class="sec-title"><span>Kursus Saya</span><a href="index.html#courses">Semak imbas lagi →</a></div>
+          <div class="my-courses" id="my-courses"></div>
+          <div class="sec-title"><span>Aktiviti Terkini</span></div>
+          <div id="activity-container"></div>
+        </div>
+
+        <!-- ── PANEL: SELESAI ── -->
+        <div class="panel" id="panel-completed">
+          <div class="page-title">Kursus Selesai</div>
+          <div id="completed-list"></div>
+        </div>
+
+        <!-- ── PANEL: SIJIL ── -->
+        <div class="panel" id="panel-certificates">
+          <div class="page-title">Sijil Saya</div>
+          <div id="cert-list"></div>
+        </div>
+
+      </div><!-- /content -->
+    </div><!-- /main -->
+  </div><!-- /app -->
+
+  <script src="app.js"></script>
+  <script>
+    /* ─── Pembantu bar sisi ─── */
+    function openSidebar() { document.getElementById('sidebar').classList.add('open'); document.getElementById('overlay').classList.add('show'); }
+    function closeSidebar() { document.getElementById('sidebar').classList.remove('open'); document.getElementById('overlay').classList.remove('show'); }
+
+    /* ─── Penukar panel ─── */
+    function showPanel(name, linkEl) {
+      document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+      document.getElementById('panel-' + name).classList.add('active');
+      document.querySelectorAll('.sb-link').forEach(l => l.classList.remove('active'));
+      if (linkEl) linkEl.classList.add('active');
+      const titles = { home: 'Papan Pemuka Saya', completed: 'Kursus Selesai', certificates: 'Sijil Saya' };
+      document.getElementById('topbar-title').textContent = titles[name] || 'Papan Pemuka';
+      if (name === 'completed') renderCompleted();
+      if (name === 'certificates') renderCertificates();
+    }
+
+    /* ─── Teruskan Belajar ─── */
+    function goResume(e) {
+      e.preventDefault();
+      const last = WazzaStore.getLastAccessed();
+      if (last) {
+        const url = `course.html?id=${last.courseId}${last.lessonId ? '&lesson=' + last.lessonId : ''}`;
+        window.location.href = url;
+      } else {
+        alert('Tiada kursus yang sedang diikuti. Semak imbas dan mulakan kursus dahulu!');
+      }
+    }
+
+    /* ─── Panel UTAMA ─── */
+    async function renderHome() {
+      document.getElementById('date-display').textContent = formatDate();
+      document.getElementById('greeting').textContent = `${getGreeting()}, Ahmad 👋`;
+
+      const stats = await WazzaStore.getStats();
+      const owned = WazzaStore.getOwnedCourses();
+      const courses = await WazzaCourses.loadAll();
+
+      const inProgress = stats.coursesOwned - stats.completedCourses;
+      document.getElementById('subtitle').textContent = stats.coursesOwned === 0
+        ? "Anda belum membeli sebarang kursus lagi. Semak imbas katalog kami!"
+        : `Anda mempunyai ${inProgress > 0 ? inProgress + ' kursus' + ' dalam kemajuan' : 'telah menyelesaikan semua kursus'}. ${inProgress > 0 ? 'Teruskan!' : 'Tahniah! 🎉'}`;
+
+      document.getElementById('stats-row').innerHTML = `
+      <div class="stat-card"><div class="stat-label">Kursus Dimiliki</div><div class="stat-val">${stats.coursesOwned} <span>kursus</span></div><div class="stat-trend">${stats.coursesOwned > 0 ? '✓ Pelajar aktif' : 'Semak imbas untuk daftar'}</div></div>
+      <div class="stat-card"><div class="stat-label">Jam Ditonton</div><div class="stat-val">${stats.hoursWatched} <span>jam</span></div><div class="stat-trend">${stats.hoursWatched > 0 ? '↑ Terus belajar!' : 'Mula menonton'}</div></div>
+      <div class="stat-card"><div class="stat-label">Purata Kemajuan</div><div class="stat-val">${stats.avgProgress} <span>%</span></div><div class="stat-trend">${stats.avgProgress >= 100 ? 'Semua selesai! 🏆' : stats.avgProgress > 0 ? 'Teruskan!' : 'Mulakan perjalanan anda'}</div></div>
+      <div class="stat-card"><div class="stat-label">Diselesaikan</div><div class="stat-val">${stats.completedCourses} <span>kursus</span></div><div class="stat-trend">${stats.completedCourses > 0 ? '🏆 Sijil diperoleh' : 'Selesaikan sebuah kursus'}</div></div>`;
+
+      const container = document.getElementById('my-courses');
+      if (owned.length === 0) {
+        container.innerHTML = `<div class="empty-state" style="grid-column:1/-1;"><p>🎓 Tiada kursus lagi. Daftar untuk bermula!</p><a href="index.html#courses" class="btn-primary">Semak Imbas Kursus →</a></div>`;
+      } else {
+        let html = '';
+        for (const courseId of owned) {
+          const course = courses.find(c => c.id === courseId);
+          if (!course || course.isBundle) continue;
+          const all = WazzaCourses.getAllLessons(course);
+          const prog = WazzaStore.getProgress(courseId);
+          const pct = all.length > 0 ? Math.round((prog.completed.length / all.length) * 100) : 0;
+          const done = pct >= 100;
+          const continueParam = prog.lastLesson ? `&lesson=${prog.lastLesson}` : '';
+          html += `
+          <div class="my-card">
+            <div class="my-thumb ${course.thumbnail}">${getCourseIcon(course.icon)}</div>
+            <div class="my-body">
+              <div class="my-cat">${course.category}</div>
+              <div class="my-title">${course.title}</div>
+              <div class="prog-wrap"><div class="prog-fill" style="width:${pct}%;${done ? 'background:#2d9e5f;' : ''}"></div></div>
+              <div class="prog-meta">
+                <span>${done ? 'Selesai ✓' : 'Pelajaran ' + prog.completed.length + ' dari ' + all.length}</span>
+                <span${done ? ' style="color:#2d9e5f;"' : ''}>${pct}%</span>
+              </div>
+              <a href="course.html?id=${courseId}${continueParam}" class="btn-continue"${done ? ' style="background:rgba(45,158,95,.15);color:#2d9e5f;"' : ''}>
+                ${done ? 'Semak Semula →' : 'Teruskan →'}
+              </a>
+            </div>
+          </div>`;
+        }
+        container.innerHTML = html;
+      }
+
+      /* Suapan aktiviti */
+      const activity = WazzaStore.getRecentActivity(8);
+      const ac = document.getElementById('activity-container');
+      if (!activity.length) {
+        ac.innerHTML = `<div class="empty-state"><p>📋 Tiada aktiviti lagi. Mula belajar!</p></div>`;
+      } else {
+        ac.innerHTML = '<div class="activity-list">' + activity.map(a => {
+          const color = a.type === 'complete' ? 'style="color:#2d9e5f;"' : '';
+          return `<div class="act-item">
+          <div class="act-icon">${getActivityIcon(a.type)}</div>
+          <div class="act-text"><strong>${a.detail}</strong><small>${a.courseId} · ${timeAgo(a.timestamp)}</small></div>
+          <div class="act-status" ${color}>${getActivityLabel(a.type)}</div>
+        </div>`;
+        }).join('') + '</div>';
+      }
+    }
+
+    /* ─── Panel SELESAI ─── */
+    async function renderCompleted() {
+      const completedIds = await WazzaStore.getCompletedCourseIds();
+      const courses = await WazzaCourses.loadAll();
+      const el = document.getElementById('completed-list');
+      if (!completedIds.length) {
+        el.innerHTML = `<div class="empty-state"><p>✅ Tiada kursus selesai lagi. Terus belajar!</p><a href="index.html#courses" class="btn-primary">Semak Imbas Kursus →</a></div>`;
+        return;
+      }
+      let html = '<div class="my-courses">';
+      for (const courseId of completedIds) {
+        const course = courses.find(c => c.id === courseId);
+        if (!course) continue;
+        const all = WazzaCourses.getAllLessons(course);
+        html += `
+        <div class="my-card">
+          <div class="my-thumb ${course.thumbnail}">${getCourseIcon(course.icon)}</div>
+          <div class="my-body">
+            <div class="my-cat">${course.category}</div>
+            <div class="my-title">${course.title}</div>
+            <div class="prog-wrap"><div class="prog-fill" style="width:100%;background:#2d9e5f;"></div></div>
+            <div class="prog-meta"><span>Semua ${all.length} pelajaran selesai ✓</span><span style="color:#2d9e5f;">100%</span></div>
+            <a href="course.html?id=${courseId}" class="btn-continue" style="background:rgba(45,158,95,.15);color:#2d9e5f;">Semak Semula →</a>
+          </div>
+        </div>`;
+      }
+      html += '</div>';
+      el.innerHTML = html;
+    }
+
+    /* ─── Panel SIJIL ─── */
+    async function renderCertificates() {
+      const completedIds = await WazzaStore.getCompletedCourseIds();
+      const courses = await WazzaCourses.loadAll();
+      const el = document.getElementById('cert-list');
+      if (!completedIds.length) {
+        el.innerHTML = `<div class="empty-state">
+        <p>🏆 Tiada sijil lagi.<br><small style="opacity:.6;">Selesaikan 100% mana-mana kursus untuk mendapat sijil anda.</small></p>
+        <a href="index.html#courses" class="btn-primary" style="margin-top:.5rem;">Mula Belajar →</a>
+      </div>`;
+        return;
+      }
+      const dateStr = new Date().toLocaleDateString('ms-MY', { year: 'numeric', month: 'long', day: 'numeric' });
+      let html = '<div class="cert-grid">';
+      for (const courseId of completedIds) {
+        const course = courses.find(c => c.id === courseId);
+        if (!course) continue;
+        html += `
+        <div class="cert-card">
+          <div class="cert-icon">🏆</div>
+          <div>
+            <div class="cert-course">${course.title}</div>
+            <div class="cert-meta">${course.category} · Diselesaikan ${dateStr}</div>
+            <div class="cert-badge">✓ Sijil Diperoleh</div>
+          </div>
+        </div>`;
+      }
+      html += '</div>';
+      el.innerHTML = html;
+    }
+
+    /* ─── Permulaan ─── */
+    // Semak pengesahan — redirect ke log masuk jika tiada sesi
+    WazzaAuth.requireAuth();
+
+    // Isi maklumat pengguna dari sesi
+    const _sess = WazzaAuth.getSession();
+    if (_sess) {
+      const initials = _sess.name.split(' ').map(w => w[0]).join('').toUpperCase().slice(0, 2);
+      document.getElementById('user-av').textContent = initials;
+      document.getElementById('user-name').textContent = _sess.name;
+      document.getElementById('user-email').textContent = _sess.email;
+      document.getElementById('greeting').textContent = `${getGreeting()}, ${_sess.name.split(' ')[0]} 👋`;
+    }
+
+    renderHome();
+  </script>
+</body>
+
+</html>

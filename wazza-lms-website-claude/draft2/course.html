@@ -1,0 +1,820 @@
+<!DOCTYPE html>
+<html lang="ms">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Kursus – Wazza Academy</title>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Space+Grotesk:wght@400;500;600;700&display=swap"
+    rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+  <style>
+    body {
+      background: #08080d;
+    }
+
+    .topbar {
+      background: rgba(8, 8, 13, 0.9);
+      backdrop-filter: blur(16px);
+      border-bottom: 1px solid var(--border);
+      padding: 0.75rem 1.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: sticky;
+      top: 0;
+      z-index: 50;
+    }
+
+    .tb-left {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .back-btn {
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      font-size: 0.8rem;
+      color: var(--text2);
+      transition: color 0.2s;
+    }
+
+    .back-btn:hover {
+      color: var(--green);
+    }
+
+    .divider-v {
+      width: 1px;
+      height: 20px;
+      background: var(--border);
+    }
+
+    .course-name-top {
+      font-family: 'Space Grotesk';
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: rgba(255, 255, 255, 0.85);
+    }
+
+    .prog-top {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      font-size: 0.78rem;
+      color: var(--text2);
+    }
+
+    .prog-top-bar {
+      width: 100px;
+      height: 4px;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 2px;
+      overflow: hidden;
+    }
+
+    .prog-top-fill {
+      height: 4px;
+      background: var(--green);
+      border-radius: 2px;
+      transition: width 0.5s;
+    }
+
+    .lms {
+      display: grid;
+      grid-template-columns: 1fr 320px;
+      height: calc(100vh - 53px);
+    }
+
+    .vid-area {
+      display: flex;
+      flex-direction: column;
+      overflow-y: auto;
+    }
+
+    .vid-wrap {
+      background: #000;
+      position: relative;
+    }
+
+    .vid-wrap iframe {
+      display: block;
+      width: 100%;
+      aspect-ratio: 16/9;
+      border: none;
+    }
+
+    .vid-placeholder {
+      width: 100%;
+      aspect-ratio: 16/9;
+      background: linear-gradient(135deg, var(--surface), var(--bg2));
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      color: var(--text2);
+      gap: 0.75rem;
+    }
+
+    .vid-placeholder svg {
+      opacity: 0.3;
+    }
+
+    .vid-placeholder p {
+      font-size: 0.88rem;
+    }
+
+    .vid-controls {
+      background: var(--bg2);
+      border-bottom: 1px solid var(--border);
+      padding: 0.75rem 1.5rem;
+      display: flex;
+      align-items: center;
+      gap: 1.5rem;
+      flex-wrap: wrap;
+    }
+
+    .vc-btn {
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      font-size: 0.78rem;
+      color: var(--text2);
+      cursor: pointer;
+      background: none;
+      border: none;
+      transition: color 0.2s;
+      font-family: 'Inter';
+    }
+
+    .vc-btn:hover {
+      color: #fff;
+    }
+
+    .vc-btn.accent {
+      color: var(--green);
+    }
+
+    .vc-btn.completed-btn {
+      color: #2d9e5f;
+    }
+
+    .vc-btn:disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+    }
+
+    .vc-sep {
+      width: 1px;
+      height: 16px;
+      background: var(--border);
+    }
+
+    .vc-title {
+      font-family: 'Space Grotesk';
+      font-weight: 700;
+      font-size: 0.9rem;
+      flex: 1;
+    }
+
+    .c-tabs {
+      padding: 0 1.5rem;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      background: var(--bg2);
+    }
+
+    .ctab {
+      padding: 0.85rem 1.2rem;
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: var(--text2);
+      cursor: pointer;
+      border: none;
+      border-bottom: 2px solid transparent;
+      transition: all 0.2s;
+      background: none;
+      font-family: 'Inter';
+    }
+
+    .ctab.active {
+      color: #fff;
+      border-bottom-color: var(--green);
+    }
+
+    .ctab:hover {
+      color: rgba(255, 255, 255, 0.8);
+    }
+
+    .tab-panel {
+      display: none;
+      padding: 1.5rem;
+      flex: 1;
+    }
+
+    .tab-panel.active {
+      display: block;
+    }
+
+    .lesson-hd h2 {
+      font-family: 'Space Grotesk';
+      font-size: 1.2rem;
+      font-weight: 800;
+      margin-bottom: 0.4rem;
+    }
+
+    .lesson-meta {
+      display: flex;
+      gap: 1rem;
+      font-size: 0.75rem;
+      color: var(--text2);
+      margin-bottom: 1.5rem;
+    }
+
+    .lesson-desc {
+      font-size: 0.875rem;
+      color: var(--text2);
+      line-height: 1.75;
+      margin-bottom: 1.5rem;
+    }
+
+    .tip-box {
+      padding: 1rem;
+      background: rgba(52, 168, 83, 0.08);
+      border-left: 3px solid var(--green);
+      border-radius: 0 8px 8px 0;
+      font-size: 0.82rem;
+      color: var(--text2);
+      line-height: 1.6;
+    }
+
+    .res-list {
+      list-style: none;
+    }
+
+    .res-item {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      padding: 0.7rem 0;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .res-item:last-child {
+      border: none;
+    }
+
+    .res-icon {
+      font-size: 1rem;
+      width: 28px;
+      text-align: center;
+      opacity: 0.7;
+    }
+
+    .res-name {
+      font-size: 0.83rem;
+      color: var(--text2);
+      flex: 1;
+    }
+
+    .res-dl {
+      font-size: 0.7rem;
+      font-weight: 600;
+      color: var(--green);
+    }
+
+    .notes-area {
+      width: 100%;
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      color: var(--text);
+      padding: 1rem;
+      font-family: 'Inter';
+      font-size: 0.85rem;
+      line-height: 1.6;
+      resize: vertical;
+      min-height: 180px;
+      outline: none;
+    }
+
+    .notes-area:focus {
+      border-color: var(--green);
+    }
+
+    .save-btn {
+      margin-top: 0.75rem;
+      background: var(--green);
+      color: #fff;
+      border: none;
+      padding: 0.55rem 1.2rem;
+      border-radius: 8px;
+      font-family: 'Space Grotesk';
+      font-weight: 700;
+      font-size: 0.78rem;
+      cursor: pointer;
+      transition: opacity 0.2s;
+    }
+
+    .save-btn:hover {
+      opacity: 0.85;
+    }
+
+    .pl-sidebar {
+      background: var(--bg2);
+      border-left: 1px solid var(--border);
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .pl-head {
+      padding: 1rem 1.2rem;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .pl-head h3 {
+      font-family: 'Space Grotesk';
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: var(--text2);
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+    }
+
+    .pl-prog {
+      margin-top: 0.6rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 0.72rem;
+      color: var(--text2);
+    }
+
+    .pl-bar {
+      height: 3px;
+      background: rgba(255, 255, 255, 0.08);
+      border-radius: 2px;
+      margin-top: 0.4rem;
+      overflow: hidden;
+    }
+
+    .pl-bar-fill {
+      height: 3px;
+      background: var(--green);
+      border-radius: 2px;
+      transition: width 0.5s;
+    }
+
+    .sec-head {
+      padding: 0.75rem 1.2rem 0.4rem;
+      font-size: 0.65rem;
+      font-weight: 700;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: rgba(255, 255, 255, 0.2);
+    }
+
+    .lesson-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 0.75rem;
+      padding: 0.75rem 1.2rem;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+      cursor: pointer;
+      transition: background 0.15s;
+    }
+
+    .lesson-item:hover {
+      background: rgba(255, 255, 255, 0.03);
+    }
+
+    .lesson-item.active {
+      background: rgba(52, 168, 83, 0.08);
+      border-left: 3px solid var(--green);
+    }
+
+    .lesson-item.done .l-num {
+      background: #2d9e5f;
+      color: #fff;
+    }
+
+    .l-num {
+      width: 22px;
+      height: 22px;
+      border-radius: 6px;
+      background: rgba(255, 255, 255, 0.08);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.65rem;
+      font-weight: 700;
+      color: var(--text2);
+      flex-shrink: 0;
+      margin-top: 1px;
+    }
+
+    .lesson-item.active .l-num {
+      background: var(--green);
+      color: #fff;
+    }
+
+    .l-info {
+      flex: 1;
+    }
+
+    .l-name {
+      font-size: 0.82rem;
+      font-weight: 500;
+      color: rgba(255, 255, 255, 0.75);
+      line-height: 1.3;
+      margin-bottom: 0.2rem;
+    }
+
+    .lesson-item.active .l-name {
+      color: #fff;
+      font-weight: 600;
+    }
+
+    .l-dur {
+      font-size: 0.68rem;
+      color: var(--text2);
+    }
+
+    @media (max-width: 900px) {
+      .lms {
+        grid-template-columns: 1fr;
+        height: auto;
+      }
+
+      .pl-sidebar {
+        height: 400px;
+        border-left: none;
+        border-top: 1px solid var(--border);
+      }
+
+      .prog-top {
+        display: none;
+      }
+
+      .vc-title {
+        display: none;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- BAR ATAS -->
+  <div class="topbar">
+    <div class="tb-left">
+      <a href="dashboard.html" class="back-btn">← Papan Pemuka</a>
+      <div class="divider-v"></div>
+      <div class="course-name-top" id="topbar-title">Memuatkan...</div>
+    </div>
+    <div class="prog-top">
+      <span id="topbar-progress-text">0 / 0 pelajaran</span>
+      <div class="prog-top-bar">
+        <div class="prog-top-fill" id="topbar-progress-bar"></div>
+      </div>
+      <span id="topbar-progress-pct">0%</span>
+    </div>
+  </div>
+
+  <!-- SUSUN ATUR -->
+  <div class="lms">
+    <div class="vid-area">
+      <!-- VIDEO -->
+      <div class="vid-wrap" id="video-container"></div>
+      <!-- KAWALAN -->
+      <div class="vid-controls">
+        <span class="vc-title" id="vc-title">Memuatkan...</span>
+        <button class="vc-btn" id="btn-prev" onclick="navigateLesson(-1)">← Sebelum</button>
+        <div class="vc-sep"></div>
+        <button class="vc-btn accent" id="btn-mark" onclick="toggleComplete()">✓ Tandai Selesai</button>
+        <div class="vc-sep"></div>
+        <button class="vc-btn" id="btn-next" onclick="navigateLesson(1)">Pelajaran Seterusnya →</button>
+      </div>
+      <!-- TAB -->
+      <div class="c-tabs">
+        <button class="ctab active" data-tab="overview" onclick="showTab('overview', this)">Ringkasan</button>
+        <button class="ctab" data-tab="resources" onclick="showTab('resources', this)">Sumber</button>
+        <button class="ctab" data-tab="notes" onclick="showTab('notes', this)">Nota Saya</button>
+      </div>
+      <!-- RINGKASAN -->
+      <div class="tab-panel active" id="tab-overview"></div>
+      <!-- SUMBER -->
+      <div class="tab-panel" id="tab-resources">
+        <div class="lesson-hd">
+          <h2>Sumber Pelajaran</h2>
+          <p style="font-size:0.82rem; color:var(--text2);">Muat turun fail yang digunakan dalam pelajaran ini.</p>
+        </div>
+        <ul class="res-list">
+          <li class="res-item"><span class="res-icon">📊</span><span class="res-name">Set Data Contoh (Google
+              Sheets)</span><a href="#" class="res-dl">Buka ↗</a></li>
+          <li class="res-item"><span class="res-icon">📄</span><span class="res-name">Helaian Rujukan Pantas
+              (PDF)</span><a href="#" class="res-dl">Muat Turun ↓</a></li>
+          <li class="res-item"><span class="res-icon">📋</span><span class="res-name">Templat Latihan</span><a href="#"
+              class="res-dl">Buka ↗</a></li>
+        </ul>
+      </div>
+      <!-- NOTA -->
+      <div class="tab-panel" id="tab-notes">
+        <div class="lesson-hd">
+          <h2>Nota Saya</h2>
+          <p style="font-size:0.82rem; color:var(--text2);">Catat perkara penting dari pelajaran ini.</p>
+        </div>
+        <textarea class="notes-area" id="notes-input" placeholder="Mula taip nota anda di sini..."></textarea>
+        <button class="save-btn" onclick="saveCurrentNote()">Simpan Nota</button>
+        <p id="save-msg" style="font-size:0.75rem; color:#2d9e5f; margin-top:0.5rem; display:none;">✓ Nota disimpan!</p>
+      </div>
+    </div>
+
+    <!-- SENARAI MAIN -->
+    <div class="pl-sidebar">
+      <div class="pl-head">
+        <h3>Senarai Main Kursus</h3>
+        <div class="pl-prog">
+          <span id="pl-progress-text">0 dari 0 selesai</span>
+          <span id="pl-progress-pct">0%</span>
+        </div>
+        <div class="pl-bar">
+          <div class="pl-bar-fill" id="pl-progress-bar"></div>
+        </div>
+      </div>
+      <div id="playlist-container"></div>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+  <script>
+    // Keadaan
+    let currentCourse = null;
+    let currentCourseId = '';
+    let currentLessonId = '';
+    let allLessons = [];
+
+    // Hurai URL
+    const params = new URLSearchParams(window.location.search);
+    const courseIdParam = params.get('id') || 'sheets-advanced';
+    const lessonParam = params.get('lesson');
+
+    async function initCourse() {
+      currentCourseId = courseIdParam;
+      currentCourse = await WazzaCourses.getCourse(currentCourseId);
+
+      if (!currentCourse) {
+        document.getElementById('topbar-title').textContent = 'Kursus tidak dijumpai';
+        return;
+      }
+
+      // Daftar secara automatik jika belum didaftar
+      if (!WazzaStore.isEnrolled(currentCourseId)) {
+        WazzaStore.enrollCourse(currentCourseId);
+      }
+
+      allLessons = WazzaCourses.getAllLessons(currentCourse);
+      document.getElementById('topbar-title').textContent = currentCourse.title;
+      document.title = `${currentCourse.title} – Wazza Academy`;
+
+      // Bina senarai main
+      renderPlaylist();
+
+      // Tentukan pelajaran mana yang hendak ditunjukkan
+      const prog = WazzaStore.getProgress(currentCourseId);
+      if (lessonParam && allLessons.find(l => l.id === lessonParam)) {
+        loadLesson(lessonParam);
+      } else if (prog.lastLesson && allLessons.find(l => l.id === prog.lastLesson)) {
+        loadLesson(prog.lastLesson);
+      } else if (allLessons.length > 0) {
+        loadLesson(allLessons[0].id);
+      }
+    }
+
+    function renderPlaylist() {
+      const container = document.getElementById('playlist-container');
+      let html = '';
+      let lessonIndex = 0;
+
+      currentCourse.sections.forEach(sec => {
+        html += `<div class="sec-head">${sec.title}</div>`;
+        sec.lessons.forEach(lesson => {
+          lessonIndex++;
+          const isDone = WazzaStore.isLessonComplete(currentCourseId, lesson.id);
+          const isActive = lesson.id === currentLessonId;
+          html += `
+          <div class="lesson-item${isActive ? ' active' : ''}${isDone ? ' done' : ''}" 
+               data-lesson-id="${lesson.id}" onclick="loadLesson('${lesson.id}')">
+            <div class="l-num">${isDone ? '✓' : lessonIndex}</div>
+            <div class="l-info">
+              <div class="l-name">${lesson.title}</div>
+              <div class="l-dur">⏱ ${lesson.duration} min${isActive ? ' · Sedang main' : ''}</div>
+            </div>
+          </div>`;
+        });
+      });
+      container.innerHTML = html;
+      updateProgress();
+    }
+
+    function loadLesson(lessonId) {
+      currentLessonId = lessonId;
+      const lesson = WazzaCourses.getLesson(currentCourse, lessonId);
+      if (!lesson) return;
+
+      // Simpan pelajaran terakhir
+      WazzaStore.setLastLesson(currentCourseId, lessonId);
+
+      // Log aktiviti tonton
+      WazzaStore.logActivity('watch', currentCourseId, `Ditonton: "${lesson.title}"`);
+
+      // Kemaskini video — tukar mana-mana URL YouTube ke format embed
+      const videoContainer = document.getElementById('video-container');
+      if (lesson.videoUrl && lesson.videoUrl.trim() !== '') {
+        videoContainer.innerHTML = `<iframe src="${toEmbedUrl(lesson.videoUrl)}" title="${lesson.title}" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>`;
+      } else {
+        videoContainer.innerHTML = `
+        <div class="vid-placeholder">
+          <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+          <p>Video akan datang</p>
+          <p style="font-size:0.75rem; opacity:0.5;">Pengajar akan memuat naik video ini tidak lama lagi</p>
+        </div>`;
+      }
+
+      // Kemaskini kawalan
+      document.getElementById('vc-title').textContent = `${lesson.title}`;
+
+      // Kemaskini butang tandai selesai
+      updateMarkButton();
+
+      // Kemaskini sebelum/seterusnya
+      const idx = WazzaCourses.getLessonIndex(currentCourse, lessonId);
+      document.getElementById('btn-prev').disabled = idx <= 0;
+      document.getElementById('btn-next').disabled = idx >= allLessons.length - 1;
+
+      // Kemaskini tab ringkasan
+      const lessonIdx = WazzaCourses.getLessonIndex(currentCourse, lessonId);
+      let sectionName = '';
+      let lessonInSection = 0;
+      let totalInSection = 0;
+      currentCourse.sections.forEach(sec => {
+        const found = sec.lessons.find(l => l.id === lessonId);
+        if (found) {
+          sectionName = sec.title;
+          lessonInSection = sec.lessons.indexOf(found) + 1;
+          totalInSection = sec.lessons.length;
+        }
+      });
+
+      // Tab ringkasan — guna lesson.description + lesson.tip dari JSON
+      const desc = lesson.description
+        || `Pelajaran ini meliputi <strong>${lesson.title}</strong>. Ikuti video dan praktikkan bersama.`;
+      const tip = lesson.tip
+        || `Ambil nota semasa menonton. Anda boleh simpannya dalam tab "Nota Saya" dan ia akan kekal merentasi sesi.`;
+
+      document.getElementById('tab-overview').innerHTML = `
+      <div class="lesson-hd">
+        <h2>${lesson.title}</h2>
+        <div class="lesson-meta">
+          <span>⏱ ${lesson.duration} min</span>
+          <span>· Pelajaran ${lessonIdx + 1} dari ${allLessons.length}</span>
+          <span>· ${sectionName}</span>
+        </div>
+      </div>
+      <p class="lesson-desc">${desc}</p>
+      <div class="tip-box">💡 <strong>Tips Pro:</strong> ${tip}</div>
+    `;
+
+      // Tab sumber — guna lesson.resources[] dari JSON
+      const resources = lesson.resources || [];
+      const resHtml = resources.length
+        ? resources.map(r => `
+          <li class="res-item">
+            <span class="res-icon">${r.icon || '📄'}</span>
+            <span class="res-name">${r.name}</span>
+            <a href="${r.url || '#'}" target="_blank" class="res-dl">${r.label || 'Buka ↗'}</a>
+          </li>`).join('')
+        : `<li style="padding:1.5rem 0; color:var(--text2); font-size:0.85rem;">Tiada sumber untuk pelajaran ini buat masa ini.</li>`;
+
+      document.getElementById('tab-resources').innerHTML = `
+      <div class="lesson-hd"><h2>Sumber Pelajaran</h2><p style="font-size:0.82rem; color:var(--text2);">Fail dan pautan yang digunakan dalam pelajaran ini.</p></div>
+      <ul class="res-list">${resHtml}</ul>
+    `;
+
+      // Muatkan nota yang disimpan
+      document.getElementById('notes-input').value = WazzaStore.getNote(currentCourseId, lessonId);
+
+      // Kemaskini keadaan aktif senarai main
+      document.querySelectorAll('.lesson-item').forEach(el => {
+        el.classList.remove('active');
+        if (el.dataset.lessonId === lessonId) {
+          el.classList.add('active');
+          const durEl = el.querySelector('.l-dur');
+          const lesson = WazzaCourses.getLesson(currentCourse, lessonId);
+          durEl.textContent = `⏱ ${lesson.duration} min · Sedang main`;
+        } else {
+          const lid = el.dataset.lessonId;
+          const l = WazzaCourses.getLesson(currentCourse, lid);
+          if (l) {
+            const durEl = el.querySelector('.l-dur');
+            durEl.textContent = `⏱ ${l.duration} min`;
+          }
+        }
+      });
+
+      // Tunjukkan tab ringkasan
+      showTab('overview', document.querySelector('.ctab[data-tab="overview"]'));
+
+      // Kemaskini URL tanpa reload
+      const newUrl = `course.html?id=${currentCourseId}&lesson=${lessonId}`;
+      history.replaceState(null, '', newUrl);
+    }
+
+    function toggleComplete() {
+      if (!currentLessonId) return;
+      const isComplete = WazzaStore.isLessonComplete(currentCourseId, currentLessonId);
+
+      if (isComplete) {
+        WazzaStore.unmarkComplete(currentCourseId, currentLessonId);
+      } else {
+        WazzaStore.markComplete(currentCourseId, currentLessonId);
+        const lesson = WazzaCourses.getLesson(currentCourse, currentLessonId);
+        WazzaStore.logActivity('complete', currentCourseId, `Diselesaikan: "${lesson.title}"`);
+      }
+
+      updateMarkButton();
+      renderPlaylist();
+      loadLesson(currentLessonId); // Segar semula keadaan aktif
+    }
+
+    function updateMarkButton() {
+      const btn = document.getElementById('btn-mark');
+      const isComplete = WazzaStore.isLessonComplete(currentCourseId, currentLessonId);
+      if (isComplete) {
+        btn.textContent = '✓ Selesai';
+        btn.className = 'vc-btn completed-btn';
+      } else {
+        btn.textContent = '✓ Tandai Selesai';
+        btn.className = 'vc-btn accent';
+      }
+    }
+
+    function navigateLesson(dir) {
+      const idx = WazzaCourses.getLessonIndex(currentCourse, currentLessonId);
+      const newIdx = idx + dir;
+      if (newIdx >= 0 && newIdx < allLessons.length) {
+        loadLesson(allLessons[newIdx].id);
+      }
+    }
+
+    function updateProgress() {
+      const prog = WazzaStore.getProgress(currentCourseId);
+      const total = allLessons.length;
+      const done = prog.completed.length;
+      const pct = total > 0 ? Math.round((done / total) * 100) : 0;
+
+      document.getElementById('topbar-progress-text').textContent = `${done} / ${total} pelajaran`;
+      document.getElementById('topbar-progress-pct').textContent = `${pct}%`;
+      document.getElementById('topbar-progress-bar').style.width = `${pct}%`;
+
+      document.getElementById('pl-progress-text').textContent = `${done} dari ${total} selesai`;
+      document.getElementById('pl-progress-pct').textContent = `${pct}%`;
+      document.getElementById('pl-progress-bar').style.width = `${pct}%`;
+    }
+
+    function showTab(tabId, btn) {
+      document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+      document.querySelectorAll('.ctab').forEach(t => t.classList.remove('active'));
+      document.getElementById('tab-' + tabId).classList.add('active');
+      if (btn) btn.classList.add('active');
+    }
+
+    function saveCurrentNote() {
+      const text = document.getElementById('notes-input').value;
+      WazzaStore.saveNote(currentCourseId, currentLessonId, text);
+      WazzaStore.logActivity('note', currentCourseId, `Nota disimpan untuk "${WazzaCourses.getLesson(currentCourse, currentLessonId).title}"`);
+      const msg = document.getElementById('save-msg');
+      msg.style.display = 'block';
+      setTimeout(() => msg.style.display = 'none', 2500);
+    }
+
+    // Tukar mana-mana URL YouTube ke URL embed
+    function toEmbedUrl(url) {
+      if (!url) return url;
+      if (url.includes('youtube.com/embed/')) return url;
+      const shortMatch = url.match(/youtu\.be\/([\w-]+)/);
+      if (shortMatch) return `https://www.youtube.com/embed/${shortMatch[1]}`;
+      const watchMatch = url.match(/[?&]v=([\w-]+)/);
+      if (watchMatch) return `https://www.youtube.com/embed/${watchMatch[1]}`;
+      return url;
+    }
+
+    // Mulakan
+    initCourse();
+  </script>
+</body>
+
+</html>

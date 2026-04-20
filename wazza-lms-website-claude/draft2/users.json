@@ -1,0 +1,24 @@
+{
+  "users": [
+    {
+      "id": "u001",
+      "name": "Developer",
+      "email": "developer@email.com",
+      "password": "developer123",
+      "purchased": [
+        "senarai-video-asas"
+      ],
+      "role": "admin"
+    },
+    {
+      "id": "u002",
+      "name": "User Tester",
+      "email": "user@email.com",
+      "password": "user123",
+      "purchased": [
+        "senarai-video-asas"
+      ],
+      "role": "student"
+    }
+  ]
+}

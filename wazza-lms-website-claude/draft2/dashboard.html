@@ -684,7 +684,7 @@
     /* ─── Panel UTAMA ─── */
     async function renderHome() {
       document.getElementById('date-display').textContent = formatDate();
-      document.getElementById('greeting').textContent = `${getGreeting()}, Ahmad 👋`;
+      document.getElementById('greeting').textContent = `${getGreeting()}, Developer 👋`;
 
       const stats = await WazzaStore.getStats();
       const owned = WazzaStore.getOwnedCourses();

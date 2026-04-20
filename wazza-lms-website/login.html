@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Login / Register – Wazza Digital</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet"/>
+  <style>
+    :root {
+      --ink: #0d0d0d;
+      --cream: #f5f0e8;
+      --accent: #e8501a;
+      --muted: #6b6b6b;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'DM Sans', sans-serif; background: var(--cream); color: var(--ink); min-height: 100vh; display: flex; flex-direction: column; }
+    h1, h2, h3, .syne { font-family: 'Syne', sans-serif; }
+    .logo { font-family: 'Syne', sans-serif; font-weight: 800; font-size: 1.4rem; }
+    .logo span { color: var(--accent); }
+
+    .auth-wrapper { flex: 1; display: grid; grid-template-columns: 1fr 1fr; min-height: 100vh; }
+
+    /* LEFT PANEL */
+    .auth-panel-left { background: var(--ink); color: var(--cream); padding: 3rem; display: flex; flex-direction: column; justify-content: space-between; position: relative; overflow: hidden; }
+    .auth-panel-left::before { content: ''; position: absolute; inset: 0; background: repeating-linear-gradient(45deg, rgba(255,255,255,0.02) 0px, rgba(255,255,255,0.02) 1px, transparent 1px, transparent 12px); pointer-events: none; }
+    .left-top { position: relative; z-index: 1; }
+    .left-quote { position: relative; z-index: 1; margin-top: 3rem; }
+    .left-quote p { font-size: clamp(1.8rem, 3vw, 2.8rem); font-family: 'Syne', sans-serif; font-weight: 800; letter-spacing: -1px; line-height: 1.15; }
+    .left-quote p em { font-style: normal; color: var(--accent); }
+    .left-bottom { position: relative; z-index: 1; }
+    .benefit-list { list-style: none; margin-top: 2rem; }
+    .benefit-list li { display: flex; align-items: center; gap: 0.75rem; font-size: 0.9rem; color: rgba(255,255,255,0.75); padding: 0.5rem 0; border-bottom: 1px solid rgba(255,255,255,0.1); }
+    .benefit-list li:last-child { border-bottom: none; }
+    .benefit-list li .check { background: var(--accent); color: #fff; width: 18px; height: 18px; display: flex; align-items: center; justify-content: center; font-size: 0.7rem; flex-shrink: 0; font-weight: 700; }
+
+    /* RIGHT PANEL */
+    .auth-panel-right { padding: 3rem; display: flex; flex-direction: column; justify-content: center; }
+    .auth-panel-right-inner { max-width: 380px; width: 100%; margin: auto; }
+
+    /* TABS */
+    .tabs { display: flex; border: 2px solid var(--ink); margin-bottom: 2.5rem; }
+    .tab { flex: 1; padding: 0.75rem; text-align: center; font-family: 'Syne', sans-serif; font-weight: 700; font-size: 0.85rem; letter-spacing: 0.5px; cursor: pointer; background: transparent; border: none; color: var(--muted); transition: all 0.2s; }
+    .tab.active { background: var(--ink); color: var(--cream); }
+
+    /* FORM */
+    .form-group { margin-bottom: 1.2rem; }
+    label { display: block; font-size: 0.78rem; font-weight: 600; letter-spacing: 1px; text-transform: uppercase; color: var(--muted); margin-bottom: 0.4rem; }
+    input[type="text"], input[type="email"], input[type="password"] {
+      width: 100%; padding: 0.75rem 1rem; border: 2px solid var(--ink); background: var(--cream); font-family: 'DM Sans', sans-serif; font-size: 0.95rem; color: var(--ink); outline: none; transition: border-color 0.2s;
+    }
+    input:focus { border-color: var(--accent); }
+    input::placeholder { color: #bbb; }
+    .form-check { display: flex; align-items: center; gap: 0.6rem; margin-bottom: 1.5rem; }
+    .form-check input { width: auto; }
+    .form-check label { margin-bottom: 0; text-transform: none; letter-spacing: 0; font-size: 0.82rem; color: var(--muted); font-weight: 400; }
+    .btn-full { width: 100%; background: var(--ink); color: var(--cream); border: 2px solid var(--ink); padding: 0.9rem; font-family: 'Syne', sans-serif; font-weight: 700; font-size: 0.95rem; letter-spacing: 0.5px; cursor: pointer; transition: background 0.2s; }
+    .btn-full:hover { background: var(--accent); border-color: var(--accent); }
+    .divider { text-align: center; margin: 1.5rem 0; font-size: 0.8rem; color: var(--muted); position: relative; }
+    .divider::before { content: ''; position: absolute; top: 50%; left: 0; right: 0; height: 1px; background: #ddd; }
+    .divider span { background: var(--cream); padding: 0 0.75rem; position: relative; }
+    .forgot { text-align: right; margin-bottom: 1.5rem; }
+    .forgot a { font-size: 0.8rem; color: var(--muted); text-decoration: none; }
+    .forgot a:hover { color: var(--accent); }
+    .form-panel { display: none; }
+    .form-panel.active { display: block; }
+    .back-link { display: inline-flex; align-items: center; gap: 0.4rem; font-size: 0.82rem; color: var(--muted); text-decoration: none; margin-bottom: 2rem; }
+    .back-link:hover { color: var(--accent); }
+    .auth-heading { font-size: 1.6rem; font-weight: 800; letter-spacing: -0.5px; margin-bottom: 0.4rem; }
+    .auth-sub { font-size: 0.875rem; color: var(--muted); margin-bottom: 2rem; }
+
+    @media (max-width: 768px) {
+      .auth-wrapper { grid-template-columns: 1fr; }
+      .auth-panel-left { display: none; }
+      .auth-panel-right { padding: 2rem 1.5rem; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="auth-wrapper">
+  <!-- LEFT PANEL -->
+  <div class="auth-panel-left">
+    <div class="left-top">
+      <a href="index.html" style="text-decoration:none; color:inherit;">
+        <div class="logo" style="color:var(--cream);">Wazza<span>.</span>Digital</div>
+      </a>
+    </div>
+    <div class="left-quote">
+      <p>The best<br>investment<br>you can make<br>is in <em>yourself.</em></p>
+    </div>
+    <div class="left-bottom">
+      <ul class="benefit-list">
+        <li><span class="check">✓</span> Access to all purchased courses instantly</li>
+        <li><span class="check">✓</span> Download resources & project files</li>
+        <li><span class="check">✓</span> Track your learning progress</li>
+        <li><span class="check">✓</span> Join the Wazza Digital community</li>
+        <li><span class="check">✓</span> Lifetime access, no subscription needed</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- RIGHT PANEL -->
+  <div class="auth-panel-right">
+    <div class="auth-panel-right-inner">
+      <a href="index.html" class="back-link">← Back to Catalog</a>
+
+      <!-- TABS -->
+      <div class="tabs">
+        <button class="tab active" onclick="switchTab('login')">Log In</button>
+        <button class="tab" onclick="switchTab('register')">Register</button>
+      </div>
+
+      <!-- LOGIN FORM -->
+      <div class="form-panel active" id="panel-login">
+        <div class="auth-heading">Welcome back.</div>
+        <div class="auth-sub">Sign in to access your courses.</div>
+
+        <div class="form-group">
+          <label for="login-email">Email Address</label>
+          <input type="email" id="login-email" placeholder="you@example.com" />
+        </div>
+        <div class="form-group">
+          <label for="login-password">Password</label>
+          <input type="password" id="login-password" placeholder="Your password" />
+        </div>
+        <div class="forgot"><a href="#">Forgot password?</a></div>
+        <button class="btn-full" onclick="handleLogin()">Sign In →</button>
+        <div class="divider"><span>or</span></div>
+        <p style="text-align:center; font-size:0.85rem; color:var(--muted);">
+          Don't have an account? <a href="#" onclick="switchTab('register')" style="color:var(--accent); font-weight:600; text-decoration:none;">Register here</a>
+        </p>
+      </div>
+
+      <!-- REGISTER FORM -->
+      <div class="form-panel" id="panel-register">
+        <div class="auth-heading">Create account.</div>
+        <div class="auth-sub">Start your learning journey today.</div>
+
+        <div class="form-group">
+          <label for="reg-name">Full Name</label>
+          <input type="text" id="reg-name" placeholder="Ahmad Ridhwan" />
+        </div>
+        <div class="form-group">
+          <label for="reg-email">Email Address</label>
+          <input type="email" id="reg-email" placeholder="you@example.com" />
+        </div>
+        <div class="form-group">
+          <label for="reg-password">Password</label>
+          <input type="password" id="reg-password" placeholder="Min. 8 characters" />
+        </div>
+        <div class="form-group">
+          <label for="reg-confirm">Confirm Password</label>
+          <input type="password" id="reg-confirm" placeholder="Repeat password" />
+        </div>
+        <div class="form-check">
+          <input type="checkbox" id="reg-terms" />
+          <label for="reg-terms">I agree to the <a href="#" style="color:var(--accent);">Terms of Service</a> and <a href="#" style="color:var(--accent);">Privacy Policy</a></label>
+        </div>
+        <button class="btn-full" onclick="handleRegister()">Create Account →</button>
+        <div class="divider"><span>or</span></div>
+        <p style="text-align:center; font-size:0.85rem; color:var(--muted);">
+          Already have an account? <a href="#" onclick="switchTab('login')" style="color:var(--accent); font-weight:600; text-decoration:none;">Sign in</a>
+        </p>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<script>
+  // Check for #register hash in URL
+  if (window.location.hash === '#register') switchTab('register');
+
+  function switchTab(tab) {
+    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.form-panel').forEach(p => p.classList.remove('active'));
+    document.getElementById('panel-' + tab).classList.add('active');
+    document.querySelectorAll('.tab').forEach(t => {
+      if (t.getAttribute('onclick').includes(tab)) t.classList.add('active');
+    });
+  }
+
+  function handleLogin() {
+    const email = document.getElementById('login-email').value.trim();
+    const pw = document.getElementById('login-password').value.trim();
+    if (!email || !pw) { alert('Please enter your email and password.'); return; }
+    // Placeholder: redirect to dashboard
+    window.location.href = 'dashboard.html';
+  }
+
+  function handleRegister() {
+    const name = document.getElementById('reg-name').value.trim();
+    const email = document.getElementById('reg-email').value.trim();
+    const pw = document.getElementById('reg-password').value.trim();
+    const confirm = document.getElementById('reg-confirm').value.trim();
+    const terms = document.getElementById('reg-terms').checked;
+    if (!name || !email || !pw || !confirm) { alert('Please fill in all fields.'); return; }
+    if (pw !== confirm) { alert('Passwords do not match.'); return; }
+    if (!terms) { alert('Please accept the terms to continue.'); return; }
+    // Placeholder: redirect to dashboard
+    window.location.href = 'dashboard.html';
+  }
+</script>
+</body>
+</html>

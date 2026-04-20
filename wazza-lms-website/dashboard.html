@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>My Dashboard – Wazza Digital</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;1,400&display=swap" rel="stylesheet"/>
+  <style>
+    :root {
+      --ink: #0d0d0d;
+      --cream: #f5f0e8;
+      --accent: #e8501a;
+      --muted: #6b6b6b;
+      --sidebar-w: 240px;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Plus Jakarta Sans', sans-serif; background: #f0ebe2; color: var(--ink); }
+    * { scrollbar-width: none; -ms-overflow-style: none; }
+    *::-webkit-scrollbar { display: none; }
+    h1, h2, h3, h4, .syne { font-family: 'Syne', sans-serif; }
+
+    /* LAYOUT */
+    .app { display: flex; min-height: 100vh; }
+
+    /* SIDEBAR */
+    .sidebar { width: var(--sidebar-w); background: var(--ink); color: var(--cream); display: flex; flex-direction: column; position: fixed; top: 0; left: 0; height: 100vh; z-index: 40; transition: transform 0.3s; }
+    .sidebar-logo { padding: 1.5rem 1.5rem 1rem; border-bottom: 1px solid rgba(255,255,255,0.1); }
+    .sidebar-logo .logo { font-family: 'Syne', sans-serif; font-weight: 800; font-size: 1.2rem; }
+    .sidebar-logo .logo span { color: var(--accent); }
+    .sidebar-nav { flex: 1; padding: 1.5rem 0; overflow-y: auto; }
+    .sidebar-label { font-size: 0.65rem; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: rgba(255,255,255,0.35); padding: 0 1.5rem; margin-bottom: 0.5rem; margin-top: 1rem; }
+    .sidebar-link { display: flex; align-items: center; gap: 0.75rem; padding: 0.65rem 1.5rem; font-size: 0.875rem; color: rgba(255,255,255,0.65); text-decoration: none; transition: all 0.2s; cursor: pointer; border-left: 3px solid transparent; }
+    .sidebar-link:hover { color: #fff; background: rgba(255,255,255,0.05); }
+    .sidebar-link.active { color: #fff; border-left-color: var(--accent); background: rgba(255,255,255,0.06); }
+    .sidebar-link .icon { font-size: 1rem; width: 20px; text-align: center; }
+    .sidebar-bottom { padding: 1.5rem; border-top: 1px solid rgba(255,255,255,0.1); }
+    .user-pill { display: flex; align-items: center; gap: 0.75rem; }
+    .user-avatar { width: 36px; height: 36px; background: var(--accent); display: flex; align-items: center; justify-content: center; font-family: 'Syne', sans-serif; font-weight: 700; font-size: 0.9rem; color: #fff; flex-shrink: 0; }
+    .user-name { font-size: 0.85rem; font-weight: 600; color: #fff; }
+    .user-email { font-size: 0.72rem; color: rgba(255,255,255,0.4); }
+    .logout-btn { margin-top: 0.75rem; width: 100%; background: transparent; border: 1px solid rgba(255,255,255,0.2); color: rgba(255,255,255,0.5); padding: 0.5rem; font-family: 'Syne', sans-serif; font-size: 0.75rem; font-weight: 600; letter-spacing: 0.5px; cursor: pointer; transition: all 0.2s; text-align: center; }
+    .logout-btn:hover { border-color: var(--accent); color: var(--accent); }
+
+    /* MAIN */
+    .main { margin-left: var(--sidebar-w); flex: 1; display: flex; flex-direction: column; }
+
+    /* TOPBAR */
+    .topbar { background: var(--cream); border-bottom: 2px solid var(--ink); padding: 1rem 2rem; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 30; }
+    .topbar h1 { font-size: 1.1rem; font-weight: 700; }
+    .topbar-right { display: flex; align-items: center; gap: 1rem; }
+    .topbar-btn { background: var(--ink); color: var(--cream); border: 2px solid var(--ink); padding: 0.45rem 1rem; font-family: 'Syne', sans-serif; font-weight: 700; font-size: 0.78rem; cursor: pointer; text-decoration: none; transition: all 0.2s; }
+    .topbar-btn:hover { background: var(--accent); border-color: var(--accent); }
+    .hamburger { display: none; flex-direction: column; gap: 5px; cursor: pointer; }
+    .hamburger span { display: block; width: 22px; height: 2px; background: var(--ink); }
+
+    /* PAGE CONTENT */
+    .content { padding: 2rem; flex: 1; }
+
+    /* STATS */
+    .stats-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 1rem; margin-bottom: 2rem; }
+    .stat-card { background: var(--cream); border: 2px solid var(--ink); padding: 1.25rem; }
+    .stat-label { font-size: 0.7rem; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; color: var(--muted); margin-bottom: 0.5rem; }
+    .stat-val { font-family: 'Syne', sans-serif; font-size: 2rem; font-weight: 800; line-height: 1; }
+    .stat-val span { font-size: 0.9rem; font-weight: 400; color: var(--muted); }
+    .stat-trend { font-size: 0.78rem; color: #2d9e5f; margin-top: 0.25rem; }
+
+    /* SECTIONS */
+    .section-title { font-size: 1rem; font-weight: 800; letter-spacing: -0.25px; margin-bottom: 1rem; display: flex; align-items: center; justify-content: space-between; }
+    .section-title a { font-size: 0.78rem; font-weight: 600; color: var(--accent); text-decoration: none; }
+
+    /* COURSE CARDS */
+    .courses-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 1rem; margin-bottom: 2.5rem; }
+    .course-card { background: var(--cream); border: 2px solid var(--ink); overflow: hidden; transition: box-shadow 0.2s; }
+    .course-card:hover { box-shadow: 4px 4px 0 var(--ink); }
+    .course-thumb { aspect-ratio: 16/9; position: relative; overflow: hidden; }
+    .course-thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
+    .course-thumb::after { content: '▶'; position: absolute; right: 0.75rem; bottom: 0.75rem; background: var(--accent); color: #fff; font-size: 0.6rem; padding: 0.3rem 0.5rem; }
+    .course-body { padding: 1rem; }
+    .course-cat { font-size: 0.65rem; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; color: var(--muted); margin-bottom: 0.3rem; }
+    .course-title { font-family: 'Syne', sans-serif; font-weight: 700; font-size: 0.95rem; margin-bottom: 0.75rem; line-height: 1.3; }
+    .progress-bar-wrap { background: #ddd; height: 4px; margin-bottom: 0.4rem; }
+    .progress-bar { background: var(--accent); height: 4px; }
+    .progress-meta { display: flex; justify-content: space-between; font-size: 0.72rem; color: var(--muted); margin-bottom: 0.9rem; }
+    .btn-continue { display: block; text-align: center; background: var(--ink); color: var(--cream); padding: 0.55rem; font-family: 'Syne', sans-serif; font-weight: 700; font-size: 0.78rem; text-decoration: none; transition: background 0.2s; border: 2px solid var(--ink); }
+    .btn-continue:hover { background: var(--accent); border-color: var(--accent); }
+
+    /* RECENT ACTIVITY */
+    .activity-list { background: var(--cream); border: 2px solid var(--ink); }
+    .activity-item { display: flex; align-items: center; gap: 1rem; padding: 0.85rem 1.2rem; border-bottom: 1px solid #ddd; }
+    .activity-item:last-child { border-bottom: none; }
+    .activity-icon { width: 36px; height: 36px; background: var(--ink); display: flex; align-items: center; justify-content: center; font-size: 1rem; flex-shrink: 0; }
+    .activity-text { flex: 1; }
+    .activity-text strong { font-size: 0.85rem; font-weight: 600; display: block; }
+    .activity-text small { font-size: 0.75rem; color: var(--muted); }
+    .activity-status { font-size: 0.7rem; font-weight: 700; letter-spacing: 0.5px; color: var(--accent); }
+
+    /* MOBILE OVERLAY */
+    .sidebar-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 39; }
+
+    @media (max-width: 768px) {
+      .sidebar { transform: translateX(-100%); }
+      .sidebar.open { transform: translateX(0); }
+      .sidebar-overlay.show { display: block; }
+      .main { margin-left: 0; }
+      .hamburger { display: flex; }
+      .content { padding: 1.25rem; }
+      .topbar { padding: 1rem 1.25rem; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="app">
+  <!-- SIDEBAR -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-logo">
+      <a href="index.html" style="text-decoration:none;">
+        <div class="logo" style="color:var(--cream);">Wazza<span>.</span>Digital</div>
+      </a>
+    </div>
+    <nav class="sidebar-nav">
+      <div class="sidebar-label">Main</div>
+      <a class="sidebar-link active" href="dashboard.html"><span class="icon">⊞</span> Dashboard</a>
+      <a class="sidebar-link" href="index.html"><span class="icon">🛒</span> Browse Courses</a>
+
+      <div class="sidebar-label">My Learning</div>
+      <a class="sidebar-link" href="course.html"><span class="icon">▶</span> Continue Learning</a>
+      <a class="sidebar-link" href="#"><span class="icon">✓</span> Completed</a>
+      <a class="sidebar-link" href="#"><span class="icon">📄</span> Certificates</a>
+
+      <div class="sidebar-label">Account</div>
+      <a class="sidebar-link" href="#"><span class="icon">⚙</span> Settings</a>
+      <a class="sidebar-link" href="#"><span class="icon">🧾</span> Purchase History</a>
+    </nav>
+    <div class="sidebar-bottom">
+      <div class="user-pill">
+        <div class="user-avatar">AR</div>
+        <div>
+          <div class="user-name">Ahmad Ridhwan</div>
+          <div class="user-email">ahmad@example.com</div>
+        </div>
+      </div>
+      <button class="logout-btn" onclick="window.location.href='login.html'">← Log Out</button>
+    </div>
+  </aside>
+
+  <div class="sidebar-overlay" id="overlay" onclick="closeSidebar()"></div>
+
+  <!-- MAIN -->
+  <div class="main">
+    <div class="topbar">
+      <div style="display:flex; align-items:center; gap:1rem;">
+        <div class="hamburger" onclick="openSidebar()">
+          <span></span><span></span><span></span>
+        </div>
+        <h1 class="syne">My Dashboard</h1>
+      </div>
+      <div class="topbar-right">
+        <a href="index.html" class="topbar-btn">+ Buy More</a>
+      </div>
+    </div>
+
+    <div class="content">
+      <!-- GREETING -->
+      <div style="margin-bottom:2rem;">
+        <p style="font-size:0.8rem; color:var(--muted); text-transform:uppercase; letter-spacing:1.5px; font-weight:600;">Monday, 20 April 2025</p>
+        <h2 class="syne" style="font-size:1.6rem; font-weight:800; letter-spacing:-0.5px; margin-top:0.2rem;">Good morning, Ahmad 👋</h2>
+        <p style="color:var(--muted); font-size:0.875rem; margin-top:0.3rem;">You have 2 courses in progress. Keep going!</p>
+      </div>
+
+      <!-- STATS -->
+      <div class="stats-row">
+        <div class="stat-card">
+          <div class="stat-label">Courses Owned</div>
+          <div class="stat-val">3 <span>courses</span></div>
+          <div class="stat-trend">↑ 1 new this month</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Hours Watched</div>
+          <div class="stat-val">14 <span>hrs</span></div>
+          <div class="stat-trend">↑ 3 hrs this week</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Avg. Progress</div>
+          <div class="stat-val">48 <span>%</span></div>
+          <div class="stat-trend">Keep it up!</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Completed</div>
+          <div class="stat-val">1 <span>course</span></div>
+          <div class="stat-trend">Certificate earned</div>
+        </div>
+      </div>
+
+      <!-- MY COURSES -->
+      <div class="section-title">
+        <span class="syne">My Courses</span>
+        <a href="index.html">Browse more →</a>
+      </div>
+      <div class="courses-grid">
+
+        <div class="course-card">
+          <div class="course-thumb">
+            <img src="https://picsum.photos/seed/video-edit/600/338" alt="Video Editing" />
+          </div>
+          <div class="course-body">
+            <div class="course-cat">Video Production</div>
+            <div class="course-title">Complete Video Editing Masterclass</div>
+            <div class="progress-bar-wrap"><div class="progress-bar" style="width:65%"></div></div>
+            <div class="progress-meta"><span>Lesson 6 of 12</span><span>65%</span></div>
+            <a href="course.html" class="btn-continue">Continue →</a>
+          </div>
+        </div>
+
+        <div class="course-card">
+          <div class="course-thumb">
+            <img src="https://picsum.photos/seed/social-media/600/338" alt="Social Media" />
+          </div>
+          <div class="course-body">
+            <div class="course-cat">Social Media</div>
+            <div class="course-title">Social Media Growth Blueprint</div>
+            <div class="progress-bar-wrap"><div class="progress-bar" style="width:30%"></div></div>
+            <div class="progress-meta"><span>Lesson 3 of 10</span><span>30%</span></div>
+            <a href="course.html" class="btn-continue">Continue →</a>
+          </div>
+        </div>
+
+        <div class="course-card">
+          <div class="course-thumb">
+            <img src="https://picsum.photos/seed/copywriting/600/338" alt="Copywriting" />
+          </div>
+          <div class="course-body">
+            <div class="course-cat">Copywriting</div>
+            <div class="course-title">Persuasive Copywriting for Sales</div>
+            <div class="progress-bar-wrap"><div class="progress-bar" style="width:100%; background:#2d9e5f;"></div></div>
+            <div class="progress-meta"><span>Completed ✓</span><span style="color:#2d9e5f;">100%</span></div>
+            <a href="course.html" class="btn-continue" style="background:#2d9e5f; border-color:#2d9e5f;">Review Course →</a>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- RECENT ACTIVITY -->
+      <div class="section-title"><span class="syne">Recent Activity</span></div>
+      <div class="activity-list">
+        <div class="activity-item">
+          <div class="activity-icon">▶</div>
+          <div class="activity-text">
+            <strong>Watched: "Advanced Color Grading Techniques"</strong>
+            <small>Complete Video Editing Masterclass · 2 hours ago</small>
+          </div>
+          <div class="activity-status">WATCHED</div>
+        </div>
+        <div class="activity-item">
+          <div class="activity-icon">📥</div>
+          <div class="activity-text">
+            <strong>Downloaded: Project Files – Lesson 5</strong>
+            <small>Complete Video Editing Masterclass · Yesterday</small>
+          </div>
+          <div class="activity-status">SAVED</div>
+        </div>
+        <div class="activity-item">
+          <div class="activity-icon">🧾</div>
+          <div class="activity-text">
+            <strong>Purchased: Social Media Growth Blueprint</strong>
+            <small>Order #WD-20250415 · 5 days ago</small>
+          </div>
+          <div class="activity-status">PURCHASED</div>
+        </div>
+        <div class="activity-item">
+          <div class="activity-icon">🏆</div>
+          <div class="activity-text">
+            <strong>Course Completed: Persuasive Copywriting for Sales</strong>
+            <small>Certificate available · 2 weeks ago</small>
+          </div>
+          <div class="activity-status" style="color:#2d9e5f;">DONE</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<script>
+  function openSidebar() {
+    document.getElementById('sidebar').classList.add('open');
+    document.getElementById('overlay').classList.add('show');
+  }
+  function closeSidebar() {
+    document.getElementById('sidebar').classList.remove('open');
+    document.getElementById('overlay').classList.remove('show');
+  }
+</script>
+</body>
+</html>

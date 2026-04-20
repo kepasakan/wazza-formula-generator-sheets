@@ -1,0 +1,514 @@
+<!DOCTYPE html>
+<html lang="ms">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>
+        Wazza Digital - Google Review
+    </title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="" />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&amp;display=swap"
+        rel="stylesheet" />
+    <style>
+        *,
+        *::before,
+        *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: &#39;
+            Plus Jakarta Sans&#39;
+            ,
+            sans-serif;
+            background: #F0EFE8;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 40px 24px;
+        }
+
+        /* ── SLIDE: 16:9 landscape ── */
+        .slide {
+            width: 100%;
+            max-width: 960px;
+            aspect-ratio: 16 / 9;
+            display: grid;
+            /* Left narrow: brand+steps | Centre: QR hero | Right: reviews */
+            grid-template-columns: 22% 38% 40%;
+            border: 1px solid #111111;
+            overflow: hidden;
+        }
+
+        /* ══════════════════
+           COL 1 — brand
+        ══════════════════ */
+        .col-brand {
+            background: #111111;
+            display: flex;
+            flex-direction: column;
+            padding: 32px 24px;
+            border-right: 2px solid rgba(255, 255, 255, 0.08);
+        }
+
+        .brand-label {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 16px;
+        }
+
+        .brand-label::before {
+            content: &#39;
+            &#39;
+            ;
+            width: 14px;
+            height: 3px;
+            background: #FFCC00;
+            flex-shrink: 0;
+        }
+
+        .brand-label span {
+            font-size: 8px;
+            font-weight: 800;
+            letter-spacing: 0.24em;
+            text-transform: uppercase;
+            color: rgba(255, 255, 255, 0.35);
+        }
+
+        .brand-name {
+            font-size: clamp(22px, 3.2vw, 40px);
+            font-weight: 800;
+            letter-spacing: -0.035em;
+            color: #FAFAF5;
+            line-height: 0.95;
+            margin-bottom: auto;
+        }
+
+        .brand-name span {
+            color: #FFCC00;
+            display: block;
+        }
+
+        /* Steps */
+        .steps-wrap {
+            margin-top: auto;
+        }
+
+        .steps-heading {
+            font-size: 8px;
+            font-weight: 800;
+            letter-spacing: 0.22em;
+            text-transform: uppercase;
+            color: rgba(255, 255, 255, 0.30);
+            margin-bottom: 8px;
+        }
+
+        .steps-list {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .step-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 8px;
+        }
+
+        .step-num {
+            background: #FFCC00;
+            color: #111111;
+            width: 18px;
+            height: 18px;
+            min-width: 18px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-weight: 800;
+            font-size: 9px;
+            flex-shrink: 0;
+            margin-top: 1px;
+        }
+
+        .step-text {
+            font-size: 10px;
+            font-weight: 500;
+            color: rgba(255, 255, 255, 0.65);
+            line-height: 1.4;
+        }
+
+        /* ══════════════════
+           COL 2 — QR HERO
+        ══════════════════ */
+        .col-qr {
+            background: #FFCC00;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 2px 2px;
+            gap: 0;
+            position: relative;
+        }
+
+        .qr-headline {
+            font-size: clamp(11px, 1.6vw, 16px);
+            font-weight: 800;
+            letter-spacing: 0.22em;
+            text-transform: uppercase;
+            color: #111111;
+            margin-bottom: 14px;
+            text-align: center;
+        }
+
+        .qr-img-wrap {
+            background: #111111;
+            padding: 4px;
+            width: 62%;
+            aspect-ratio: 1 / 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .qr-img-wrap img {
+            width: 100%;
+            height: 100%;
+            display: block;
+        }
+
+        .qr-sub {
+            margin-top: 14px;
+            font-size: clamp(18px, 3.2vw, 30px);
+            font-weight: 800;
+            letter-spacing: -0.03em;
+            color: #111111;
+            text-align: center;
+            line-height: 1;
+        }
+
+        .qr-url {
+            margin-top: 6px;
+            font-size: 9px;
+            font-weight: 700;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            color: rgba(17, 17, 17, 0.45);
+            text-align: center;
+        }
+
+        /* ══════════════════
+           COL 3 — reviews
+        ══════════════════ */
+        .col-reviews {
+            background: #FAFAF5;
+            display: flex;
+            flex-direction: column;
+            padding: 28px 28px 24px;
+            border-left: 2px solid #111111;
+        }
+
+        .sec-label {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 14px;
+            flex-shrink: 0;
+        }
+
+        .sec-label::before {
+            content: &#39;
+            &#39;
+            ;
+            width: 14px;
+            height: 3px;
+            background: #FFCC00;
+            flex-shrink: 0;
+        }
+
+        .sec-label::after {
+            content: &#39;
+            &#39;
+            ;
+            flex: 1;
+            height: 1px;
+            background: rgba(17, 17, 17, 0.10);
+        }
+
+        .sec-label span {
+            font-size: 8px;
+            font-weight: 800;
+            letter-spacing: 0.22em;
+            text-transform: uppercase;
+            color: rgba(17, 17, 17, 0.38);
+        }
+
+        .reviews-grid {
+            flex: 1;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            grid-template-rows: 1fr 1fr;
+            gap: 2px;
+            background: rgba(17, 17, 17, 0.08);
+            border: 1px solid rgba(17, 17, 17, 0.10);
+            min-height: 0;
+        }
+
+        .review-card {
+            background: #FAFAF5;
+            padding: 12px 14px;
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+            overflow: hidden;
+        }
+
+        .review-stars {
+            color: #FFCC00;
+            font-size: 10px;
+            letter-spacing: 1px;
+            flex-shrink: 0;
+        }
+
+        .review-text {
+            font-size: 10px;
+            font-weight: 400;
+            color: rgba(17, 17, 17, 0.60);
+            line-height: 1.5;
+            flex: 1;
+            overflow: hidden;
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            line-clamp: 3;
+            -webkit-box-orient: vertical;
+        }
+
+        .copy-btn {
+            align-self: flex-start;
+            background: #111111;
+            color: #FFCC00;
+            font-family: &#39;
+            Plus Jakarta Sans&#39;
+            ,
+            sans-serif;
+            font-size: 7.5px;
+            font-weight: 800;
+            letter-spacing: 0.16em;
+            text-transform: uppercase;
+            padding: 3px 8px;
+            border: none;
+            cursor: pointer;
+            transition: background 0.1s, color 0.1s;
+            flex-shrink: 0;
+        }
+
+        .copy-btn:hover {
+            background: #FFCC00;
+            color: #111111;
+        }
+
+        /* ── TOAST ── */
+        .copy-notification {
+            position: fixed;
+            bottom: 24px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #111111;
+            color: #FFCC00;
+            font-family: &#39;
+            Plus Jakarta Sans&#39;
+            ,
+            sans-serif;
+            font-size: 11px;
+            font-weight: 800;
+            letter-spacing: 0.16em;
+            text-transform: uppercase;
+            padding: 10px 22px;
+            display: none;
+            z-index: 100;
+        }
+
+        /* ── RESPONSIVE ── */
+        @media (max-width: 680px) {
+            .slide {
+                aspect-ratio: unset;
+                grid-template-columns: 1fr;
+                grid-template-rows: auto auto auto;
+            }
+
+            .col-brand {
+                border-right: none;
+                border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+                padding: 28px 24px;
+            }
+
+            .col-qr {
+                padding: 32px 24px;
+            }
+
+            .qr-img-wrap {
+                width: 55%;
+            }
+
+            .col-reviews {
+                border-left: none;
+                border-top: 2px solid #111111;
+                padding: 24px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="slide">
+        <!-- COL 1: Brand + Steps -->
+        <div class="col-brand">
+            <div class="brand-label">
+                <span> Google Review
+                </span>
+            </div>
+            <div class="brand-name">
+                WAZZA
+                <span> DIGITAL
+                </span>
+            </div>
+            <div class="steps-wrap">
+                <div class="steps-heading">
+                    Cara
+                </div>
+                <div class="steps-list">
+                    <div class="step-item">
+                        <div class="step-num">
+                            1
+                        </div>
+                        <div class="step-text">
+                            Imbas Kod QR di sebelah
+                        </div>
+                    </div>
+                    <div class="step-item">
+                        <div class="step-num">
+                            2
+                        </div>
+                        <div class="step-text">
+                            Pilih &amp; Salin review, tampal di Google
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- COL 2: QR Hero -->
+        <div class="col-qr">
+            <div class="qr-headline">
+                Scan untuk Review
+            </div>
+            <div class="qr-img-wrap">
+                <img src="https://balai.wazza.my/images/2026/04/13/qr-google-review-wazza.png" alt="QR Google Review" />
+            </div>
+            <div class="qr-sub">
+                SCAN &amp;
+                <br />
+                REVIEW!
+            </div>
+            <div class="qr-url">
+                wazza.my
+            </div>
+        </div>
+        <!-- COL 3: Reviews 2×2 -->
+        <div class="col-reviews">
+            <div class="sec-label">
+                <span> Review Training
+                </span>
+            </div>
+            <div class="reviews-grid">
+                <div class="review-card">
+                    <div class="review-stars">
+                        ★★★★★
+                    </div>
+                    <p class="review-text">
+                        &#34;Training Wazza Digital sangat padat dengan info! Trainer sangat membantu dan saya faham
+                        cara nak grow business online secara sistematik. Highly recommended!&#34;
+                    </p>
+                    <button class="copy-btn" onclick="copyReview(this)">
+                        Salin
+                    </button>
+                </div>
+                <div class="review-card">
+                    <div class="review-stars">
+                        ★★★★★
+                    </div>
+                    <p class="review-text">
+                        &#34;Sangat berpuas hati dengan servis Wazza Digital. Team mereka sangat pro dan sentiasa
+                        memberi bimbingan terbaik untuk usahawan seperti saya.&#34;
+                    </p>
+                    <button class="copy-btn" onclick="copyReview(this)">
+                        Salin
+                    </button>
+                </div>
+                <div class="review-card">
+                    <div class="review-stars">
+                        ★★★★★
+                    </div>
+                    <p class="review-text">
+                        &#34;Terbaik! Cara penyampaian ilmu yang sangat jelas dan mudah faham. Dah mula nampak hasil
+                        pada bisnes saya selepas join training Wazza.&#34;
+                    </p>
+                    <button class="copy-btn" onclick="copyReview(this)">
+                        Salin
+                    </button>
+                </div>
+                <div class="review-card">
+                    <div class="review-stars">
+                        ★★★★★
+                    </div>
+                    <p class="review-text">
+                        &#34;Pakar dalam digital marketing! Strategi yang diajar memang praktikal dan boleh terus guna.
+                        Wajib join bagi siapa yang nak serius dalam online business.&#34;
+                    </p>
+                    <button class="copy-btn" onclick="copyReview(this)">
+                        Salin
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="toast" class="copy-notification">
+        Review berjaya disalin!
+    </div>
+    <script>
+        function copyReview(btn) {
+            const card = btn.closest(&#39;.review - card &#39;);
+            const text = card.querySelector(&#39;.review - text &#39;).innerText;
+
+            navigator.clipboard.writeText(text).catch(() =& gt; {
+                const ta = document.createElement(&#34; textarea &#34;);
+                ta.value = text;
+                document.body.appendChild(ta);
+                ta.select();
+                document.execCommand(&#34; copy &#34;);
+                document.body.removeChild(ta);
+            });
+
+            const toast = document.getElementById(&#39; toast &#39;);
+            toast.style.display = &#39; block &#39;;
+            btn.innerText = &#34; Copied! &#34;;
+            btn.style.background = &#34; #FFCC00 &#34;;
+            btn.style.color = &#34;#111111 &#34;;
+
+            setTimeout(() =& gt; {
+                toast.style.display = &#39; none &#39;;
+                btn.innerText = &#34; Salin &#34;;
+                btn.style.background = &#34;#111111 &#34;;
+                btn.style.color = &#34; #FFCC00 &#34;;
+            }, 2000);
+        }
+    </script>
+</body>
+
+</html>

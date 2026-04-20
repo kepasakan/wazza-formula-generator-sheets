@@ -1,0 +1,722 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <base target="_top">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+    </style>
+</head>
+
+<body class="bg-gray-900 text-gray-200 min-h-screen relative">
+
+    <div id="pageLoader" class="fixed inset-0 bg-gray-900 z-[200] flex flex-col items-center justify-center">
+        <div class="animate-spin rounded-full h-12 w-12 border-t-4 border-yellow-500 mb-4"></div>
+        <p class="text-yellow-500 font-bold text-sm tracking-widest animate-pulse">MENYEDIAKAN PORTAL...</p>
+    </div>
+
+    <div id="loginOverlay"
+        class="fixed inset-0 bg-gray-900 z-[100] flex flex-col items-center justify-center p-4 hidden">
+        <div
+            class="bg-gray-800 p-8 rounded-2xl shadow-2xl w-full max-w-sm border-t-4 border-yellow-500 animate-fade-in">
+            <h2 class="text-2xl font-black text-white text-center mb-1 tracking-wider">LOG MASUK</h2>
+            <p class="text-gray-400 text-xs text-center mb-6">Sila log masuk untuk akses Portal Staf</p>
+
+            <form onsubmit="handlePortalLogin(this); return false;" class="space-y-4">
+                <div>
+                    <label class="block text-gray-400 text-xs font-bold mb-1 uppercase">Sila Pilih Nama</label>
+                    <select name="username" id="loginUserSelect" required
+                        class="w-full p-3 rounded-lg bg-gray-700 border border-gray-600 text-white outline-none focus:border-yellow-500 transition appearance-none cursor-pointer">
+                    </select>
+                </div>
+
+                <div>
+                    <label class="block text-gray-400 text-xs font-bold mb-1 uppercase">Kata Laluan</label>
+                    <input type="password" name="password" required placeholder="****"
+                        class="w-full p-3 rounded-lg bg-gray-700 border border-gray-600 text-white outline-none focus:border-yellow-500 transition">
+                </div>
+                <button type="submit" id="btnLogin"
+                    class="w-full bg-yellow-600 hover:bg-yellow-500 text-gray-900 font-black tracking-widest py-3 rounded-lg mt-4 transition shadow-lg">
+                    MASUK PENGESAHAN
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <div class="bg-gray-800 p-6 rounded-b-3xl shadow-2xl border-b border-gray-700 flex justify-between items-start">
+        <div class="flex items-center space-x-4">
+            <div class="relative">
+                <img id="profilePic" src="https://via.placeholder.com/150"
+                    class="w-16 h-16 rounded-full border-4 border-yellow-500 object-cover">
+                <div class="absolute bottom-0 right-0 bg-green-500 w-4 h-4 rounded-full border-2 border-gray-800"></div>
+            </div>
+            <div>
+                <h1 id="staffName" class="text-lg font-bold text-white leading-tight">Loading...</h1>
+                <p id="staffRole" class="text-yellow-500 text-xs font-semibold uppercase tracking-wider">...</p>
+                <span id="staffID"
+                    class="text-[10px] bg-gray-700 text-gray-400 px-2 py-0.5 rounded mt-1 inline-block font-mono">ID:
+                    ...</span>
+            </div>
+        </div>
+        <button onclick="logoutPortal()"
+            class="bg-red-900/50 hover:bg-red-800 text-red-300 text-[10px] font-bold px-3 py-1.5 rounded-lg border border-red-800 transition">
+            Keluar
+        </button>
+    </div>
+
+    <div class="p-4 max-w-md mx-auto pb-10">
+
+        <div class="flex space-x-1 mb-6 bg-gray-800 p-1 rounded-lg text-[10px] md:text-xs">
+            <button onclick="switchTab('home')" id="btnHome"
+                class="flex-1 py-2 font-bold rounded-md bg-yellow-500 text-gray-900 transition">🏠 HOME</button>
+            <button onclick="switchTab('attendance')" id="btnAtt"
+                class="flex-1 py-2 font-bold rounded-md text-gray-400 hover:text-white transition">📅 REKOD</button>
+            <button onclick="switchTab('leave')" id="btnLeave"
+                class="flex-1 py-2 font-bold rounded-md text-gray-400 hover:text-white transition">🚑 SEJARAH</button>
+            <button onclick="switchTab('apply')" id="btnApply"
+                class="flex-1 py-2 font-bold rounded-md text-gray-400 hover:text-white transition">📝 MOHON</button>
+        </div>
+
+        <div id="tabHome" class="space-y-6 block animate-fade-in">
+
+            <div>
+                <h3 class="text-xs text-gray-500 uppercase font-bold mb-2">Status Hari Ini</h3>
+                <div id="homeTodayCard"
+                    class="bg-gray-800 p-5 rounded-2xl border-l-4 border-gray-600 shadow-lg flex flex-col items-center justify-center min-h-[120px]">
+                    <div class="animate-pulse bg-gray-700 h-8 w-1/2 rounded"></div>
+                </div>
+            </div>
+
+            <div>
+                <h3 class="text-xs text-gray-500 uppercase font-bold mb-2">Statistik Bulan Ini</h3>
+                <div class="grid grid-cols-3 gap-3">
+                    <div class="bg-gray-800 p-3 rounded-xl border border-gray-700 text-center shadow">
+                        <p class="text-[10px] text-gray-400 uppercase font-bold">Hadir</p>
+                        <p id="statHadir" class="text-2xl font-black text-green-400">-</p>
+                    </div>
+                    <div class="bg-gray-800 p-3 rounded-xl border border-gray-700 text-center shadow">
+                        <p class="text-[10px] text-gray-400 uppercase font-bold">Lewat</p>
+                        <p id="statLewat" class="text-2xl font-black text-red-400">-</p>
+                    </div>
+                    <div class="bg-gray-800 p-3 rounded-xl border border-gray-700 text-center shadow">
+                        <p class="text-[10px] text-gray-400 uppercase font-bold">Cuti</p>
+                        <p id="statCuti" class="text-2xl font-black text-yellow-400">-</p>
+                    </div>
+                </div>
+            </div>
+
+            <div>
+                <h3 class="text-xs text-gray-500 uppercase font-bold mb-2">Permohonan Cuti Terkini</h3>
+                <div id="homeLatestLeave" class="bg-gray-800 p-4 rounded-xl border border-gray-700 shadow-lg">
+                    <div class="animate-pulse bg-gray-700 h-10 w-full rounded"></div>
+                </div>
+            </div>
+
+            <button onclick="switchTab('apply')"
+                class="w-full bg-yellow-600/20 hover:bg-yellow-600/40 text-yellow-500 border border-yellow-600/50 font-bold py-3 rounded-xl transition shadow text-sm">
+                + Mohon Cuti Baru
+            </button>
+        </div>
+
+        <div id="tabAttendance" class="hidden space-y-3 animate-fade-in">
+            <h3 class="text-xs text-gray-500 uppercase font-bold mb-2">Semak Rekod Kehadiran</h3>
+            <div class="bg-gray-800 p-4 rounded-xl border border-gray-700 mb-4 shadow-lg">
+                <div class="flex gap-2">
+                    <div class="flex-1">
+                        <label class="block text-[10px] text-gray-400 mb-1">Mula</label>
+                        <input type="date" id="searchDateStart"
+                            class="w-full bg-gray-900 border border-gray-600 text-white text-xs px-2 py-2 rounded focus:border-yellow-500 outline-none cursor-pointer">
+                    </div>
+                    <div class="flex-1">
+                        <label class="block text-[10px] text-gray-400 mb-1">Akhir</label>
+                        <input type="date" id="searchDateEnd"
+                            class="w-full bg-gray-900 border border-gray-600 text-white text-xs px-2 py-2 rounded focus:border-yellow-500 outline-none cursor-pointer">
+                    </div>
+                </div>
+                <button onclick="searchMyAttendance()" id="btnSearchAtt"
+                    class="w-full mt-3 bg-gray-700 hover:bg-gray-600 text-white font-bold text-xs py-2 rounded shadow transition">
+                    Cari Rekod
+                </button>
+            </div>
+            <div id="attList" class="space-y-3"></div>
+        </div>
+
+        <div id="tabLeave" class="hidden space-y-3 animate-fade-in">
+            <h3 class="text-xs text-gray-500 uppercase font-bold mb-2">Sejarah Permohonan</h3>
+            <div id="leaveList" class="space-y-3"></div>
+        </div>
+
+        <div id="tabApply" class="hidden animate-fade-in">
+            <h3 class="text-xs text-gray-500 uppercase font-bold mb-4">Borang Cuti / Datang Lambat</h3>
+
+            <form id="leaveForm" onsubmit="handleLeaveSubmit(this); return false;"
+                class="space-y-4 bg-gray-800 p-5 rounded-xl border border-gray-700 shadow-lg relative overflow-hidden">
+
+                <div id="gpsLoader"
+                    class="absolute inset-0 bg-gray-900/90 z-50 flex flex-col items-center justify-center hidden">
+                    <div class="animate-spin rounded-full h-10 w-10 border-t-4 border-yellow-500"></div>
+                    <p class="text-xs text-yellow-400 mt-3 font-bold text-center px-4">Memproses Laporan &
+                        Lokasi...<br><span class="text-[10px] text-gray-400">(Sila tunggu jika ada fail)</span></p>
+                </div>
+
+                <div>
+                    <label class="block text-gray-400 text-xs font-bold mb-1">Nama Staf</label>
+                    <input type="text" name="nama" id="formNama" readonly
+                        class="w-full p-3 rounded-lg bg-gray-900 border border-gray-600 text-gray-400 outline-none cursor-not-allowed font-semibold opacity-70">
+                </div>
+
+                <div>
+                    <label class="block text-gray-300 text-xs font-bold mb-1">Jenis Laporan</label>
+                    <select name="jenis" id="formJenis" required
+                        class="w-full p-3 rounded-lg bg-gray-700 border border-gray-600 text-white outline-none focus:border-yellow-500"
+                        onchange="checkJenisLaporan()">
+                        <option value="" disabled selected>Memuatkan jenis...</option>
+                    </select>
+                </div>
+
+                <div class="flex gap-4">
+                    <div class="flex-1">
+                        <label class="block text-gray-300 text-xs font-bold mb-1" id="labelTarikhMula">Tarikh
+                            Mula</label>
+                        <input type="date" name="tarikhMula" id="formTarikhMula" required
+                            class="w-full p-3 rounded-lg bg-gray-700 border border-gray-600 text-white outline-none focus:border-yellow-500"
+                            onchange="syncDates()">
+                    </div>
+
+                    <div class="flex-1" id="boxTarikhTamat">
+                        <label class="block text-gray-300 text-xs font-bold mb-1">Tarikh Tamat</label>
+                        <input type="date" name="tarikhTamat" id="formTarikhTamat" required
+                            class="w-full p-3 rounded-lg bg-gray-700 border border-gray-600 text-white outline-none focus:border-yellow-500"
+                            onchange="syncDates()">
+                    </div>
+                </div>
+
+                <p id="warningLambat" class="hidden text-xs text-yellow-500 italic mt-0 mb-2">*Datang lambat hanya sah
+                    untuk tarikh hari ini sahaja.</p>
+
+                <div id="ruleWarning"
+                    class="hidden bg-red-900/40 border border-red-500 text-red-300 p-3 rounded-lg text-[11px] font-bold">
+                </div>
+
+                <div>
+                    <label class="block text-gray-300 text-xs font-bold mb-1">Sebab / Alasan</label>
+                    <textarea name="sebab" rows="3" required placeholder="Cth: Demam panas / Tayar pancit"
+                        class="w-full p-3 rounded-lg bg-gray-700 border border-gray-600 text-white outline-none focus:border-yellow-500"></textarea>
+                </div>
+
+                <div>
+                    <label class="block text-gray-300 text-xs font-bold mb-1" id="labelLampiran">Bukti Lampiran <span
+                            class="text-gray-500 font-normal">(Pilihan - Max 2MB)</span></label>
+                    <input type="file" id="formFile" accept="image/*,application/pdf"
+                        class="w-full text-sm text-gray-400 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-xs file:font-bold file:bg-yellow-500 file:text-gray-900 hover:file:bg-yellow-400 border border-gray-600 rounded-lg bg-gray-700 p-2 cursor-pointer">
+                </div>
+
+                <input type="hidden" name="ip" id="formIp">
+                <input type="hidden" name="latitude" id="formLat">
+                <input type="hidden" name="longitude" id="formLng">
+
+                <button type="submit" id="btnSubmitLeave"
+                    class="w-full bg-yellow-600 hover:bg-yellow-500 text-gray-900 font-black tracking-widest py-3 rounded-lg transition duration-300 shadow-lg mt-2">
+                    HANTAR PERMOHONAN
+                </button>
+            </form>
+
+            <div id="formSuccess"
+                class="hidden text-center p-6 bg-gray-800 border border-green-600 rounded-xl shadow-lg mt-2">
+                <div class="text-5xl mb-2">✅</div>
+                <p class="font-bold text-white text-lg">Berjaya Dihantar!</p>
+                <p class="text-xs text-gray-400 mt-1 mb-4">Permohonan anda sedang diproses.</p>
+                <button type="button" onclick="resetFormAndGoHistory()"
+                    class="bg-gray-700 hover:bg-gray-600 text-white font-bold py-2 px-6 rounded-lg text-sm transition">
+                    Lihat Status
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentUser = localStorage.getItem("wazza_nama");
+        let leaveRules = { al_advance: 0, al_streak_doc_req: 0, mc_streak_doc_req: 0 };
+
+        window.onload = function () {
+            if (currentUser) {
+                document.getElementById('pageLoader').classList.add('hidden');
+                document.getElementById('loginOverlay').classList.add('hidden');
+                loadDashboard(currentUser);
+                setupFormInit();
+            } else {
+                google.script.run.withSuccessHandler(function (names) {
+                    const select = document.getElementById('loginUserSelect');
+                    select.innerHTML = '<option value="" disabled selected>-- Sila Pilih Nama Anda --</option>';
+                    names.forEach(name => {
+                        let option = document.createElement("option");
+                        option.text = name;
+                        option.value = name;
+                        select.add(option);
+                    });
+                    document.getElementById('pageLoader').classList.add('hidden');
+                    document.getElementById('loginOverlay').classList.remove('hidden');
+                }).getStaffList();
+            }
+        };
+
+        function handlePortalLogin(form) {
+            const btn = document.getElementById('btnLogin');
+            btn.innerText = "MENYEMAK...";
+            btn.disabled = true;
+
+            google.script.run.withSuccessHandler(function (res) {
+                if (res.status === 'SUCCESS') {
+                    currentUser = res.nama;
+                    localStorage.setItem("wazza_nama", res.nama);
+                    document.getElementById('loginOverlay').classList.add('hidden');
+                    loadDashboard(currentUser);
+                    setupFormInit();
+                } else {
+                    alert(res.message);
+                    btn.innerText = "MASUK PENGESAHAN";
+                    btn.disabled = false;
+                }
+            }).verifyLogin(form.username.value, form.password.value);
+        }
+
+        function logoutPortal() {
+            if (confirm("Anda pasti untuk log keluar?")) {
+                localStorage.removeItem("wazza_nama");
+                location.reload();
+            }
+        }
+
+        function getLocalISODate() {
+            let tzoffset = (new Date()).getTimezoneOffset() * 60000;
+            return (new Date(Date.now() - tzoffset)).toISOString().slice(0, 10);
+        }
+
+        function setupFormInit() {
+            document.getElementById('formNama').value = currentUser;
+
+            let todayStr = getLocalISODate();
+            document.getElementById('formTarikhMula').value = todayStr;
+            document.getElementById('formTarikhTamat').value = todayStr;
+
+            let firstDayMonth = new Date();
+            firstDayMonth.setDate(1);
+            let firstDayStr = (new Date(firstDayMonth.getTime() - ((new Date()).getTimezoneOffset() * 60000))).toISOString().slice(0, 10);
+            document.getElementById('searchDateStart').value = firstDayStr;
+            document.getElementById('searchDateEnd').value = todayStr;
+
+            google.script.run.withSuccessHandler(res => { leaveRules = res; }).getLeaveValidationConfig();
+
+            fetch('https://api.ipify.org?format=json')
+                .then(res => res.json())
+                .then(data => document.getElementById('formIp').value = data.ip)
+                .catch(e => { document.getElementById('formIp').value = "Unknown"; });
+
+            google.script.run.withSuccessHandler(function (types) {
+                const select = document.getElementById('formJenis');
+                select.innerHTML = '<option value="" disabled selected>-- Pilih Jenis --</option>';
+                types.forEach(type => {
+                    let option = document.createElement("option");
+                    option.text = type;
+                    option.value = type;
+                    select.add(option);
+                });
+            }).getLeaveTypes();
+
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(
+                    (position) => {
+                        document.getElementById('formLat').value = position.coords.latitude;
+                        document.getElementById('formLng').value = position.coords.longitude;
+                    },
+                    (error) => { },
+                    { enableHighAccuracy: true, timeout: 5000, maximumAge: 0 }
+                );
+            }
+        }
+
+        function validateLeaveRules() {
+            let jenis = document.getElementById('formJenis').value || "";
+            let tmInput = document.getElementById('formTarikhMula').value;
+            let ttInput = document.getElementById('formTarikhTamat').value;
+
+            if (!jenis || !tmInput || !ttInput) return;
+
+            let tm = new Date(tmInput);
+            let tt = new Date(ttInput);
+            let todayStr = getLocalISODate();
+            let todayObj = new Date(todayStr);
+
+            let btn = document.getElementById('btnSubmitLeave');
+            let fileInput = document.getElementById('formFile');
+            let warningBox = document.getElementById('ruleWarning');
+            let labelLampiran = document.getElementById('labelLampiran');
+
+            btn.disabled = false;
+            btn.classList.remove('opacity-50', 'cursor-not-allowed');
+            fileInput.required = false;
+            warningBox.classList.add('hidden');
+            warningBox.innerHTML = "";
+            labelLampiran.innerHTML = `Bukti Lampiran <span class="text-gray-500 font-normal">(Pilihan - Max 2MB)</span>`;
+
+            if (jenis.includes("Lambat")) return;
+
+            let timeDiff = tt.getTime() - tm.getTime();
+            let dayStreak = Math.ceil(timeDiff / (1000 * 3600 * 24)) + 1;
+            let advanceDiff = tm.getTime() - todayObj.getTime();
+            let advanceDays = Math.ceil(advanceDiff / (1000 * 3600 * 24));
+
+            let isMC = jenis.toUpperCase().includes("MC") || jenis.toUpperCase().includes("MEDICAL") || jenis.toUpperCase().includes("SAKIT");
+            let isAL = jenis.toUpperCase().includes("AL") || jenis.toUpperCase().includes("ANNUAL") || jenis.toUpperCase().includes("TAHUNAN");
+            let isEL = jenis.toUpperCase().includes("EL") || jenis.toUpperCase().includes("EMERGENCY") || jenis.toUpperCase().includes("KECEMASAN");
+
+            let errors = [];
+            let needsDoc = false;
+
+            if (isMC && leaveRules.mc_streak_doc_req > 0 && dayStreak >= leaveRules.mc_streak_doc_req) { needsDoc = true; }
+            if ((isAL || isEL) && leaveRules.al_streak_doc_req > 0 && dayStreak > leaveRules.al_streak_doc_req) { needsDoc = true; }
+            if (isAL && leaveRules.al_advance > 0 && advanceDays < leaveRules.al_advance) {
+                errors.push(`⚠️ AL wajib dimohon sekurang-kurangnya ${leaveRules.al_advance} hari lebih awal. Sila tukar kepada EL jika ini kes kecemasan.`);
+            }
+
+            if (needsDoc) {
+                fileInput.required = true;
+                labelLampiran.innerHTML = `Bukti Lampiran <span class="text-red-500 font-bold">* (WAJIB MUAT NAIK GAMBAR/PDF)</span>`;
+            }
+
+            if (errors.length > 0) {
+                warningBox.innerHTML = errors.join("<br><br>");
+                warningBox.classList.remove('hidden');
+                btn.disabled = true;
+                btn.classList.add('opacity-50', 'cursor-not-allowed');
+            }
+        }
+
+        function checkJenisLaporan() {
+            let jenis = document.getElementById('formJenis').value;
+            let tm = document.getElementById('formTarikhMula');
+            let tt = document.getElementById('formTarikhTamat');
+            let boxTt = document.getElementById('boxTarikhTamat');
+            let warning = document.getElementById('warningLambat');
+            let labelMula = document.getElementById('labelTarikhMula');
+
+            let todayStr = getLocalISODate();
+
+            if (jenis.includes("Lambat")) {
+                tm.value = todayStr; tm.setAttribute('min', todayStr); tm.setAttribute('max', todayStr); tm.readOnly = true;
+                tt.value = todayStr; boxTt.classList.add('hidden'); warning.classList.remove('hidden'); labelMula.innerText = "Tarikh Kejadian";
+            } else {
+                tm.removeAttribute('min'); tm.removeAttribute('max'); tm.readOnly = false;
+                boxTt.classList.remove('hidden'); warning.classList.add('hidden'); labelMula.innerText = "Tarikh Mula";
+            }
+
+            validateLeaveRules();
+        }
+
+        function syncDates() {
+            let tm = document.getElementById('formTarikhMula');
+            let tt = document.getElementById('formTarikhTamat');
+            if (tt.value < tm.value) tt.value = tm.value;
+            validateLeaveRules();
+        }
+
+        function handleLeaveSubmit(form) {
+            const fileInput = document.getElementById('formFile');
+            const file = fileInput.files[0];
+
+            if (fileInput.required && !file) {
+                alert("Ralat Sistem: Cuti ini wajib disertakan dengan bukti lampiran.");
+                return;
+            }
+
+            document.getElementById('gpsLoader').classList.remove('hidden');
+            const btn = document.getElementById('btnSubmitLeave');
+            btn.disabled = true;
+            btn.classList.add('opacity-50', 'cursor-not-allowed');
+
+            if (file) {
+                if (file.size > 2097152) {
+                    alert("Saiz fail terlalu besar! Sila pastikan saiz fail bawah 2MB.");
+                    resetSubmitState();
+                    return;
+                }
+
+                const reader = new FileReader();
+                reader.onload = function (e) {
+                    const base64Data = e.target.result.split(',')[1];
+                    sendData(form, base64Data, file.type, file.name);
+                };
+                reader.readAsDataURL(file);
+            } else {
+                sendData(form, null, null, null);
+            }
+        }
+
+        function sendData(form, fileData, mimeType, fileName) {
+            const formData = {
+                nama: form.nama.value,
+                jenis: form.jenis.value,
+                tarikhMula: form.tarikhMula.value,
+                tarikhTamat: form.tarikhTamat.value,
+                sebab: form.sebab.value,
+                ip: document.getElementById('formIp').value || "Unknown",
+                lat: form.latitude.value || "",
+                lng: form.longitude.value || "",
+                fileData: fileData,
+                mimeType: mimeType,
+                fileName: fileName
+            };
+
+            google.script.run.withSuccessHandler(function (response) {
+                resetSubmitState();
+                if (response && response.status === 'ERROR') {
+                    alert(response.message);
+                    return;
+                }
+                document.getElementById('leaveForm').classList.add('hidden');
+                document.getElementById('formSuccess').classList.remove('hidden');
+                loadDashboard(currentUser);
+
+            }).processCuti(formData);
+        }
+
+        function resetSubmitState() {
+            document.getElementById('gpsLoader').classList.add('hidden');
+            const btn = document.getElementById('btnSubmitLeave');
+            btn.disabled = false;
+            btn.classList.remove('opacity-50', 'cursor-not-allowed');
+        }
+
+        function resetFormAndGoHistory() {
+            document.getElementById('leaveForm').reset();
+            document.getElementById('leaveForm').classList.remove('hidden');
+            document.getElementById('formSuccess').classList.add('hidden');
+            setupFormInit();
+            checkJenisLaporan();
+            switchTab('leave');
+        }
+
+        function searchMyAttendance() {
+            let ds = document.getElementById('searchDateStart').value;
+            let de = document.getElementById('searchDateEnd').value;
+            let btn = document.getElementById('btnSearchAtt');
+
+            if (!ds || !de) { alert("Sila pilih Tarikh Mula dan Akhir."); return; }
+            if (ds > de) { alert("Tarikh Mula tak boleh lebih dari Tarikh Akhir."); return; }
+
+            btn.innerText = "Mencari..."; btn.disabled = true;
+            document.getElementById('attList').innerHTML = `<div class="animate-pulse bg-gray-800 h-16 rounded-xl text-center text-xs text-gray-500 py-5">Menarik rekod...</div>`;
+
+            google.script.run.withSuccessHandler(function (logs) {
+                renderAttendanceLogs(logs, "Tiada rekod dijumpai pada julat tarikh ini.");
+                btn.innerText = "Cari Rekod"; btn.disabled = false;
+            }).getStaffAttendanceByDateRange(currentUser, ds, de);
+        }
+
+        function renderAttendanceLogs(logs, emptyMsg) {
+            const attList = document.getElementById('attList');
+            attList.innerHTML = "";
+            if (logs.length === 0) {
+                attList.innerHTML = `<p class="text-center text-gray-500 text-sm py-4 bg-gray-800 rounded-lg">${emptyMsg}</p>`;
+                return;
+            }
+
+            logs.forEach(log => {
+                let isLate = String(log.status).toUpperCase().includes("LEWAT");
+                let borderColor = isLate ? 'border-red-500' : 'border-green-500';
+                let badgeColor = isLate ? 'text-red-400' : 'text-green-400';
+                let badgeText = isLate ? 'LEWAT' : 'HADIR';
+
+                attList.innerHTML += `
+              <div class="bg-gray-800 p-4 rounded-xl border-l-4 ${borderColor} shadow-lg mb-3">
+                <div class="flex justify-between items-center mb-3 border-b border-gray-700 pb-2">
+                   <p class="text-xs text-gray-400 font-mono">${log.date}</p>
+                   <span class="${badgeColor} font-bold text-[9px] px-2 py-0.5 rounded bg-gray-900 border border-gray-700 tracking-wider">${badgeText}</span>
+                </div>
+                <div class="flex justify-between items-end mt-1 px-1">
+                   <div>
+                      <p class="text-[10px] text-gray-500 uppercase font-bold mb-1">Masuk</p>
+                      <p class="font-mono font-bold text-white text-lg leading-none">${log.in || '--:--'}</p>
+                   </div>
+                   <div class="text-right">
+                      <p class="text-[10px] text-gray-500 uppercase font-bold mb-1">Keluar</p>
+                      <p class="font-mono font-bold text-yellow-500 text-lg leading-none">${log.out || '--:--'}</p>
+                   </div>
+                </div>
+              </div>`;
+            });
+        }
+
+        // --- TAMBAHAN FUNGSI LOADDASHBOARD (WAJIB ADA) ---
+        function loadDashboard(u) {
+            document.getElementById('pageLoader').classList.remove('hidden'); // Tunjuk loading
+            google.script.run
+                .withSuccessHandler(renderDashboard)
+                .withFailureHandler(function (err) {
+                    alert("Gagal menghubungi pelayan. Sila refresh semula.\nSebab: " + err);
+                    document.getElementById('staffName').innerText = "Ralat!";
+                    document.getElementById('pageLoader').classList.add('hidden'); // Tutup loading kalau error
+                })
+                .getStaffDashboardData(u);
+        }
+        // ------------------------------------------------
+
+        function renderDashboard(data) {
+            document.getElementById('pageLoader').classList.add('hidden'); // Tutup loading lepas berjaya
+
+            if (data.status === 'ERROR') { alert(data.message); return; }
+
+            document.getElementById('staffName').innerText = data.profile.name;
+            document.getElementById('staffRole').innerText = data.profile.role;
+            document.getElementById('staffID').innerText = "ID: " + data.profile.id;
+
+            let profilePicElem = document.getElementById('profilePic');
+            let picUrl = data.profile.pic;
+            if (picUrl && typeof picUrl === 'string' && picUrl.trim() !== "") {
+                picUrl = picUrl.trim();
+                if (picUrl.includes("drive.google.com")) {
+                    let match = picUrl.match(/\/d\/(.+?)\//);
+                    if (match && match[1]) picUrl = "https://lh3.googleusercontent.com/d/" + match[1];
+                }
+                profilePicElem.src = picUrl;
+            } else {
+                profilePicElem.src = "https://via.placeholder.com/150?text=Tiada+Gambar";
+            }
+
+            // --- RENDER HOMEPAGE ---
+            const todayCard = document.getElementById('homeTodayCard');
+            if (data.todayLog) {
+                let isLate = String(data.todayLog.status).toUpperCase().includes("LEWAT");
+                let tColor = isLate ? "text-red-400" : "text-green-400";
+                let bColor = isLate ? "border-red-500" : "border-green-500";
+                let textStatus = isLate ? "HADIR (LEWAT)" : "HADIR";
+
+                todayCard.className = `bg-gray-800 p-5 rounded-2xl border-l-4 ${bColor} shadow-lg w-full`;
+                todayCard.innerHTML = `
+                <div class="flex justify-between w-full mb-4 items-center">
+                    <span class="text-gray-400 text-xs font-mono">${data.todayLog.date}</span>
+                    <span class="${tColor} font-black text-sm tracking-widest">${textStatus}</span>
+                </div>
+                <div class="flex justify-around w-full mt-2">
+                    <div class="text-center">
+                        <p class="text-[10px] text-gray-500 uppercase font-bold">Masuk</p>
+                        <p class="text-3xl font-black text-white">${data.todayLog.in}</p>
+                    </div>
+                    <div class="text-center">
+                        <p class="text-[10px] text-gray-500 uppercase font-bold">Keluar</p>
+                        <p class="text-3xl font-black ${data.todayLog.out === '--:--' ? 'text-gray-600' : 'text-yellow-500'}">${data.todayLog.out}</p>
+                    </div>
+                </div>
+            `;
+            } else {
+                todayCard.className = `bg-gray-800 p-5 rounded-2xl border-l-4 border-gray-600 shadow-lg w-full flex flex-col items-center justify-center min-h-[120px]`;
+                todayCard.innerHTML = `
+                <div class="text-4xl mb-2">👋</div>
+                <p class="text-gray-400 text-sm font-bold">Belum Rekod Kehadiran</p>
+                <p class="text-[10px] text-gray-500 mt-1">Sila scan QR di pintu masuk.</p>
+            `;
+            }
+
+            document.getElementById('statHadir').innerText = data.monthlyStats.present;
+            document.getElementById('statLewat').innerText = data.monthlyStats.late;
+            document.getElementById('statCuti').innerText = data.monthlyStats.leave;
+
+            const latestLeaveCard = document.getElementById('homeLatestLeave');
+            if (data.latestLeave) {
+                let l = data.latestLeave;
+                let statusBadge = "";
+                if (l.status === "DILULUSKAN") statusBadge = `<span class="bg-green-900 text-green-300 px-2 py-1 rounded text-[10px] font-bold border border-green-700">LULUS</span>`;
+                else if (l.status === "DITOLAK") statusBadge = `<span class="bg-red-900 text-red-300 px-2 py-1 rounded text-[10px] font-bold border border-red-700">DITOLAK</span>`;
+                else statusBadge = `<span class="bg-yellow-900 text-yellow-300 px-2 py-1 rounded text-[10px] font-bold border border-yellow-700 animate-pulse">PROSES</span>`;
+
+                latestLeaveCard.innerHTML = `
+              <div class="flex justify-between items-center mb-1">
+                  <p class="text-white font-bold text-sm uppercase">${l.type}</p>
+                  ${statusBadge}
+              </div>
+              <p class="text-xs text-gray-400 font-mono">${l.date}</p>
+              <div class="mt-2 text-xs text-gray-400 italic bg-gray-900 p-2 rounded border border-gray-700 truncate">"${l.reason}"</div>
+            `;
+            } else {
+                latestLeaveCard.innerHTML = `<p class="text-center text-gray-500 text-xs py-2">Tiada permohonan terkini.</p>`;
+            }
+            // ------------------------
+
+            renderAttendanceLogs(data.attendance, "Tiada rekod 10 hari terakhir.");
+
+            const leaveList = document.getElementById('leaveList');
+            leaveList.innerHTML = "";
+            if (data.leave.length === 0) leaveList.innerHTML = `<p class="text-center text-gray-500 text-sm py-4 bg-gray-800 rounded-lg">Tiada sejarah.</p>`;
+
+            data.leave.forEach(cuti => {
+                let statusBadge = ""; let borderClass = "";
+                if (cuti.status === "DILULUSKAN") { statusBadge = `<span class="bg-green-900 text-green-300 px-2 py-1 rounded text-[10px] font-bold border border-green-700">LULUS</span>`; borderClass = "border-green-600"; }
+                else if (cuti.status === "DITOLAK") { statusBadge = `<span class="bg-red-900 text-red-300 px-2 py-1 rounded text-[10px] font-bold border border-red-700">DITOLAK</span>`; borderClass = "border-red-600"; }
+                else { statusBadge = `<span class="bg-yellow-900 text-yellow-300 px-2 py-1 rounded text-[10px] font-bold border border-yellow-700 animate-pulse">PROSES</span>`; borderClass = "border-yellow-600"; }
+
+                let attachHtml = "";
+                if (cuti.attachment && cuti.attachment !== "Tiada" && cuti.attachment !== "") {
+                    attachHtml = `<a href="${cuti.attachment}" target="_blank" class="mt-2 inline-block bg-gray-800 border border-gray-600 text-blue-400 text-[10px] px-2 py-1 rounded hover:bg-gray-700 transition">🔗 Lihat Lampiran</a>`;
+                }
+
+                leaveList.innerHTML += `
+            <div class="bg-gray-800 p-4 rounded-xl border-l-4 ${borderClass} shadow-lg">
+              <div class="flex justify-between items-start mb-2">
+                  <div><p class="text-white font-bold text-sm uppercase">${cuti.type}</p><p class="text-xs text-gray-400 font-mono">${cuti.date}</p></div>
+                  ${statusBadge}
+              </div>
+              <div class="bg-gray-900 p-3 rounded-lg text-xs text-gray-300 italic border border-gray-700">
+                "${cuti.reason}"<br>
+                ${attachHtml}
+              </div>
+            </div>`;
+            });
+        }
+
+        function switchTab(tab) {
+            const tHome = document.getElementById('tabHome'); const tAtt = document.getElementById('tabAttendance'); const tLeave = document.getElementById('tabLeave'); const tApply = document.getElementById('tabApply');
+            const bHome = document.getElementById('btnHome'); const bAtt = document.getElementById('btnAtt'); const bLeave = document.getElementById('btnLeave'); const bApply = document.getElementById('btnApply');
+
+            tHome.classList.add('hidden'); tAtt.classList.add('hidden'); tLeave.classList.add('hidden'); tApply.classList.add('hidden');
+            bHome.className = "flex-1 py-2 font-bold rounded-md text-gray-400 hover:text-white transition";
+            bAtt.className = "flex-1 py-2 font-bold rounded-md text-gray-400 hover:text-white transition";
+            bLeave.className = "flex-1 py-2 font-bold rounded-md text-gray-400 hover:text-white transition";
+            bApply.className = "flex-1 py-2 font-bold rounded-md text-gray-400 hover:text-white transition";
+
+            if (tab === 'home') { tHome.classList.remove('hidden'); bHome.className = "flex-1 py-2 font-bold rounded-md bg-yellow-500 text-gray-900 transition"; }
+            else if (tab === 'attendance') { tAtt.classList.remove('hidden'); bAtt.className = "flex-1 py-2 font-bold rounded-md bg-yellow-500 text-gray-900 transition"; }
+            else if (tab === 'leave') { tLeave.classList.remove('hidden'); bLeave.className = "flex-1 py-2 font-bold rounded-md bg-yellow-500 text-gray-900 transition"; }
+            else if (tab === 'apply') { tApply.classList.remove('hidden'); bApply.className = "flex-1 py-2 font-bold rounded-md bg-yellow-500 text-gray-900 transition"; }
+        }
+    </script>
+
+    <style>
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .animate-fade-in {
+            animation: fadeIn 0.3s ease-out forwards;
+        }
+
+        input[type="date"]::-webkit-calendar-picker-indicator {
+            filter: invert(1);
+            cursor: pointer;
+        }
+    </style>
+</body>
+
+</html>

@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <base target="_top">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8">
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Outfit:wght@400;600;700;900&display=swap" rel="stylesheet">
+  <style>
+    body { font-family: 'Outfit', sans-serif; }
+    h1, .font-display { font-family: 'Bebas Neue', sans-serif; }
+
+    .qr-card { transition: transform 0.25s ease, box-shadow 0.25s ease; }
+    .qr-card:hover { transform: translateY(-4px); }
+
+    /* Glow effects */
+    .glow-green { box-shadow: 0 0 30px rgba(34,197,94,0.25), 0 0 60px rgba(34,197,94,0.1); }
+    .glow-blue  { box-shadow: 0 0 30px rgba(59,130,246,0.25), 0 0 60px rgba(59,130,246,0.1); }
+    .glow-yellow{ box-shadow: 0 0 30px rgba(234,179,8,0.20),  0 0 60px rgba(234,179,8,0.08); }
+
+    /* Button press effect */
+    .btn-action { transition: transform 0.1s ease, filter 0.1s ease; }
+    .btn-action:active { transform: scale(0.96); filter: brightness(0.9); }
+
+    /* Mobile scroll fix */
+    @media (max-width: 1023px) {
+      body { height: auto; overflow-y: auto; }
+    }
+
+    /* Subtle animated background */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background: radial-gradient(ellipse at 20% 20%, rgba(34,197,94,0.04) 0%, transparent 50%),
+                  radial-gradient(ellipse at 80% 80%, rgba(59,130,246,0.04) 0%, transparent 50%),
+                  radial-gradient(ellipse at 50% 50%, rgba(234,179,8,0.03) 0%, transparent 70%);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .content-wrap { position: relative; z-index: 1; }
+  </style>
+</head>
+
+<body class="bg-gray-950 text-white min-h-screen flex flex-col items-center justify-center p-4 lg:p-6 lg:h-screen lg:overflow-hidden">
+
+  <div class="content-wrap w-full max-w-7xl flex flex-col items-center gap-6 py-6 lg:py-0 lg:h-full lg:justify-center">
+
+    <!-- HEADER -->
+    <div class="text-center">
+      <h1 class="text-4xl md:text-6xl text-yellow-400 tracking-widest leading-none drop-shadow-lg">WAZZA DIGITAL</h1>
+      <p class="text-gray-500 mt-1 text-xs md:text-sm tracking-[0.3em] uppercase font-semibold">Sistem Kehadiran Berpusat</p>
+    </div>
+
+    <!-- CARDS ROW -->
+    <div class="flex flex-col lg:flex-row gap-4 w-full items-stretch justify-center">
+
+      <!-- ===== CLOCK IN ===== -->
+      <div class="qr-card glow-green lg:flex-1 bg-gray-900 border-2 border-green-500 rounded-3xl p-5 flex flex-col items-center shadow-2xl relative overflow-hidden">
+        <!-- accent line top -->
+        <div class="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-transparent via-green-400 to-transparent opacity-60"></div>
+
+        <!-- badge -->
+        <div class="bg-green-500/20 border border-green-500/40 text-green-400 font-bold py-1.5 px-5 rounded-full uppercase text-xs tracking-widest mb-4">
+          ✅ &nbsp;CLOCK IN
+        </div>
+
+        <!-- Mobile: layout side-by-side QR + info. Desktop: stacked -->
+        <div class="w-full flex flex-row lg:flex-col items-center gap-4 lg:gap-0">
+
+          <!-- QR -->
+          <div class="bg-white p-2.5 rounded-2xl shadow-inner relative flex-shrink-0
+                      w-32 h-32 sm:w-40 sm:h-40 lg:w-52 lg:h-52 xl:w-64 xl:h-64
+                      flex items-center justify-center overflow-hidden">
+            <div id="qrWrapper" class="w-full h-full flex items-center justify-center">
+              <div id="loadingOverlay" class="absolute inset-0 bg-white z-20 flex items-center justify-center">
+                <div class="animate-spin rounded-full h-8 w-8 border-t-4 border-green-500"></div>
+              </div>
+              <img id="qrImageGreen" src="" alt="QR Clock In" class="w-full h-full object-contain rounded-lg">
+            </div>
+            <div id="msgOverlay"
+              class="hidden absolute inset-0 w-full h-full bg-gray-900 z-50 flex flex-col items-center justify-center text-center rounded-xl p-2">
+              <div class="text-4xl mb-1 text-red-500">⛔</div>
+              <h2 id="msgText" class="text-lg font-black text-white tracking-widest uppercase">TAMAT</h2>
+            </div>
+          </div>
+
+          <!-- Info + Token + Button -->
+          <div class="flex flex-col items-start lg:items-center gap-2 flex-1 lg:mt-4 lg:text-center w-full">
+            <div>
+              <p id="tokenDisplay" class="text-2xl xl:text-3xl font-mono font-bold text-green-400 tracking-widest">...</p>
+              <p class="text-[10px] text-gray-500 uppercase font-bold tracking-wider mt-0.5">Token Harian · Waktu Pagi</p>
+            </div>
+            <a id="btnClockIn" href="#" target="_blank"
+              class="btn-action w-full lg:w-auto mt-1 bg-green-500 hover:bg-green-400 text-gray-950 font-bold text-sm py-2.5 px-6 rounded-xl shadow-lg flex items-center justify-center gap-2 uppercase tracking-wide">
+              <span>👆</span> Buka Clock In
+            </a>
+            <p class="text-[10px] text-gray-600 italic hidden lg:block">atau scan QR di atas</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- ===== CLOCK OUT ===== -->
+      <div class="qr-card glow-blue lg:flex-1 bg-gray-900 border-2 border-blue-500 rounded-3xl p-5 flex flex-col items-center shadow-2xl relative overflow-hidden">
+        <div class="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-transparent via-blue-400 to-transparent opacity-60"></div>
+
+        <div class="bg-blue-500/20 border border-blue-500/40 text-blue-400 font-bold py-1.5 px-5 rounded-full uppercase text-xs tracking-widest mb-4">
+          👋 &nbsp;CLOCK OUT
+        </div>
+
+        <div class="w-full flex flex-row lg:flex-col items-center gap-4 lg:gap-0">
+
+          <!-- QR -->
+          <div class="bg-white p-2.5 rounded-2xl shadow-inner flex-shrink-0
+                      w-32 h-32 sm:w-40 sm:h-40 lg:w-52 lg:h-52 xl:w-64 xl:h-64
+                      flex items-center justify-center overflow-hidden">
+            <img id="qrImageBlue" src="" alt="QR Clock Out" class="w-full h-full object-contain rounded-lg">
+          </div>
+
+          <!-- Info + Button -->
+          <div class="flex flex-col items-start lg:items-center gap-2 flex-1 lg:mt-4 lg:text-center w-full">
+            <div>
+              <p class="text-gray-300 text-sm font-semibold">Balik Awal / Emergency?</p>
+              <p class="text-blue-300 text-sm font-bold mt-0.5">Kemaskini masa keluar.</p>
+              <p class="text-[10px] text-gray-500 mt-1 italic">*Auto-Checkout pukul 6:00 PM</p>
+            </div>
+            <a id="btnClockOut" href="#" target="_blank"
+              class="btn-action w-full lg:w-auto mt-1 bg-blue-500 hover:bg-blue-400 text-white font-bold text-sm py-2.5 px-6 rounded-xl shadow-lg flex items-center justify-center gap-2 uppercase tracking-wide">
+              <span>👆</span> Buka Clock Out
+            </a>
+            <p class="text-[10px] text-gray-600 italic hidden lg:block">atau scan QR di atas</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- ===== PORTAL STAF ===== -->
+      <div class="qr-card glow-yellow lg:w-72 bg-gray-900 border-2 border-yellow-500/70 rounded-3xl p-5 flex flex-col items-center shadow-xl relative overflow-hidden">
+        <div class="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-transparent via-yellow-400 to-transparent opacity-50"></div>
+
+        <div class="bg-yellow-500/20 border border-yellow-500/40 text-yellow-400 font-bold py-1.5 px-5 rounded-full uppercase text-xs tracking-widest mb-4">
+          📝 &nbsp;PORTAL STAF
+        </div>
+
+        <div class="w-full flex flex-row lg:flex-col items-center gap-4 lg:gap-0">
+
+          <!-- QR -->
+          <div class="bg-white p-2.5 rounded-2xl shadow-inner flex-shrink-0
+                      w-32 h-32 sm:w-36 sm:h-36 lg:w-44 lg:h-44 xl:w-52 xl:h-52
+                      flex items-center justify-center overflow-hidden">
+            <img id="qrImagePortal" src="" alt="QR Portal" class="w-full h-full object-contain rounded-lg">
+          </div>
+
+          <!-- Info + Button -->
+          <div class="flex flex-col items-start lg:items-center gap-2 flex-1 lg:mt-4 lg:text-center w-full">
+            <div>
+              <p class="text-yellow-400 text-sm font-bold uppercase tracking-wide">Cuti / Lambat?</p>
+              <p class="text-gray-400 text-xs mt-1 leading-snug">Masuk ke profil anda untuk mohon cuti atau lapor lewat.</p>
+            </div>
+            <a id="btnPortal" href="#" target="_blank"
+              class="btn-action w-full lg:w-auto mt-1 bg-yellow-500 hover:bg-yellow-400 text-gray-950 font-bold text-sm py-2.5 px-6 rounded-xl shadow-lg flex items-center justify-center gap-2 uppercase tracking-wide">
+              <span>👆</span> Buka Portal
+            </a>
+            <p class="text-[10px] text-gray-600 italic hidden lg:block">atau scan QR di atas</p>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- FOOTER CLOCK -->
+    <div class="text-center">
+      <p id="liveClock" class="font-display text-2xl md:text-3xl text-gray-600 tracking-widest"></p>
+    </div>
+
+  </div>
+
+  <script>
+    // ===== CONFIG — isi sebelum deploy =====
+    const GAS_URL = "https://script.google.com/macros/s/AKfycbzjwycP8S7eGC_dLML24louH75mM9pOsVxDhTJJ8qE_qSgzPcCKHJhd9hzilAaaMaoT/exec";
+    const WEBSITE_URL = "https://urus.wazza.my"; // tiada trailing slash
+    // =======================================
+
+    function callGAS(action, params, onSuccess, onError) {
+      const url = GAS_URL + "?data=" + encodeURIComponent(JSON.stringify(Object.assign({ action: action }, params || {})));
+      fetch(url)
+        .then(function(res) {
+          if (!res.ok) throw new Error("HTTP " + res.status);
+          return res.json();
+        })
+        .then(function(data) { if (onSuccess) onSuccess(data); })
+        .catch(function(err) {
+          if (onError) onError(err);
+          else console.error("callGAS error:", action, err);
+        });
+    }
+
+    let currentToken = "";
+
+    function initDashboard() {
+      // Set button hrefs & QR untuk Clock Out
+      const outURL = WEBSITE_URL + "/clockout";
+      document.getElementById('btnClockOut').href = outURL;
+      const qrBlueSource = "https://quickchart.io/qr?text=" + encodeURIComponent(outURL) + "&size=350&margin=1&dark=000000&light=ffffff";
+      document.getElementById('qrImageBlue').src = qrBlueSource;
+
+      // Portal Staf
+      const portalURL = WEBSITE_URL + "/portal";
+      document.getElementById('btnPortal').href = portalURL;
+      const qrPortalSource = "https://quickchart.io/qr?text=" + encodeURIComponent(portalURL) + "&size=300&margin=1&dark=000000&light=ffffff";
+      document.getElementById('qrImagePortal').src = qrPortalSource;
+
+      // Clock In button href akan dikemaskini tiap kali token berubah
+      checkTokenUpdate();
+      setInterval(checkTokenUpdate, 5000);
+    }
+
+    function checkTokenUpdate() {
+      callGAS("getDashboardStatus", {}, function (data) {
+        const tokenDisplay = document.getElementById('tokenDisplay');
+        const btnClockIn = document.getElementById('btnClockIn');
+
+        if (data.isOpen) {
+          document.getElementById('qrWrapper').classList.remove('hidden');
+          document.getElementById('msgOverlay').classList.add('hidden');
+
+          tokenDisplay.innerText = data.token;
+          tokenDisplay.classList.remove('text-red-500');
+          tokenDisplay.classList.add('text-green-400');
+
+          // Kemaskini button href dengan token terkini
+          const scanURL = WEBSITE_URL + "/scan?token=" + data.token;
+          btnClockIn.href = scanURL;
+          btnClockIn.classList.remove('opacity-50', 'pointer-events-none');
+
+          if (data.token !== currentToken && data.token !== "") {
+            currentToken = data.token;
+            updateGreenQR(data.token);
+          }
+        } else {
+          document.getElementById('qrWrapper').classList.add('hidden');
+          document.getElementById('msgOverlay').classList.remove('hidden');
+          if (data.statusMsg) document.getElementById('msgText').innerText = data.statusMsg;
+
+          tokenDisplay.innerText = "🔒 TUTUP";
+          tokenDisplay.classList.remove('text-green-400');
+          tokenDisplay.classList.add('text-red-500');
+
+          // Disable button waktu tutup
+          btnClockIn.href = "#";
+          btnClockIn.classList.add('opacity-50', 'pointer-events-none');
+        }
+      });
+    }
+
+    function updateGreenQR(token) {
+      document.getElementById('loadingOverlay').classList.remove('hidden');
+      const scanURL = WEBSITE_URL + "/scan?token=" + token;
+      const qrSource = "https://quickchart.io/qr?text=" + encodeURIComponent(scanURL) + "&size=350&margin=1&dark=000000&light=ffffff";
+
+      const img = new Image();
+      img.src = qrSource;
+      img.onload = function () {
+        document.getElementById('qrImageGreen').src = qrSource;
+        document.getElementById('loadingOverlay').classList.add('hidden');
+      };
+    }
+
+    // Live clock
+    function updateClock() {
+      const now = new Date();
+      const h = String(now.getHours()).padStart(2, '0');
+      const m = String(now.getMinutes()).padStart(2, '0');
+      const s = String(now.getSeconds()).padStart(2, '0');
+      document.getElementById('liveClock').innerText = h + ' : ' + m + ' : ' + s;
+    }
+    updateClock();
+    setInterval(updateClock, 1000);
+
+    initDashboard();
+  </script>
+</body>
+
+</html>

@@ -4,755 +4,353 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Wazza Sheets Generator Pro</title>
+    <title>Wazza Formula Generator - Embed Edition</title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=DM+Mono:ital,wght@0,400;0,500;1,400&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
     <style>
-        /* CSS Variables for Modern Theme */
         :root {
-            --primary: #4f46e5;
-            --primary-hover: #4338ca;
-            --success: #10b981;
-            --bg-color: #f8fafc;
-            --surface: #ffffff;
-            --text-main: #0f172a;
-            --text-muted: #64748b;
-            --border: #e2e8f0;
-            --code-bg: #1e293b;
+            --app-bg: #0d1117;
+            --sidebar-bg: #111827;
+            --sidebar-border: rgba(255, 255, 255, 0.06);
+            --main-bg: #0d1117;
+            --text: #e8edf5;
+            --text-muted: #6b7a99;
+            --text-hint: #3a475e;
+            --accent: #2563eb;
+            --accent-light: #3b82f6;
+            --accent-glow: rgba(37, 99, 235, 0.2);
+            --green: #16a34a;
+            --sans: 'Plus Jakarta Sans', sans-serif;
+            --mono: 'DM Mono', monospace;
         }
 
         * {
             box-sizing: border-box;
             margin: 0;
             padding: 0;
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
         }
 
         body {
-            background: var(--bg-color);
-            color: var(--text-main);
-            height: 100vh;
+            font-family: var(--sans);
+            background: var(--app-bg);
+            color: var(--text);
+            min-height: 100vh;
             display: flex;
             flex-direction: column;
             overflow: hidden;
         }
 
-        /* Top Navigation */
         header {
-            background: var(--surface);
-            padding: 16px 32px;
-            border-bottom: 1px solid var(--border);
+            height: 56px;
+            background: #161d2e;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
             display: flex;
             align-items: center;
-            gap: 16px;
-            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
-            z-index: 10;
+            justify-content: space-between;
+            padding: 0 28px;
             flex-shrink: 0;
         }
 
-        .logo-badge {
-            background: linear-gradient(135deg, var(--primary), #818cf8);
-            color: white;
-            width: 40px;
-            height: 40px;
-            border-radius: 10px;
+        .hd-left {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .hd-logo {
+            width: 34px;
+            height: 34px;
+            background: var(--accent);
+            border-radius: 8px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-weight: bold;
-            font-size: 20px;
-            box-shadow: 0 4px 6px rgba(79, 70, 229, 0.2);
-        }
-
-        header h1 {
-            font-size: 18px;
             font-weight: 700;
-            color: var(--text-main);
-            display: flex;
-            align-items: center;
-            gap: 8px;
+            color: #fff;
+            box-shadow: 0 0 16px var(--accent-glow);
         }
 
-        header p {
-            font-size: 13px;
+        .hd-name {
+            font-size: 14px;
+            font-weight: 700;
+        }
+
+        .hd-sub {
+            font-size: 11px;
             color: var(--text-muted);
-            margin-top: 2px;
         }
 
-        /* Main Layout */
-        main {
+        .app-layout {
             display: grid;
-            grid-template-columns: 400px 1fr;
+            grid-template-columns: 320px 1fr;
             flex: 1;
-            height: calc(100vh - 73px);
+            min-height: 0;
         }
 
-        /* Left Panel (Accordions) */
-        .sidebar-panel {
-            background: var(--surface);
-            border-right: 1px solid var(--border);
-            padding: 24px;
-            overflow-y: auto;
-        }
-
-        /* Accordion Style */
-        .accordion-item {
-            border: 1px solid var(--border);
-            border-radius: 12px;
-            margin-bottom: 16px;
-            overflow: hidden;
-            background: var(--surface);
-            transition: all 0.3s ease;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
-        }
-
-        .accordion-item[open] {
-            border-color: var(--primary);
-            box-shadow: 0 4px 6px -1px rgba(79, 70, 229, 0.1);
-        }
-
-        .accordion-header {
-            padding: 16px 20px;
-            cursor: pointer;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            font-weight: 700;
-            font-size: 14px;
-            color: var(--text-main);
-            background: var(--bg-color);
-            user-select: none;
-        }
-
-        .accordion-item[open] .accordion-header {
-            background: #eef2ff;
-            color: var(--primary);
-            border-bottom: 1px solid #e0e7ff;
-        }
-
-        .accordion-content {
-            padding: 20px;
-        }
-
-        summary::-webkit-details-marker {
-            display: none;
-        }
-
-        summary {
-            list-style: none;
-            outline: none;
-        }
-
-        .chevron {
-            transition: transform 0.3s ease;
-            width: 20px;
-            height: 20px;
-            color: var(--text-muted);
-        }
-
-        .accordion-item[open] .chevron {
-            transform: rotate(180deg);
-            color: var(--primary);
-        }
-
-        /* Forms */
-        .form-group {
-            margin-bottom: 20px;
-        }
-
-        .form-group:last-child {
-            margin-bottom: 0;
-        }
-
-        label {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            font-size: 13px;
-            font-weight: 600;
-            margin-bottom: 8px;
-            color: var(--text-main);
-        }
-
-        .hint {
-            display: block;
-            font-size: 12px;
-            color: var(--text-muted);
-            margin-top: 4px;
-        }
-
-        input[type="text"],
-        input[type="number"],
-        select {
-            width: 100%;
-            padding: 10px 14px;
-            border: 1px solid var(--border);
-            border-radius: 8px;
-            font-size: 14px;
-            color: var(--text-main);
-            transition: all 0.2s ease;
-            background: var(--surface);
-        }
-
-        input[type="text"]:focus,
-        select:focus,
-        input[type="number"]:focus {
-            outline: none;
-            border-color: var(--primary);
-            box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
-        }
-
-        /* MINI SPREADSHEET UI */
-        .mini-sheet-wrapper {
-            border: 1px solid #cbd5e1;
-            border-radius: 8px;
-            overflow: hidden;
-            background: white;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
-            margin-bottom: 12px;
-        }
-
-        .ms-header-row {
-            display: flex;
-            background: #f1f5f9;
-            border-bottom: 1px solid #cbd5e1;
-        }
-
-        .ms-corner {
-            width: 36px;
-            background: #e2e8f0;
-            border-right: 1px solid #cbd5e1;
-            flex-shrink: 0;
-        }
-
-        .ms-cols-container {
-            display: flex;
-            overflow-x: auto;
-            scroll-behavior: smooth;
-        }
-
-        .ms-cols-container::-webkit-scrollbar {
-            height: 6px;
-        }
-
-        .ms-cols-container::-webkit-scrollbar-thumb {
-            background: #cbd5e1;
-            border-radius: 4px;
-        }
-
-        .ms-col {
-            min-width: 50px;
-            text-align: center;
-            padding: 8px 0;
-            font-size: 12px;
-            font-weight: 600;
-            color: #475569;
-            border-right: 1px solid #cbd5e1;
-            cursor: pointer;
-            user-select: none;
-            transition: background 0.2s;
-        }
-
-        .ms-col:hover {
-            background: #e2e8f0;
-        }
-
-        .ms-col.active {
-            background: #e0e7ff;
-            color: var(--primary);
-            border-bottom: 2px solid var(--primary);
-        }
-
-        .ms-body-row {
-            display: flex;
-            align-items: center;
-            background: white;
-        }
-
-        .ms-row-indicator {
-            width: 36px;
-            text-align: center;
-            font-size: 12px;
-            font-weight: 600;
-            color: #475569;
-            background: #f1f5f9;
-            border-right: 1px solid #cbd5e1;
-            padding: 12px 0;
-            flex-shrink: 0;
-        }
-
-        .ms-cell-area {
-            padding: 0 12px;
-            flex: 1;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        /* Right Panel */
-        .content-area {
-            padding: 32px 40px;
-            overflow-y: auto;
+        /* SIDEBAR */
+        .sidebar {
+            background: var(--sidebar-bg);
+            border-right: 1px solid var(--sidebar-border);
             display: flex;
             flex-direction: column;
-            gap: 24px;
-            background: var(--bg-color);
+            overflow-y: auto;
+            padding: 20px 16px;
+            gap: 15px;
         }
 
-        .panel-card {
-            background: var(--surface);
-            border: 1px solid var(--border);
-            border-radius: 16px;
-            padding: 28px;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
-        }
-
-        .section-label {
-            font-size: 12px;
+        .sb-section-title {
+            font-size: 9px;
             font-weight: 700;
+            letter-spacing: 0.12em;
             text-transform: uppercase;
-            letter-spacing: 0.1em;
-            color: var(--primary);
-            margin-bottom: 20px;
+            color: var(--text-hint);
+        }
+
+        .mode-toggle {
             display: flex;
-            align-items: center;
-            gap: 8px;
+            background: rgba(255, 255, 255, 0.04);
+            border-radius: 9px;
+            padding: 3px;
+            gap: 2px;
         }
 
-        /* Editor */
-        .editor-container {
-            background: var(--code-bg);
-            border-radius: 12px;
-            overflow: hidden;
-            margin-bottom: 24px;
-            box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.2);
+        .mode-btn {
+            flex: 1;
+            padding: 8px;
+            font-size: 11px;
+            font-weight: 600;
+            border: none;
+            border-radius: 7px;
+            background: transparent;
+            color: var(--text-muted);
+            cursor: pointer;
         }
 
-        .editor-header {
-            background: rgba(0, 0, 0, 0.2);
-            padding: 10px 16px;
+        .mode-btn.active {
+            background: var(--accent);
+            color: #fff;
+        }
+
+        .field {
             display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            flex-direction: column;
+            gap: 5px;
         }
 
-        .editor-dots {
-            display: flex;
-            gap: 6px;
+        .field-lbl {
+            font-size: 10.5px;
+            font-weight: 600;
+            color: var(--text-muted);
         }
 
-        .dot {
-            width: 12px;
-            height: 12px;
-            border-radius: 50%;
+        .field input {
+            width: 100%;
+            padding: 10px;
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 8px;
+            color: var(--text);
+            font-size: 13px;
         }
 
-        .dot.r {
-            background: #ef4444;
+        .fbox-wrap {
+            background: #0a0e17;
+            border: 1px solid rgba(255, 255, 255, 0.07);
+            border-radius: 9px;
+            margin-top: 10px;
         }
 
-        .dot.y {
-            background: #eab308;
-        }
-
-        .dot.g {
-            background: #10b981;
-        }
-
-        .editor-title {
-            color: #94a3b8;
-            font-size: 12px;
-            font-family: monospace;
-        }
-
-        .formula-display {
-            padding: 20px;
-            font-family: 'Fira Code', 'Courier New', monospace;
-            font-size: 14px;
+        .fbox-code {
+            padding: 12px;
+            font-family: var(--mono);
+            font-size: 10px;
             line-height: 1.6;
-            color: #e2e8f0;
+            color: #5c6e8a;
             white-space: pre-wrap;
             word-break: break-all;
-            max-height: 250px;
+            max-height: 200px;
             overflow-y: auto;
         }
 
-        .kw {
-            color: #c678dd;
-            font-weight: bold;
+        .c-fn {
+            color: #60a5fa;
         }
 
-        .fn {
-            color: #61afef;
+        .c-str {
+            color: #4ade80;
         }
 
-        .str {
-            color: #98c379;
+        .c-rng {
+            color: #fb923c;
         }
 
-        .var {
-            color: #e06c75;
-        }
-
-        .op {
-            color: #56b6c2;
-        }
-
-        /* Buttons */
         .btn-copy {
-            background: var(--primary);
-            color: white;
-            border: none;
-            border-radius: 8px;
-            padding: 14px 24px;
-            font-size: 14px;
-            font-weight: 600;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            gap: 8px;
             width: 100%;
-            justify-content: center;
-            transition: all 0.2s;
-            box-shadow: 0 4px 6px rgba(79, 70, 229, 0.2);
-        }
-
-        .btn-copy:hover {
-            background: var(--primary-hover);
-            transform: translateY(-1px);
-        }
-
-        .btn-copy.success {
-            background: var(--success);
-            box-shadow: 0 4px 6px rgba(16, 185, 129, 0.2);
-        }
-
-        /* Interactive Tester */
-        .tester-box {
-            background: #f8fafc;
-            border: 1px dashed #cbd5e1;
-            border-radius: 12px;
-            padding: 24px;
-            text-align: center;
-        }
-
-        .tester-input {
-            font-size: 18px !important;
-            text-align: center;
-            padding: 16px !important;
-            margin-bottom: 16px;
-            border: 2px solid var(--border) !important;
-            background: white !important;
-        }
-
-        .tester-input:focus {
-            border-color: var(--primary) !important;
-        }
-
-        .tester-result {
-            background: white;
-            border: 1px solid #e0e7ff;
-            border-radius: 8px;
-            padding: 16px;
-            font-size: 16px;
+            padding: 12px;
+            background: var(--accent);
+            border: none;
+            border-radius: 9px;
+            color: #fff;
             font-weight: 700;
-            color: var(--primary);
-            display: inline-block;
-            min-width: 60%;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.02);
-            word-break: break-all;
+            cursor: pointer;
+            transition: 0.2s;
+            margin-top: 5px;
         }
 
-        .tester-result.wa-mode {
-            color: #25D366;
+        .btn-copy.ok {
+            background: var(--green);
         }
 
-        /* Utilities */
-        .hidden {
-            display: none !important;
+        /* MAIN AREA (EMBED) */
+        .main-area {
+            background: var(--main-bg);
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            overflow: hidden;
         }
 
-        @media (max-width: 900px) {
-            body {
-                overflow: auto;
-                height: auto;
-            }
+        .embed-card {
+            flex: 1;
+            background: #161d2e;
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            border-radius: 12px;
+            overflow: hidden;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+        }
 
-            main {
+        .embed-header {
+            padding: 10px 15px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            font-size: 11px;
+            font-weight: 700;
+            color: var(--text-muted);
+            display: flex;
+            justify-content: space-between;
+        }
+
+        iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+            flex: 1;
+        }
+
+        @media (max-width: 860px) {
+            .app-layout {
                 grid-template-columns: 1fr;
-                height: auto;
             }
 
-            .sidebar-panel {
-                border-right: none;
-                border-bottom: 1px solid var(--border);
-            }
-
-            .content-area {
-                padding: 20px;
+            .sidebar {
+                display: none;
             }
         }
     </style>
 </head>
 
 <body>
-
     <header>
-        <div class="logo-badge">W</div>
-        <div>
-            <h1>Generator Formula Wazza</h1>
-            <p>Alat pembersihan data nombor telefon automatik</p>
+        <div class="hd-left">
+            <div class="hd-logo">W</div>
+            <div>
+                <div class="hd-name">Wazza Formula Generator</div>
+                <div class="hd-sub">Embed Edition · v3.2</div>
+            </div>
         </div>
     </header>
 
-    <main>
-        <aside class="sidebar-panel">
-            <div style="margin-bottom: 24px;">
-                <h2 style="font-size: 16px; color: var(--text-main);">Konfigurasi Data</h2>
-                <p style="font-size: 12px; color: var(--text-muted);">Buka atau tutup menu di bawah sesuka hati anda.
-                </p>
+    <div class="app-layout">
+        <aside class="sidebar">
+            <div class="sb-section-title">Konfigurasi</div>
+
+            <div class="mode-toggle">
+                <button class="mode-btn active" id="tab-wa" onclick="setMode('wa')">🔗 WA Pautan</button>
+                <button class="mode-btn" id="tab-std" onclick="setMode('std')">📱 Nombor Std</button>
             </div>
 
-            <details class="accordion-item" open>
-                <summary class="accordion-header">
-                    1. Asas & Output Formula
-                    <svg class="chevron" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
-                    </svg>
-                </summary>
-                <div class="accordion-content">
-                    <div class="form-group">
-                        <label>Jenis Output</label>
-                        <select id="typeSelect" onchange="updateAll()">
-                            <option value="wa">🔗 Pautan WhatsApp (wa.me/...)</option>
-                            <option value="std">📱 Nombor Standard Sahaja (60...)</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label>Nama Tajuk Kolum Baru</label>
-                        <input type="text" id="headerInput" value="PAUTAN WHATSAPP" oninput="updateAll()">
-                    </div>
-                </div>
-            </details>
+            <div class="field">
+                <div class="field-lbl">Kolum Data (Cth: A)</div>
+                <input id="srcCol" value="A" maxlength="1" oninput="sync()">
+            </div>
 
-            <details class="accordion-item" open>
-                <summary class="accordion-header">
-                    2. Lokasi Data Mentah
-                    <svg class="chevron" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
-                    </svg>
-                </summary>
-                <div class="accordion-content">
+            <div class="field">
+                <div class="field-lbl">Nama Header Baru</div>
+                <input id="headerName" value="PAUTAN WHATSAPP" oninput="sync()">
+            </div>
 
-                    <span class="hint" style="margin-bottom: 8px; margin-top: 0;">Pilih kolum data anda seperti dalam
-                        Google Sheets:</span>
+            <div class="field" id="msgField">
+                <div class="field-lbl">Mesej Auto (Optional)</div>
+                <input id="msgText" placeholder="Hai, nak tanya..." oninput="sync()">
+            </div>
 
-                    <div class="mini-sheet-wrapper">
-                        <div class="ms-header-row">
-                            <div class="ms-corner"></div>
-                            <div class="ms-cols-container" id="msColsContainer">
-                            </div>
-                        </div>
-                        <div class="ms-body-row">
-                            <div class="ms-row-indicator">Baris</div>
-                            <div class="ms-cell-area">
-                                <span style="font-size: 13px; color: #64748b; font-weight:600;">Mula dari:</span>
-                                <input type="number" id="rowInput" value="2" min="1"
-                                    style="width: 70px; padding: 6px 10px; margin: 8px 0;" oninput="updateAll()">
-                            </div>
-                        </div>
-                    </div>
+            <div class="fbox-wrap">
+                <div class="fbox-code" id="fboxCode"></div>
+            </div>
 
-                    <div style="display: flex; gap: 8px; align-items: center;">
-                        <span style="font-size: 12px; color: var(--text-muted);">Kolum Terpilih:</span>
-                        <input type="text" id="colManual" value="A" maxlength="2"
-                            style="text-transform: uppercase; text-align: center; width: 60px; padding: 6px; font-weight: bold;"
-                            oninput="handleManualCol()">
-                    </div>
-
-                </div>
-            </details>
-
-            <details class="accordion-item" id="msgAccordion">
-                <summary class="accordion-header">
-                    3. Tetapan Tambahan (Pilihan)
-                    <svg class="chevron" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
-                    </svg>
-                </summary>
-                <div class="accordion-content">
-                    <div class="form-group">
-                        <label>Mesej Auto (Pre-filled Text)</label>
-                        <input type="text" id="msgInput" placeholder="Cth: Hai, saya berminat..." oninput="updateAll()">
-                        <span class="hint">Ayat ini akan auto-tertaip bila pelanggan klik pautan WhatsApp.</span>
-                    </div>
-                </div>
-            </details>
+            <button class="btn-copy" id="copyBtn" onclick="copyFn()">
+                <span id="copyTxt">Salin Formula</span>
+            </button>
         </aside>
 
-        <section class="content-area">
-
-            <div class="panel-card">
-                <div class="section-label">💻 Kod Formula Generasi</div>
-
-                <div class="editor-container">
-                    <div class="editor-header">
-                        <div class="editor-dots">
-                            <div class="dot r"></div>
-                            <div class="dot y"></div>
-                            <div class="dot g"></div>
-                        </div>
-                        <div class="editor-title">formula.gs</div>
-                    </div>
-                    <div class="formula-display" id="codeDisplay"></div>
+        <main class="main-area">
+            <div class="embed-card">
+                <div class="embed-header">
+                    <span>LIVE GOOGLE SHEETS TESTER</span>
+                    <span id="sheetStatus">Mode: Edit 🟢</span>
                 </div>
-
-                <button class="btn-copy" id="copyBtn" onclick="copyFormula()">
-                    <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24"
-                        xmlns="http://www.w3.org/2000/svg">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                            d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z">
-                        </path>
-                    </svg>
-                    <span id="copyText">Salin Formula ke Clipboard</span>
-                </button>
+                <iframe
+                    src="https://docs.google.com/spreadsheets/d/1S3EBlqCkQtLd4r5hAlI4CHJcGK4wjLtBQinnOKfWY4w/edit?rm=minimal&usp=sharing"></iframe>
             </div>
-
-            <div class="panel-card">
-                <div class="section-label">🧪 Penguji Data (Live Tester)</div>
-                <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 16px;">
-                    Taip nombor bersepah kat bawah ni untuk tengok macam mana formula ni bersihkan data anda.
-                </p>
-                <div class="tester-box">
-                    <input type="text" id="testInput" class="tester-input" placeholder="Cth: +60 12- 345 6789"
-                        value="+60 19- 888 7777" oninput="runTester()">
-                    <div>
-                        <span
-                            style="font-size: 12px; color: var(--text-muted); display: block; margin-bottom: 8px;">Hasil
-                            Bersih:</span>
-                        <div id="testResult" class="tester-result wa-mode">https://wa.me/60198887777</div>
-                    </div>
-                </div>
-            </div>
-
-        </section>
-    </main>
+        </main>
+    </div>
 
     <script>
-        // Generate A-Z for Mini Sheet
-        const ALPHABET = Array.from(Array(26)).map((e, i) => i + 65);
-        const COLUMNS = ALPHABET.map((x) => String.fromCharCode(x));
+        let st = { mode: 'wa', src: 'A', row: 2, hdr: 'PAUTAN WHATSAPP', msg: '' };
 
-        const state = { col: 'A', row: 2, type: 'wa', header: 'PAUTAN WHATSAPP', msg: '' };
+        function getFormula() {
+            const range = st.src + st.row + ':' + st.src;
+            if (st.mode === 'wa') {
+                const mp = st.msg ? ' & "?text=" & ENCODEURL("' + st.msg + '")' : '';
+                return `=LET(\n  nota,"Wazza Digital",\n  columntelefon,${range},\n  namaheader,"${st.hdr}",\n  formuladata,ARRAYFORMULA(\n    IF(columntelefon="","",\n      "https://wa.me/" &\n      REGEXREPLACE(REGEXREPLACE(\n        TO_TEXT(columntelefon),\n        "\\D+",""),"^(60)?0*","60")${mp})),\n  VSTACK(namaheader,formuladata)\n)`;
+            }
+            return `=LET(\n  nota,"Wazza Digital",\n  columntelefon,${range},\n  namaheader,"${st.hdr}",\n  formuladata,ARRAYFORMULA(\n    IF(columntelefon="","",\n      REGEXREPLACE(REGEXREPLACE(\n        TO_TEXT(columntelefon),\n        "\\D+",""),"^(60)?0*","60"))),\n  VSTACK(namaheader,formuladata)\n)`;
+        }
 
-        function buildMiniSheet() {
-            const container = document.getElementById('msColsContainer');
-            container.innerHTML = '';
-            COLUMNS.forEach(c => {
-                const div = document.createElement('div');
-                div.className = 'ms-col' + (c === state.col ? ' active' : '');
-                div.textContent = c;
-                div.onclick = () => {
-                    document.getElementById('colManual').value = c;
-                    handleManualCol();
+        function hl(code) {
+            return code.replace(/\b(LET|ARRAYFORMULA|IF|REGEXREPLACE|TO_TEXT|VSTACK|ENCODEURL)\b/g, '<span class="c-fn">$1</span>')
+                .replace(/"[^"]*"/g, m => '<span class="c-str">' + m + '</span>')
+                .replace(/\b([A-Z]\d+:[A-Z])\b/g, '<span class="c-rng">$1</span>');
+        }
 
-                    // Auto scroll to active column
-                    div.scrollIntoView({ behavior: "smooth", block: "nearest", inline: "center" });
-                };
-                container.appendChild(div);
+        function sync() {
+            st.src = (document.getElementById('srcCol').value || 'A').toUpperCase();
+            st.hdr = document.getElementById('headerName').value;
+            st.msg = document.getElementById('msgText').value.trim();
+            document.getElementById('fboxCode').innerHTML = hl(getFormula());
+        }
+
+        function setMode(m) {
+            st.mode = m;
+            document.getElementById('tab-wa').classList.toggle('active', m === 'wa');
+            document.getElementById('tab-std').classList.toggle('active', m === 'std');
+            document.getElementById('msgField').style.display = m === 'wa' ? 'flex' : 'none';
+            sync();
+        }
+
+        function copyFn() {
+            navigator.clipboard.writeText(getFormula()).then(() => {
+                const b = document.getElementById('copyBtn'), t = document.getElementById('copyTxt');
+                b.classList.add('ok'); t.textContent = 'Berjaya Disalin!';
+                setTimeout(() => { b.classList.remove('ok'); t.textContent = 'Salin Formula'; }, 2000);
             });
         }
 
-        function handleManualCol() {
-            const val = document.getElementById('colManual').value.replace(/[^a-zA-Z]/g, '').toUpperCase();
-            if (val) { state.col = val; buildMiniSheet(); updateAll(); }
-        }
-
-        function getRange() { return `${state.col}${state.row}:${state.col}`; }
-
-        function getRawFormula() {
-            const range = getRange();
-            const header = state.header || "TAJUK KOSONG";
-
-            let msgFormula = state.msg ? ` & "?text=" & ENCODEURL("${state.msg}")` : "";
-            let baseWaLink = `"https://wa.me/" & REGEXREPLACE(REGEXREPLACE(TO_TEXT(columntelefon), "\\D+", ""), "^(60)?0*", "60")` + msgFormula;
-
-            let logicPart = state.type === 'wa'
-                ? `formuladata, ARRAYFORMULA(IF(columntelefon="", "", ${baseWaLink})),\n`
-                : `formuladata, ARRAYFORMULA(IF(columntelefon="", "", REGEXREPLACE(REGEXREPLACE(TO_TEXT(columntelefon), "\\D+", ""), "^(60)?0*", "60"))),\n`;
-
-            return `=LET(\nnota, "Format dijana oleh Wazza Digital",\ncolumntelefon, ${range},\n\nnamaheader, "${header}",\n\n${logicPart}\nVSTACK(namaheader, formuladata)\n)`;
-        }
-
-        function highlightSyntax(code) {
-            let s = code.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
-            s = s.replace(/\b(LET|ARRAYFORMULA|IF|REGEXREPLACE|TO_TEXT|VSTACK|ENCODEURL)\b/g, '<span class="fn">$1</span>');
-            s = s.replace(/\b(nota|columntelefon|namaheader|formuladata)\b/g, '<span class="var">$1</span>');
-            s = s.replace(/"(?:[^"\\]|\\.)*"/g, m => `<span class="str">${m}</span>`);
-            const range = getRange(); s = s.replace(new RegExp(`\\b${range}\\b`, 'g'), `<span class="kw">${range}</span>`);
-            s = s.replace(/^=/, '<span class="op">=</span>');
-            return s;
-        }
-
-        function runTester() {
-            const inputVal = document.getElementById('testInput').value;
-            const resultBox = document.getElementById('testResult');
-
-            if (!inputVal.trim()) {
-                resultBox.textContent = "-";
-                return;
-            }
-
-            let cleanNum = inputVal.replace(/\D/g, '').replace(/^(60)?0*/, '60');
-
-            if (state.type === 'wa') {
-                let msgPreview = state.msg ? `?text=${encodeURIComponent(state.msg)}` : '';
-                resultBox.textContent = `https://wa.me/${cleanNum}${msgPreview}`;
-                resultBox.className = 'tester-result wa-mode';
-            } else {
-                resultBox.textContent = cleanNum;
-                resultBox.className = 'tester-result';
-            }
-        }
-
-        // JS EXCLUSIVITY DIBUANG: Accordion sekarang bebas dibuka/ditutup tanpa paksaan
-
-        function updateAll() {
-            state.type = document.getElementById('typeSelect').value;
-            state.header = document.getElementById('headerInput').value;
-            state.row = parseInt(document.getElementById('rowInput').value) || 2;
-            state.msg = document.getElementById('msgInput').value.trim();
-
-            const msgAccordion = document.getElementById('msgAccordion');
-
-            if (state.type === 'std') {
-                msgAccordion.classList.add('hidden');
-                if (state.header === 'PAUTAN WHATSAPP') {
-                    document.getElementById('headerInput').value = 'NOMBOR TELEFON'; state.header = 'NOMBOR TELEFON';
-                }
-            } else {
-                msgAccordion.classList.remove('hidden');
-                if (state.header === 'NOMBOR TELEFON') {
-                    document.getElementById('headerInput').value = 'PAUTAN WHATSAPP'; state.header = 'PAUTAN WHATSAPP';
-                }
-            }
-
-            document.getElementById('codeDisplay').innerHTML = highlightSyntax(getRawFormula());
-            runTester();
-        }
-
-        function copyFormula() {
-            navigator.clipboard.writeText(getRawFormula()).then(() => {
-                const btn = document.getElementById('copyBtn'); const txt = document.getElementById('copyText');
-                btn.classList.add('success'); txt.textContent = "Berjaya Disalin!";
-                setTimeout(() => { btn.classList.remove('success'); txt.textContent = "Salin Formula ke Clipboard"; }, 2000);
-            });
-        }
-
-        // Initialize
-        buildMiniSheet();
-        updateAll();
+        sync();
     </script>
-
 </body>
 
 </html>

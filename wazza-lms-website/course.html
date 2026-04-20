@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Video Editing Masterclass – Wazza Digital</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;1,400&display=swap" rel="stylesheet"/>
+  <style>
+    :root {
+      --ink: #0d0d0d;
+      --cream: #f5f0e8;
+      --accent: #e8501a;
+      --muted: #6b6b6b;
+      --panel: #1a1a1a;
+      --panel2: #111;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; scrollbar-width: none; -ms-overflow-style: none; }
+    *::-webkit-scrollbar { display: none; }
+    body { font-family: 'Plus Jakarta Sans', sans-serif; background: var(--ink); color: var(--cream); min-height: 100vh; }
+    h1, h2, h3, h4, .syne { font-family: 'Syne', sans-serif; }
+
+    /* TOPBAR */
+    .topbar { background: #0d0d0d; border-bottom: 1px solid rgba(255,255,255,0.1); padding: 0.75rem 1.5rem; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 50; }
+    .topbar-left { display: flex; align-items: center; gap: 1rem; }
+    .back-btn { display: flex; align-items: center; gap: 0.4rem; font-size: 0.8rem; color: rgba(255,255,255,0.55); text-decoration: none; transition: color 0.2s; }
+    .back-btn:hover { color: var(--accent); }
+    .divider-v { width: 1px; height: 20px; background: rgba(255,255,255,0.15); }
+    .course-title-top { font-family: 'Syne', sans-serif; font-size: 0.85rem; font-weight: 700; color: rgba(255,255,255,0.85); }
+    .logo { font-family: 'Syne', sans-serif; font-weight: 800; font-size: 1.1rem; }
+    .logo span { color: var(--accent); }
+    .progress-top { display: flex; align-items: center; gap: 0.75rem; font-size: 0.78rem; color: rgba(255,255,255,0.5); }
+    .progress-top-bar { width: 100px; height: 4px; background: rgba(255,255,255,0.15); }
+    .progress-top-bar-fill { height: 4px; background: var(--accent); width: 50%; }
+
+    /* MAIN LAYOUT */
+    .lms-layout { display: grid; grid-template-columns: 1fr 320px; height: calc(100vh - 53px); }
+
+    /* VIDEO AREA */
+    .video-area { display: flex; flex-direction: column; overflow-y: auto; }
+    .video-wrap { background: #000; position: relative; }
+    .video-wrap iframe { display: block; width: 100%; aspect-ratio: 16/9; border: none; }
+    .video-controls { background: #111; border-bottom: 1px solid rgba(255,255,255,0.08); padding: 0.75rem 1.5rem; display: flex; align-items: center; gap: 1.5rem; flex-wrap: wrap; }
+    .vc-btn { display: flex; align-items: center; gap: 0.4rem; font-size: 0.78rem; color: rgba(255,255,255,0.6); cursor: pointer; background: none; border: none; transition: color 0.2s; padding: 0; font-family: 'Plus Jakarta Sans', sans-serif; }
+    .vc-btn:hover { color: var(--cream); }
+    .vc-btn.accent { color: var(--accent); }
+    .vc-sep { width: 1px; height: 16px; background: rgba(255,255,255,0.15); }
+    .vc-title { font-family: 'Syne', sans-serif; font-weight: 700; font-size: 0.9rem; flex: 1; }
+
+    /* TABS */
+    .content-tabs { padding: 0 1.5rem; border-bottom: 1px solid rgba(255,255,255,0.1); display: flex; gap: 0; background: #111; }
+    .ctab { padding: 0.85rem 1.2rem; font-size: 0.8rem; font-weight: 600; color: rgba(255,255,255,0.45); cursor: pointer; border-bottom: 2px solid transparent; transition: all 0.2s; background: none; border-left: none; border-right: none; border-top: none; font-family: 'Plus Jakarta Sans', sans-serif; }
+    .ctab.active { color: var(--cream); border-bottom-color: var(--accent); }
+    .ctab:hover { color: rgba(255,255,255,0.8); }
+
+    /* DESCRIPTION / NOTES */
+    .tab-panel { display: none; padding: 1.5rem; flex: 1; }
+    .tab-panel.active { display: block; }
+    .lesson-header { margin-bottom: 1.5rem; }
+    .lesson-header h2 { font-size: 1.2rem; font-weight: 800; letter-spacing: -0.3px; margin-bottom: 0.4rem; }
+    .lesson-meta { display: flex; gap: 1rem; font-size: 0.75rem; color: rgba(255,255,255,0.45); }
+    .lesson-desc { font-size: 0.875rem; color: rgba(255,255,255,0.7); line-height: 1.75; margin-bottom: 1.5rem; }
+    .resource-list { list-style: none; }
+    .resource-item { display: flex; align-items: center; gap: 0.75rem; padding: 0.7rem 0; border-bottom: 1px solid rgba(255,255,255,0.07); }
+    .resource-item:last-child { border: none; }
+    .resource-icon { font-size: 1rem; width: 28px; text-align: center; opacity: 0.7; }
+    .resource-name { font-size: 0.83rem; color: rgba(255,255,255,0.75); }
+    .resource-dl { margin-left: auto; font-size: 0.7rem; font-weight: 600; color: var(--accent); cursor: pointer; text-decoration: none; }
+    .notes-area { width: 100%; background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.12); color: var(--cream); padding: 1rem; font-family: 'Plus Jakarta Sans', sans-serif; font-size: 0.85rem; line-height: 1.6; resize: vertical; min-height: 180px; outline: none; }
+    .notes-area:focus { border-color: var(--accent); }
+    .save-btn { margin-top: 0.75rem; background: var(--accent); color: #fff; border: none; padding: 0.5rem 1.2rem; font-family: 'Syne', sans-serif; font-weight: 700; font-size: 0.78rem; cursor: pointer; transition: opacity 0.2s; }
+    .save-btn:hover { opacity: 0.85; }
+
+    /* SIDEBAR / PLAYLIST */
+    .sidebar { background: var(--panel); border-left: 1px solid rgba(255,255,255,0.1); overflow-y: auto; display: flex; flex-direction: column; }
+    .sidebar-head { padding: 1rem 1.2rem; border-bottom: 1px solid rgba(255,255,255,0.1); }
+    .sidebar-head h3 { font-family: 'Syne', sans-serif; font-size: 0.85rem; font-weight: 700; color: rgba(255,255,255,0.6); text-transform: uppercase; letter-spacing: 1.5px; }
+    .progress-row { margin-top: 0.6rem; display: flex; align-items: center; justify-content: space-between; font-size: 0.72rem; color: rgba(255,255,255,0.4); }
+    .sidebar-bar { height: 3px; background: rgba(255,255,255,0.1); margin-top: 0.4rem; }
+    .sidebar-bar-fill { height: 3px; background: var(--accent); width: 50%; }
+
+    .section-head { padding: 0.75rem 1.2rem 0.4rem; font-size: 0.65rem; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: rgba(255,255,255,0.25); }
+    .lesson-item { display: flex; align-items: flex-start; gap: 0.75rem; padding: 0.75rem 1.2rem; border-bottom: 1px solid rgba(255,255,255,0.05); cursor: pointer; transition: background 0.15s; }
+    .lesson-item:hover { background: rgba(255,255,255,0.04); }
+    .lesson-item.active { background: rgba(232,80,26,0.1); border-left: 3px solid var(--accent); }
+    .lesson-item.done .lesson-num { background: #2d9e5f; }
+    .lesson-num { width: 22px; height: 22px; background: rgba(255,255,255,0.1); display: flex; align-items: center; justify-content: center; font-size: 0.65rem; font-weight: 700; color: rgba(255,255,255,0.5); flex-shrink: 0; margin-top: 1px; }
+    .lesson-item.active .lesson-num { background: var(--accent); color: #fff; }
+    .lesson-info { flex: 1; }
+    .lesson-name { font-size: 0.82rem; font-weight: 500; color: rgba(255,255,255,0.8); line-height: 1.3; margin-bottom: 0.2rem; }
+    .lesson-item.active .lesson-name { color: #fff; font-weight: 600; }
+    .lesson-duration { font-size: 0.68rem; color: rgba(255,255,255,0.3); }
+
+    /* RESPONSIVE */
+    @media (max-width: 900px) {
+      .lms-layout { grid-template-columns: 1fr; height: auto; }
+      .sidebar { height: 400px; border-left: none; border-top: 1px solid rgba(255,255,255,0.1); }
+      .topbar .progress-top { display: none; }
+      .vc-title { display: none; }
+    }
+    @media (max-width: 600px) {
+      .topbar { padding: 0.75rem 1rem; }
+      .video-controls { padding: 0.6rem 1rem; gap: 0.75rem; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- TOPBAR -->
+<div class="topbar">
+  <div class="topbar-left">
+    <a href="dashboard.html" class="back-btn">← Dashboard</a>
+    <div class="divider-v"></div>
+    <div class="course-title-top">Complete Video Editing Masterclass</div>
+  </div>
+  <div class="logo" style="display:none; display:flex;">Wazza<span>.</span>Digital</div>
+  <div class="progress-top">
+    <span>6 / 12 lessons</span>
+    <div class="progress-top-bar"><div class="progress-top-bar-fill"></div></div>
+    <span>50%</span>
+  </div>
+</div>
+
+<!-- LAYOUT -->
+<div class="lms-layout">
+
+  <!-- VIDEO AREA -->
+  <div class="video-area">
+
+    <!-- VIDEO PLAYER -->
+    <div class="video-wrap">
+      <iframe
+        src="https://www.youtube.com/embed/jNQXAC9IVRw?rel=0&modestbranding=1"
+        title="Lesson Video"
+        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+        allowfullscreen>
+      </iframe>
+    </div>
+
+    <!-- VIDEO CONTROLS BAR -->
+    <div class="video-controls">
+      <span class="vc-title">Lesson 6 — Advanced Color Grading Techniques</span>
+      <button class="vc-btn">← Prev</button>
+      <div class="vc-sep"></div>
+      <button class="vc-btn accent" onclick="markComplete(this)">✓ Mark Complete</button>
+      <div class="vc-sep"></div>
+      <button class="vc-btn">Next Lesson →</button>
+    </div>
+
+    <!-- TABS -->
+    <div class="content-tabs">
+      <button class="ctab active" onclick="showTab('overview')">Overview</button>
+      <button class="ctab" onclick="showTab('resources')">Resources</button>
+      <button class="ctab" onclick="showTab('notes')">My Notes</button>
+    </div>
+
+    <!-- OVERVIEW -->
+    <div class="tab-panel active" id="tab-overview">
+      <div class="lesson-header">
+        <h2>Advanced Color Grading Techniques</h2>
+        <div class="lesson-meta">
+          <span>⏱ 24 min</span>
+          <span>· Lesson 6 of 12</span>
+          <span>· Section 2: Post-Production</span>
+        </div>
+      </div>
+      <p class="lesson-desc">
+        In this lesson, we dive deep into professional color grading workflows used by top video editors and filmmakers. You'll learn how to use LUTs (Look-Up Tables), manipulate curves, and apply cinematic color profiles that will give your videos a polished, professional look.
+      </p>
+      <p class="lesson-desc">
+        By the end of this lesson, you will be able to: apply and customize LUTs in your editor of choice, correct white balance issues in post, create consistent colour profiles across an entire project, and export color-accurate footage for different platforms.
+      </p>
+      <div style="padding:1rem; background:rgba(232,80,26,0.08); border-left:3px solid var(--accent); font-size:0.82rem; color:rgba(255,255,255,0.7); line-height:1.6;">
+        💡 <strong>Pro Tip:</strong> Always color grade on a calibrated monitor. Your laptop screen may show colors differently than how your audience sees them.
+      </div>
+    </div>
+
+    <!-- RESOURCES -->
+    <div class="tab-panel" id="tab-resources">
+      <div class="lesson-header">
+        <h2>Lesson Resources</h2>
+        <p style="font-size:0.82rem; color:rgba(255,255,255,0.45);">Download the files used in this lesson.</p>
+      </div>
+      <ul class="resource-list">
+        <li class="resource-item">
+          <span class="resource-icon">🎨</span>
+          <span class="resource-name">Cinematic LUT Pack (12 LUTs)</span>
+          <a href="#" class="resource-dl">Download ↓</a>
+        </li>
+        <li class="resource-item">
+          <span class="resource-icon">📄</span>
+          <span class="resource-name">Color Grading Cheat Sheet (PDF)</span>
+          <a href="#" class="resource-dl">Download ↓</a>
+        </li>
+        <li class="resource-item">
+          <span class="resource-icon">🎬</span>
+          <span class="resource-name">Sample Footage (RAW .mp4)</span>
+          <a href="#" class="resource-dl">Download ↓</a>
+        </li>
+        <li class="resource-item">
+          <span class="resource-icon">📁</span>
+          <span class="resource-name">Premiere Pro Project File</span>
+          <a href="#" class="resource-dl">Download ↓</a>
+        </li>
+      </ul>
+    </div>
+
+    <!-- NOTES -->
+    <div class="tab-panel" id="tab-notes">
+      <div class="lesson-header">
+        <h2>My Notes</h2>
+        <p style="font-size:0.82rem; color:rgba(255,255,255,0.45);">Jot down key takeaways from this lesson.</p>
+      </div>
+      <textarea class="notes-area" placeholder="Start typing your notes here...
+
+e.g. — Use Lumetri Color panel in Premiere Pro to apply LUTs..."></textarea>
+      <button class="save-btn" onclick="saveNotes()">Save Notes</button>
+      <p id="save-msg" style="font-size:0.75rem; color:#2d9e5f; margin-top:0.5rem; display:none;">✓ Notes saved!</p>
+    </div>
+
+  </div>
+
+  <!-- SIDEBAR PLAYLIST -->
+  <div class="sidebar">
+    <div class="sidebar-head">
+      <h3>Course Playlist</h3>
+      <div class="progress-row">
+        <span>6 of 12 complete</span>
+        <span>50%</span>
+      </div>
+      <div class="sidebar-bar"><div class="sidebar-bar-fill"></div></div>
+    </div>
+
+    <div class="section-head">Section 1 — Getting Started</div>
+
+    <div class="lesson-item done" onclick="loadLesson(this, 'Welcome & Course Overview', 'https://www.youtube.com/embed/jNQXAC9IVRw?rel=0')">
+      <div class="lesson-num">✓</div>
+      <div class="lesson-info">
+        <div class="lesson-name">Welcome & Course Overview</div>
+        <div class="lesson-duration">⏱ 5 min</div>
+      </div>
+    </div>
+
+    <div class="lesson-item done" onclick="loadLesson(this, 'Setting Up Your Workspace', 'https://www.youtube.com/embed/jNQXAC9IVRw?rel=0')">
+      <div class="lesson-num">✓</div>
+      <div class="lesson-info">
+        <div class="lesson-name">Setting Up Your Workspace</div>
+        <div class="lesson-duration">⏱ 12 min</div>
+      </div>
+    </div>
+
+    <div class="lesson-item done" onclick="loadLesson(this, 'Importing & Organising Footage', 'https://www.youtube.com/embed/jNQXAC9IVRw?rel=0')">
+      <div class="lesson-num">✓</div>
+      <div class="lesson-info">
+        <div class="lesson-name">Importing & Organising Footage</div>
+        <div class="lesson-duration">⏱ 18 min</div>
+      </div>
+    </div>
+
+    <div class="section-head">Section 2 — Post-Production</div>
+
+    <div class="lesson-item done" onclick="loadLesson(this, 'Basic Cuts & Transitions', 'https://www.youtube.com/embed/jNQXAC9IVRw?rel=0')">
+      <div class="lesson-num">✓</div>
+      <div class="lesson-info">
+        <div class="lesson-name">Basic Cuts & Transitions</div>
+        <div class="lesson-duration">⏱ 22 min</div>
+      </div>
+    </div>
+
+    <div class="lesson-item done" onclick="loadLesson(this, 'Working with Audio', 'https://www.youtube.com/embed/jNQXAC9IVRw?rel=0')">
+      <div class="lesson-num">✓</div>
+      <div class="lesson-info">
+        <div class="lesson-name">Working with Audio</div>
+        <div class="lesson-duration">⏱ 20 min</div>
+      </div>
+    </div>
+
+    <div class="lesson-item done" onclick="loadLesson(this, 'Text, Titles & Motion Graphics', 'https://www.youtube.com/embed/jNQXAC9IVRw?rel=0')">
+      <div class="lesson-num">✓</div>
+      <div class="lesson-info">
+        <div class="lesson-name">Text, Titles & Motion Graphics</div>
+        <div class="lesson-duration">⏱ 28 min</div>
+      </div>
+    </div>
+
+    <div class="lesson-item active" onclick="loadLesson(this, 'Advanced Color Grading Techniques', 'https://www.youtube.com/embed/jNQXAC9IVRw?rel=0')">
+      <div class="lesson-num">6</div>
+      <div class="lesson-info">
+        <div class="lesson-name">Advanced Color Grading Techniques</div>
+        <div class="lesson-duration">⏱ 24 min · Now playing</div>
+      </div>
+    </div>
+
+    <div class="section-head">Section 3 — Advanced Techniques</div>
+
+    <div class="lesson-item" onclick="loadLesson(this, 'Speed Ramping & Time Effects', 'https://www.youtube.com/embed/jNQXAC9IVRw?rel=0')">
+      <div class="lesson-num">8</div>
+      <div class="lesson-info">
+        <div class="lesson-name">Speed Ramping & Time Effects</div>
+        <div class="lesson-duration">⏱ 19 min</div>
+      </div>
+    </div>
+
+    <div class="lesson-item" onclick="loadLesson(this, 'Green Screen & VFX Basics', 'https://www.youtube.com/embed/jNQXAC9IVRw?rel=0')">
+      <div class="lesson-num">9</div>
+      <div class="lesson-info">
+        <div class="lesson-name">Green Screen & VFX Basics</div>
+        <div class="lesson-duration">⏱ 31 min</div>
+      </div>
+    </div>
+
+    <div class="lesson-item" onclick="loadLesson(this, 'Exporting for YouTube, Instagram & Web', 'https://www.youtube.com/embed/jNQXAC9IVRw?rel=0')">
+      <div class="lesson-num">10</div>
+      <div class="lesson-info">
+        <div class="lesson-name">Exporting for YouTube, Instagram & Web</div>
+        <div class="lesson-duration">⏱ 16 min</div>
+      </div>
+    </div>
+
+    <div class="section-head">Section 4 — Final Project</div>
+
+    <div class="lesson-item" onclick="loadLesson(this, 'Your Final Edit – Brief & Instructions', 'https://www.youtube.com/embed/jNQXAC9IVRw?rel=0')">
+      <div class="lesson-num">11</div>
+      <div class="lesson-info">
+        <div class="lesson-name">Your Final Edit – Brief & Instructions</div>
+        <div class="lesson-duration">⏱ 10 min</div>
+      </div>
+    </div>
+
+    <div class="lesson-item" onclick="loadLesson(this, 'Course Wrap-Up & Next Steps', 'https://www.youtube.com/embed/jNQXAC9IVRw?rel=0')">
+      <div class="lesson-num">12</div>
+      <div class="lesson-info">
+        <div class="lesson-name">Course Wrap-Up & Next Steps</div>
+        <div class="lesson-duration">⏱ 8 min</div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+  function showTab(id) {
+    document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.ctab').forEach(t => t.classList.remove('active'));
+    document.getElementById('tab-' + id).classList.add('active');
+    event.target.classList.add('active');
+  }
+
+  function loadLesson(el, title, url) {
+    // Update active state
+    document.querySelectorAll('.lesson-item').forEach(i => i.classList.remove('active'));
+    el.classList.add('active');
+    // Update iframe
+    document.querySelector('iframe').src = url;
+    // Update title bar
+    document.querySelector('.vc-title').textContent = title;
+    document.querySelector('.course-title-top').textContent = 'Complete Video Editing Masterclass';
+    // Reset to overview tab
+    showTabById('overview');
+  }
+
+  function showTabById(id) {
+    document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.ctab').forEach(t => t.classList.remove('active'));
+    document.getElementById('tab-' + id).classList.add('active');
+    document.querySelectorAll('.ctab')[0].classList.add('active');
+  }
+
+  function markComplete(btn) {
+    btn.textContent = '✓ Completed!';
+    btn.style.color = '#2d9e5f';
+    btn.disabled = true;
+    // Mark current lesson as done in sidebar
+    const active = document.querySelector('.lesson-item.active');
+    if (active) {
+      active.classList.add('done');
+      active.querySelector('.lesson-num').textContent = '✓';
+    }
+  }
+
+  function saveNotes() {
+    const msg = document.getElementById('save-msg');
+    msg.style.display = 'block';
+    setTimeout(() => msg.style.display = 'none', 2500);
+  }
+</script>
+</body>
+</html>

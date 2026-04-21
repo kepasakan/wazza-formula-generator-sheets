@@ -1,0 +1,806 @@
+/* ============================================================
+   WAZZA ACADEMY — MOBILE.CSS
+   Mobile-first responsive overrides
+   Tambah <link rel="stylesheet" href="mobile.css" /> pada
+   semua HTML files SELEPAS styles.css
+   ============================================================ */
+
+/* ============================================================
+   SHARED / GLOBAL
+   ============================================================ */
+@media (max-width: 767px) {
+
+    /* Pastikan font lebih besar untuk keterbacaan di mobile */
+    body {
+        font-size: 15px;
+        -webkit-text-size-adjust: 100%;
+    }
+
+    /* Touch-friendly tap targets minimum 44px */
+    button,
+    a,
+    input,
+    select,
+    textarea {
+        min-height: 44px;
+    }
+
+    /* Scrollbar sembunyikan pada mobile */
+    html {
+        scrollbar-width: none;
+    }
+
+    html::-webkit-scrollbar {
+        display: none;
+    }
+}
+
+
+/* ============================================================
+   LOGIN PAGE — login.html
+   ============================================================ */
+@media (max-width: 767px) {
+
+    /* Sembunyikan panel kiri (decorative) — tunjuk form sahaja */
+    .auth-wrapper {
+        grid-template-columns: 1fr !important;
+        min-height: 100dvh;
+    }
+
+    .auth-left {
+        display: none !important;
+    }
+
+    .auth-right {
+        padding: 1.5rem 1.25rem;
+        align-items: flex-start;
+        padding-top: 2.5rem;
+        min-height: 100dvh;
+    }
+
+    .auth-form-wrap {
+        max-width: 100%;
+        width: 100%;
+    }
+
+    /* Logo mini di atas form */
+    .auth-right::before {
+        content: '';
+        display: none;
+    }
+
+    /* Tambah logo mini di atas untuk mobile */
+    .auth-back {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        margin-bottom: 1.5rem;
+        font-size: 0.85rem;
+        padding: 0.5rem 0;
+    }
+
+    /* Tab */
+    .auth-tabs {
+        margin-bottom: 1.75rem;
+    }
+
+    .auth-tab {
+        padding: 0.85rem;
+        font-size: 0.9rem;
+    }
+
+    /* Heading */
+    .auth-heading {
+        font-size: 1.5rem;
+        margin-bottom: 0.25rem;
+    }
+
+    .auth-sub {
+        font-size: 0.85rem;
+        margin-bottom: 1.5rem;
+    }
+
+    /* Form fields lebih besar untuk jari */
+    .form-group {
+        margin-bottom: 1rem;
+    }
+
+    .form-group label {
+        font-size: 0.72rem;
+        margin-bottom: 0.35rem;
+    }
+
+    .form-group input {
+        padding: 0.85rem 1rem;
+        font-size: 1rem;
+        /* Elak auto-zoom iOS */
+        border-radius: 10px;
+    }
+
+    /* Butang submit */
+    .btn-submit {
+        padding: 1rem;
+        font-size: 1rem;
+        border-radius: 12px;
+        touch-action: manipulation;
+    }
+
+    /* Checkbox */
+    .form-check {
+        margin-bottom: 1.25rem;
+    }
+
+    .form-check label {
+        font-size: 0.85rem;
+        line-height: 1.5;
+    }
+
+    /* Forgot password */
+    .forgot-row {
+        margin-bottom: 1.25rem;
+    }
+
+    .forgot-row a {
+        font-size: 0.82rem;
+        padding: 0.5rem 0;
+        display: inline-block;
+    }
+
+    /* Divider */
+    .divider {
+        margin: 1.25rem 0;
+    }
+
+    /* Switch text */
+    .switch-text {
+        font-size: 0.88rem;
+        padding-bottom: 1rem;
+    }
+}
+
+
+/* ============================================================
+   COURSE PAGE — course.html
+   ============================================================ */
+@media (max-width: 767px) {
+
+    /* Body overflow untuk scroll */
+    body {
+        overflow: auto !important;
+    }
+
+    /* ── TOPBAR ── */
+    .topbar {
+        padding: 0 1rem;
+        height: 52px;
+        position: sticky;
+        top: 0;
+        z-index: 50;
+    }
+
+    .topbar-logo-text {
+        font-size: 0.88rem;
+    }
+
+    .course-name-top {
+        display: none !important;
+        /* Sembunyikan nama kursus di topbar mobile */
+    }
+
+    .divider-v {
+        display: none;
+    }
+
+    /* Progress di topbar — padat untuk mobile */
+    .prog-top {
+        display: none !important;
+        /* Sembunyikan bar, ada dalam sidebar */
+    }
+
+    /* Butang toggle panel */
+    .btn-toggle-panel {
+        padding: 0.4rem 0.7rem;
+        font-size: 0.7rem;
+    }
+
+    /* Logout button teks sembunyikan kalau ada */
+    .btn-logout-text {
+        display: none;
+    }
+
+    /* ── LMS LAYOUT ── */
+    .lms,
+    .lms.panel-open {
+        display: flex !important;
+        flex-direction: column !important;
+        grid-template-columns: unset !important;
+        height: auto !important;
+        overflow: visible !important;
+    }
+
+    /* ── VIDEO AREA ── */
+    .vid-area {
+        width: 100%;
+        overflow: visible;
+    }
+
+    /* ── WELCOME SCREEN ── */
+    .welcome-screen {
+        min-height: calc(100dvh - 52px);
+        padding: 2rem 1.25rem;
+    }
+
+    .welcome-screen h1 {
+        font-size: 1.5rem !important;
+        letter-spacing: -0.3px;
+    }
+
+    .welcome-screen p {
+        font-size: 0.84rem;
+        max-width: 100%;
+    }
+
+    .welcome-logo-wrap {
+        width: 52px;
+        height: 52px;
+        margin-bottom: 1.25rem;
+    }
+
+    /* Hint arrow: tukar arah ke bawah untuk mobile */
+    .welcome-hint {
+        flex-direction: column;
+        text-align: center;
+        gap: 0.4rem;
+        padding: 0.75rem 1rem;
+    }
+
+    .hint-arrow {
+        animation: bounceD 1.8s ease-in-out infinite;
+    }
+
+    @keyframes bounceD {
+
+        0%,
+        100% {
+            transform: translateY(0);
+        }
+
+        50% {
+            transform: translateY(5px);
+        }
+    }
+
+    /* ── VIDEO WRAP ── */
+    .vid-wrap iframe {
+        width: 100%;
+        aspect-ratio: 16 / 9;
+    }
+
+    /* Error note */
+    .vid-error-note {
+        padding: 0.5rem 1rem;
+        font-size: 0.7rem;
+        flex-wrap: wrap;
+    }
+
+    /* ── VIDEO CONTROLS ── */
+    .vid-controls {
+        padding: 0.5rem 0.9rem;
+        gap: 0.6rem;
+        flex-wrap: nowrap;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        scrollbar-width: none;
+        justify-content: space-between;
+    }
+
+    .vid-controls::-webkit-scrollbar {
+        display: none;
+    }
+
+    .vc-title {
+        display: none !important;
+        /* Guna heading dari tab overview sahaja */
+    }
+
+    .vc-btn {
+        font-size: 0.72rem;
+        gap: 0.25rem;
+        white-space: nowrap;
+        flex-shrink: 0;
+    }
+
+    /* Besarkan butang mark selesai */
+    #btn-mark {
+        font-size: 0.72rem;
+        padding: 0.3rem 0.6rem;
+        border-radius: 6px;
+        border: 1px solid rgba(52, 168, 83, 0.3);
+        background: rgba(52, 168, 83, 0.08);
+    }
+
+    .vc-sep {
+        display: none;
+    }
+
+    /* ── TABS ── */
+    .c-tabs {
+        padding: 0 0.5rem;
+        overflow-x: auto;
+        scrollbar-width: none;
+        -webkit-overflow-scrolling: touch;
+        flex-wrap: nowrap;
+    }
+
+    .c-tabs::-webkit-scrollbar {
+        display: none;
+    }
+
+    .ctab {
+        padding: 0.7rem 0.85rem;
+        font-size: 0.73rem;
+        white-space: nowrap;
+        flex-shrink: 0;
+    }
+
+    /* ── TAB PANELS ── */
+    .tab-panel {
+        padding: 1rem 1.1rem;
+    }
+
+    .lesson-hd h2 {
+        font-size: 0.95rem;
+        line-height: 1.4;
+    }
+
+    .lesson-desc {
+        font-size: 0.83rem;
+    }
+
+    .tip-box {
+        font-size: 0.78rem;
+        padding: 0.75rem 0.9rem;
+    }
+
+    /* Notes textarea */
+    .notes-area {
+        font-size: 0.95rem;
+        /* Elak zoom pada iOS */
+        min-height: 140px;
+    }
+
+    .save-btn {
+        width: 100%;
+        padding: 0.75rem;
+        font-size: 0.85rem;
+        border-radius: 10px;
+    }
+
+    /* ── SIDEBAR PLAYLIST ── */
+    .pl-sidebar {
+        width: 100%;
+        border-left: none !important;
+        border-top: 1px solid var(--border);
+        height: auto !important;
+        max-height: none !important;
+        overflow: visible !important;
+    }
+
+    /* Sidebar: tunjuk apabila panel-open sahaja pada mobile */
+    .lms:not(.panel-open) .pl-sidebar {
+        display: none;
+    }
+
+    .lms.panel-open .pl-sidebar {
+        display: flex;
+    }
+
+    .pl-head {
+        padding: 0.8rem 1rem;
+    }
+
+    .pl-head h3 {
+        font-size: 0.7rem;
+    }
+
+    .pl-prog {
+        font-size: 0.65rem;
+    }
+
+    .sec-head {
+        padding: 0.8rem 1rem 0.3rem;
+        font-size: 0.58rem;
+    }
+
+    .lesson-item {
+        padding: 0.9rem 1rem;
+        gap: 0.7rem;
+    }
+
+    .l-num {
+        width: 24px;
+        height: 24px;
+        border-radius: 7px;
+        font-size: 0.64rem;
+        flex-shrink: 0;
+    }
+
+    .l-name {
+        font-size: 0.82rem;
+        line-height: 1.35;
+    }
+
+    .l-dur {
+        font-size: 0.66rem;
+    }
+}
+
+
+/* ============================================================
+   INDEX PAGE — index.html (redirect splash)
+   ============================================================ */
+@media (max-width: 767px) {
+    /* Index page hanya redirect, tiada UI khusus */
+}
+
+
+/* ============================================================
+   STYLES.CSS — Global Components pada mobile
+   ============================================================ */
+@media (max-width: 767px) {
+
+    /* ── NAV ── */
+    nav {
+        padding: 0.8rem 0;
+    }
+
+    .nav-inner {
+        padding: 0 1rem;
+    }
+
+    .logo-text {
+        font-size: 1.1rem;
+    }
+
+    /* Hamburger menu */
+    .hamburger {
+        display: flex !important;
+    }
+
+    .nav-links {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(10, 10, 15, 0.97);
+        backdrop-filter: blur(20px);
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        gap: 2rem;
+        z-index: 99;
+    }
+
+    .nav-links.open {
+        display: flex !important;
+    }
+
+    .nav-links a {
+        font-size: 1.1rem;
+        font-weight: 600;
+        color: var(--text) !important;
+    }
+
+    .btn-nav {
+        padding: 0.7rem 1.8rem;
+        font-size: 0.95rem;
+    }
+
+    /* ── HERO ── */
+    .hero {
+        flex-direction: column;
+        padding: 6.5rem 1.25rem 3rem;
+        gap: 2rem;
+        min-height: auto;
+        text-align: center;
+    }
+
+    .hero-content {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .hero h1 {
+        font-size: clamp(1.8rem, 7vw, 2.5rem);
+        letter-spacing: -1px;
+        margin-bottom: 1rem;
+    }
+
+    .hero-sub {
+        font-size: 0.95rem;
+        max-width: 100%;
+        text-align: center;
+    }
+
+    .hero-ctas {
+        justify-content: center;
+        gap: 0.6rem;
+    }
+
+    .btn-primary {
+        padding: 0.85rem 1.5rem;
+        font-size: 0.9rem;
+    }
+
+    .btn-primary.btn-lg {
+        padding: 0.9rem 1.8rem;
+        font-size: 0.95rem;
+    }
+
+    .hero-stats {
+        justify-content: center;
+        flex-wrap: wrap;
+        gap: 1rem;
+    }
+
+    .stat-divider {
+        display: none;
+    }
+
+    .hero-stat strong {
+        font-size: 1.2rem;
+    }
+
+    /* Hero visual — kecilkan floating cards */
+    .hero-visual {
+        flex: none;
+        width: 100%;
+        height: 260px;
+        overflow: hidden;
+    }
+
+    .floating-card {
+        transform: scale(0.78);
+        transform-origin: top left;
+    }
+
+    .card-sheets {
+        top: 5%;
+        left: 5%;
+    }
+
+    .card-looker {
+        top: 40%;
+        right: -20px;
+    }
+
+    .card-workspace {
+        bottom: 0;
+        left: 10%;
+    }
+
+    /* ── TICKER ── */
+    .ticker {
+        padding: 0.7rem 0;
+    }
+
+    /* ── SECTION HEADERS ── */
+    .section-header {
+        margin-bottom: 2rem;
+        padding: 0 0.5rem;
+    }
+
+    .section-header h2 {
+        font-size: clamp(1.5rem, 5vw, 2rem);
+    }
+
+    .section-header p {
+        font-size: 0.88rem;
+        max-width: 100%;
+    }
+
+    /* ── COURSES ── */
+    .courses-section {
+        padding: 3rem 0;
+    }
+
+    .course-grid {
+        grid-template-columns: 1fr !important;
+        gap: 1.25rem;
+        padding: 0 1rem;
+    }
+
+    .card-body {
+        padding: 1.1rem;
+    }
+
+    .card-title {
+        font-size: 1rem;
+    }
+
+    .card-desc {
+        font-size: 0.83rem;
+    }
+
+    .card-price {
+        font-size: 1.1rem;
+    }
+
+    .btn-card {
+        font-size: 0.8rem;
+        padding: 0.55rem 1rem;
+    }
+
+    /* ── FEATURES ── */
+    .features-section {
+        padding: 3rem 0;
+    }
+
+    .features-grid {
+        grid-template-columns: 1fr !important;
+        gap: 1rem;
+        padding: 0 1rem;
+    }
+
+    .feature-card {
+        padding: 1.5rem 1.25rem;
+    }
+
+    /* ── TESTIMONIALS ── */
+    .testimonials-section {
+        padding: 3rem 0;
+    }
+
+    .testimonial-grid {
+        grid-template-columns: 1fr !important;
+        gap: 1rem;
+        padding: 0 1rem;
+    }
+
+    .testimonial-card {
+        padding: 1.5rem;
+    }
+
+    /* ── CTA ── */
+    .cta-section {
+        padding: 3rem 0;
+    }
+
+    .cta-box {
+        padding: 2.5rem 1.25rem;
+        border-radius: 16px;
+        margin: 0 1rem;
+    }
+
+    .cta-box h2 {
+        font-size: clamp(1.3rem, 5vw, 1.8rem);
+    }
+
+    /* ── FOOTER ── */
+    footer {
+        padding-top: 2rem;
+    }
+
+    .footer-inner {
+        flex-direction: column;
+        gap: 1.5rem;
+        padding: 0 1rem 1.5rem;
+    }
+
+    .footer-brand {
+        max-width: 100%;
+    }
+
+    .footer-links {
+        flex-direction: column;
+        gap: 1.5rem;
+    }
+
+    .footer-bottom {
+        padding: 1rem 1rem;
+    }
+
+    .footer-bottom p {
+        text-align: center;
+    }
+
+    /* ── CONTAINER ── */
+    .container {
+        padding: 0 1rem;
+    }
+}
+
+
+/* ============================================================
+   TABLET — 768px to 1023px
+   ============================================================ */
+@media (min-width: 768px) and (max-width: 1023px) {
+
+    /* Login */
+    .auth-left {
+        padding: 2rem;
+    }
+
+    .left-quote {
+        font-size: 1.9rem;
+    }
+
+    /* Hero */
+    .hero {
+        padding: 7rem 2rem 4rem;
+        gap: 2.5rem;
+    }
+
+    .hero h1 {
+        font-size: 2.8rem;
+    }
+
+    .hero-visual {
+        flex: 0 0 300px;
+    }
+
+    /* Course grid */
+    .course-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    /* Features */
+    .features-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    /* Course page sidebar */
+    .lms.panel-open {
+        grid-template-columns: 1fr 280px;
+    }
+
+    /* Topbar */
+    .course-name-top {
+        max-width: 200px;
+    }
+}
+
+
+/* ============================================================
+   SAFE AREA (Notch / Island support — iPhone, Android)
+   ============================================================ */
+@supports (padding: env(safe-area-inset-top)) {
+    @media (max-width: 767px) {
+
+        .topbar {
+            padding-left: max(1rem, env(safe-area-inset-left));
+            padding-right: max(1rem, env(safe-area-inset-right));
+        }
+
+        .auth-right {
+            padding-left: max(1.25rem, env(safe-area-inset-left));
+            padding-right: max(1.25rem, env(safe-area-inset-right));
+            padding-bottom: max(1.5rem, env(safe-area-inset-bottom));
+        }
+
+        nav {
+            padding-top: max(0.8rem, env(safe-area-inset-top));
+        }
+
+        .nav-links {
+            padding-top: max(2rem, env(safe-area-inset-top));
+            padding-bottom: max(2rem, env(safe-area-inset-bottom));
+        }
+    }
+}
+
+
+/* ============================================================
+   UTILITY: Prevent horizontal scroll globally
+   ============================================================ */
+@media (max-width: 767px) {
+
+    html,
+    body {
+        max-width: 100vw;
+        overflow-x: hidden;
+    }
+}

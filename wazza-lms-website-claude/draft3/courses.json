@@ -1,0 +1,31 @@
+{
+    "courses": [
+        {
+            "id": "autocrat",
+            "title": "Mastering Autocrat: Automasi Dokumen",
+            "category": "Autocrat",
+            "sections": [
+                {
+                    "title": "Modul 1: Persediaan Data",
+                    "lessons": [
+                        {
+                            "id": "auto-01",
+                            "title": "1.1 Pengenalan & Setup Google Form",
+                            "duration": 8,
+                            "videoUrl": "https://youtu.be/QMZBxdYJZc0?si=v1xdgqHtF7y70UFc",
+                            "description": "Cara bina form yang hantar data ke Sheets untuk diproses oleh Autocrat.",
+                            "resources": [
+                                {
+                                    "icon": "📊",
+                                    "name": "Template Google Sheets (Copy)",
+                                    "url": "https://drive.google.com/file/d/1Mnr-eTaVQb_fwJ-7a35iAUSr_O1UtIey/view",
+                                    "label": "Gunakan Template ↗"
+                                }
+                            ]
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+}

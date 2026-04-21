@@ -1,0 +1,259 @@
+/* --- DRAFT 3: NEW COMPONENTS --- */
+
+/* Empty State - Skrin Welcome ala Gemini */
+.empty-box {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    height: 60vh;
+    padding: 2rem;
+    background: radial-gradient(circle at center, rgba(52, 168, 83, 0.05) 0%, transparent 70%);
+}
+
+.empty-box svg {
+    margin-bottom: 1.5rem;
+    filter: drop-shadow(0 0 10px rgba(52, 168, 83, 0.3));
+}
+
+/* YouTube Fallback Section */
+.youtube-fallback {
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 1rem 1.5rem;
+    margin: 1rem 1.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 1rem;
+}
+
+.btn-yt-outline {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    border: 1px solid #FF0000;
+    /* Warna merah YouTube */
+    color: #FF0000 !important;
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    transition: all 0.2s ease;
+}
+
+.btn-yt-outline:hover {
+    background: rgba(255, 0, 0, 0.1);
+    transform: translateY(-1px);
+}
+
+/* Playlist Sidebar Adjustments */
+.pl-sidebar {
+    background: var(--bg2);
+    border-left: 1px solid var(--border);
+    height: calc(100vh - 60px);
+    overflow-y: auto;
+}
+
+.pl-head {
+    padding: 1.5rem;
+    border-bottom: 1px solid var(--border);
+    background: var(--bg2);
+    position: sticky;
+    top: 0;
+    z-index: 10;
+}
+
+/* =========================================
+   DRAFT 3: LMS SINGLE PAGE LAYOUT
+========================================= */
+
+/* Warna Base & Background */
+body {
+    background: var(--bg, #08080d);
+    color: var(--text, #fff);
+    margin: 0;
+    font-family: 'Inter', sans-serif;
+    overflow: hidden;
+    /* Elak scroll luar */
+}
+
+/* Topbar */
+.topbar {
+    background: rgba(8, 8, 13, 0.9);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    padding: 0.75rem 1.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 60px;
+    box-sizing: border-box;
+}
+
+.logo-text {
+    font-family: 'Space Grotesk';
+    font-weight: 700;
+    font-size: 1.25rem;
+}
+
+.logo-dot {
+    color: #34A853;
+}
+
+.logout-btn {
+    background: transparent;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: #fff;
+    padding: 0.4rem 1rem;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 0.8rem;
+}
+
+.logout-btn:hover {
+    border-color: #EA4335;
+    color: #EA4335;
+}
+
+/* Struktur Utama Kiri & Kanan */
+.lms {
+    display: grid;
+    grid-template-columns: 1fr 320px;
+    /* Video ambil baki ruang, Sidebar 320px */
+    height: calc(100vh - 60px);
+}
+
+.vid-area {
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+    background: #0a0a0f;
+}
+
+.pl-sidebar {
+    background: #12121a;
+    border-left: 1px solid rgba(255, 255, 255, 0.08);
+    overflow-y: auto;
+}
+
+/* Empty State & Video Wrap */
+.empty-box {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    height: 60vh;
+    padding: 2rem;
+}
+
+.vid-wrap iframe {
+    display: block;
+    width: 100%;
+    aspect-ratio: 16/9;
+    border: none;
+}
+
+/* Tabs Kawalan */
+.c-tabs {
+    display: flex;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    background: #12121a;
+    padding: 0 1.5rem;
+}
+
+.ctab {
+    background: none;
+    border: none;
+    color: rgba(255, 255, 255, 0.5);
+    padding: 1rem 1.5rem;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 0.85rem;
+    border-bottom: 2px solid transparent;
+    transition: all 0.2s;
+}
+
+.ctab.active {
+    color: #fff;
+    border-bottom-color: #34A853;
+}
+
+.ctab:hover {
+    color: #fff;
+}
+
+.tab-panel {
+    display: none;
+    padding: 1.5rem;
+    background: #08080d;
+}
+
+.tab-panel.active {
+    display: block;
+}
+
+/* Sidebar Default: Hide (Collapsed) */
+.pl-sidebar {
+    width: 320px;
+    transition: margin-right 0.3s ease, transform 0.3s ease;
+}
+
+.pl-sidebar.collapsed {
+    margin-right: -320px;
+    /* Tolak keluar dari skrin */
+}
+
+/* Grid layout kena responsif dengan sidebar */
+.lms {
+    display: flex;
+    /* Tukar dari grid ke flex supaya senang collapse */
+    overflow: hidden;
+}
+
+.vid-area {
+    flex: 1;
+    transition: all 0.3s ease;
+}
+
+/* Styling untuk Butang Collapse */
+.icon-btn {
+    background: transparent;
+    border: none;
+    color: #fff;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    padding: 8px;
+    border-radius: 6px;
+}
+
+.icon-btn:hover {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+/* Styling untuk Course Picker Grid */
+.course-grid-small {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+    width: 100%;
+    max-width: 800px;
+}
+
+.course-item-card {
+    background: #12121a;
+    border: 1px solid var(--border);
+    padding: 1.5rem;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: transform 0.2s;
+}
+
+.course-item-card:hover {
+    border-color: var(--green);
+    transform: translateY(-3px);
+}

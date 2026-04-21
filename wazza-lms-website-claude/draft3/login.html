@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="ms">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Log Masuk – Wazza Academy</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&family=Space+Grotesk:wght@700&display=swap"
+        rel="stylesheet" />
+    <style>
+        :root {
+            --bg: #08080d;
+            --card: #12121a;
+            --green: #34A853;
+            --text: #ffffff;
+            --text-dim: rgba(255, 255, 255, 0.6);
+            --border: rgba(255, 255, 255, 0.08);
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: var(--bg);
+            color: var(--text);
+            font-family: 'Inter', sans-serif;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+        }
+
+        .login-card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            padding: 2.5rem;
+            border-radius: 16px;
+            width: 100%;
+            max-width: 360px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+            text-align: center;
+        }
+
+        .logo {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .logo span {
+            color: var(--green);
+        }
+
+        .subtitle {
+            color: var(--text-dim);
+            font-size: 0.85rem;
+            margin-bottom: 2rem;
+        }
+
+        .form-group {
+            text-align: left;
+            margin-bottom: 1.2rem;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: var(--text-dim);
+            margin-bottom: 0.4rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        input {
+            width: 100%;
+            padding: 0.8rem 1rem;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            color: #fff;
+            font-size: 0.9rem;
+            box-sizing: border-box;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+
+        input:focus {
+            border-color: var(--green);
+        }
+
+        .btn-login {
+            width: 100%;
+            padding: 0.9rem;
+            background: var(--green);
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 0.95rem;
+            cursor: pointer;
+            margin-top: 1rem;
+            transition: transform 0.2s, background 0.2s;
+        }
+
+        .btn-login:hover {
+            background: #2d9247;
+            transform: translateY(-1px);
+        }
+
+        .error-msg {
+            color: #EA4335;
+            font-size: 0.8rem;
+            margin-top: 1rem;
+            display: none;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="login-card">
+        <div class="logo">Wazza<span>.</span>Academy</div>
+        <div class="subtitle">Log masuk untuk akses modul Autocrat.</div>
+
+        <div class="form-group">
+            <label>Alamat E-mel</label>
+            <input type="email" id="email" placeholder="anda@contoh.com" />
+        </div>
+
+        <div class="form-group">
+            <label>Kata Laluan</label>
+            <input type="password" id="password" placeholder="••••••••" />
+        </div>
+
+        <button class="btn-login" onclick="handleLogin()">Masuk Sekarang →</button>
+        <div id="error-box" class="error-msg">E-mel atau kata laluan salah.</div>
+    </div>
+
+    <script src="app.js"></script>
+    <script>
+        async function handleLogin() {
+            const email = document.getElementById('email').value;
+            const pass = document.getElementById('password').value;
+            const errorBox = document.getElementById('error-box');
+
+            // Guna fungsi login dari WazzaAuth dalam app.js
+            const result = await WazzaAuth.login(email, pass);
+
+            if (result.ok) {
+                // Selepas login berjaya, terus ke course.html
+                window.location.href = 'course.html';
+            } else {
+                errorBox.style.display = 'block';
+                errorBox.textContent = result.error;
+            }
+        }
+    </script>
+</body>
+
+</html>

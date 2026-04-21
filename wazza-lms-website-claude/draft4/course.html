@@ -1,0 +1,1120 @@
+<!DOCTYPE html>
+<html lang="ms">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Kursus – Wazza Academy</title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Space+Grotesk:wght@400;500;600;700&display=swap"
+        rel="stylesheet" />
+    <link rel="stylesheet" href="styles.css" />
+    <style>
+        body {
+            background: #08080d;
+            overflow: hidden;
+        }
+
+        /* ── TOPBAR ── */
+        .topbar {
+            background: rgba(8, 8, 13, 0.92);
+            backdrop-filter: blur(16px);
+            border-bottom: 1px solid var(--border);
+            padding: 0.7rem 1.25rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: sticky;
+            top: 0;
+            z-index: 50;
+            height: 52px;
+        }
+
+        .tb-left {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        /* Logo — replaces ← Dashboard */
+        .topbar-logo {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            text-decoration: none;
+        }
+
+        .topbar-logo-icon {
+            width: 28px;
+            height: 28px;
+            border-radius: 7px;
+            background: linear-gradient(135deg, #34A853, #0D652D);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .topbar-logo-text {
+            font-family: 'Space Grotesk';
+            font-weight: 700;
+            font-size: 0.95rem;
+            color: #fff;
+        }
+
+        .topbar-logo-dot {
+            color: #34A853;
+        }
+
+        .divider-v {
+            width: 1px;
+            height: 18px;
+            background: var(--border);
+        }
+
+        .course-name-top {
+            font-family: 'Space Grotesk';
+            font-size: 0.78rem;
+            font-weight: 600;
+            color: rgba(255, 255, 255, 0.45);
+            max-width: 340px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .tb-right {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .prog-top {
+            display: flex;
+            align-items: center;
+            gap: 0.65rem;
+            font-size: 0.72rem;
+            color: var(--text2);
+        }
+
+        .prog-top-bar {
+            width: 80px;
+            height: 3px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 2px;
+            overflow: hidden;
+        }
+
+        .prog-top-fill {
+            height: 3px;
+            background: #34A853;
+            border-radius: 2px;
+            transition: width 0.5s;
+        }
+
+        /* Modul toggle */
+        .btn-toggle-panel {
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+            padding: 0.38rem 0.85rem;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 7px;
+            font-size: 0.73rem;
+            font-weight: 600;
+            color: var(--text2);
+            cursor: pointer;
+            font-family: 'Inter';
+            transition: all 0.2s;
+        }
+
+        .btn-toggle-panel:hover {
+            border-color: #34A853;
+            color: #34A853;
+        }
+
+        .btn-toggle-panel.panel-open {
+            background: rgba(52, 168, 83, 0.12);
+            border-color: rgba(52, 168, 83, 0.35);
+            color: #34A853;
+        }
+
+        /* ── LAYOUT ── */
+        .lms {
+            display: grid;
+            grid-template-columns: 1fr 0px;
+            height: calc(100vh - 52px);
+            transition: grid-template-columns 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+            overflow: hidden;
+        }
+
+        .lms.panel-open {
+            grid-template-columns: 1fr 310px;
+        }
+
+        /* LEFT */
+        .vid-area {
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto;
+            min-width: 0;
+        }
+
+        /* ── WELCOME SCREEN ── */
+        .welcome-screen {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 3rem 2rem;
+            text-align: center;
+            min-height: calc(100vh - 52px);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .welcome-screen::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background-image: radial-gradient(rgba(255, 255, 255, 0.025) 1px, transparent 1px);
+            background-size: 36px 36px;
+            pointer-events: none;
+        }
+
+        .welcome-screen::after {
+            content: '';
+            position: absolute;
+            top: 40%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 500px;
+            height: 300px;
+            background: radial-gradient(ellipse, rgba(52, 168, 83, 0.08), transparent 70%);
+            pointer-events: none;
+        }
+
+        .welcome-inner {
+            position: relative;
+            z-index: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            animation: wFadeUp 0.55s ease both;
+        }
+
+        @keyframes wFadeUp {
+            from {
+                opacity: 0;
+                transform: translateY(18px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .welcome-logo-wrap {
+            width: 64px;
+            height: 64px;
+            border-radius: 18px;
+            background: linear-gradient(135deg, #34A853, #0D652D);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 1.75rem;
+            box-shadow: 0 12px 40px rgba(52, 168, 83, 0.22);
+        }
+
+        .welcome-tag {
+            font-size: 0.68rem;
+            font-weight: 700;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            color: #34A853;
+            margin-bottom: 0.75rem;
+        }
+
+        .welcome-screen h1 {
+            font-family: 'Space Grotesk';
+            font-size: clamp(1.6rem, 3.5vw, 2.2rem);
+            font-weight: 800;
+            letter-spacing: -0.5px;
+            line-height: 1.15;
+            margin-bottom: 0.85rem;
+            color: #fff;
+        }
+
+        .welcome-screen h1 span {
+            background: linear-gradient(135deg, #34A853, #4285F4);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .welcome-screen p {
+            font-size: 0.88rem;
+            color: rgba(255, 255, 255, 0.45);
+            max-width: 380px;
+            line-height: 1.75;
+            margin-bottom: 2rem;
+        }
+
+        .welcome-screen p strong {
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        .welcome-hint {
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+            font-size: 0.8rem;
+            color: rgba(255, 255, 255, 0.3);
+            border: 1px dashed rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            padding: 0.65rem 1.25rem;
+        }
+
+        .welcome-hint strong {
+            color: rgba(255, 255, 255, 0.5);
+            margin: 0 3px;
+        }
+
+        .hint-arrow {
+            animation: bounceR 1.8s ease-in-out infinite;
+        }
+
+        @keyframes bounceR {
+
+            0%,
+            100% {
+                transform: translateX(0);
+            }
+
+            50% {
+                transform: translateX(5px);
+            }
+        }
+
+        /* ── VIDEO ── */
+        .vid-wrap {
+            background: #000;
+            position: relative;
+            display: none;
+        }
+
+        .vid-wrap.visible {
+            display: block;
+        }
+
+        .vid-wrap iframe {
+            display: block;
+            width: 100%;
+            aspect-ratio: 16/9;
+            border: none;
+        }
+
+        /* Error note — shown once a lesson is loaded */
+        .vid-error-note {
+            display: none;
+            background: rgba(251, 188, 4, 0.06);
+            border-top: 1px solid rgba(251, 188, 4, 0.12);
+            padding: 0.48rem 1.25rem;
+            font-size: 0.73rem;
+            color: rgba(251, 188, 4, 0.7);
+            line-height: 1.5;
+            gap: 0.45rem;
+            align-items: center;
+        }
+
+        .vid-error-note.visible {
+            display: flex;
+        }
+
+        .vid-error-note strong {
+            color: rgba(251, 188, 4, 0.95);
+        }
+
+        /* ── CONTROLS ── */
+        .vid-controls {
+            background: #12121a;
+            border-bottom: 1px solid var(--border);
+            padding: 0.6rem 1.25rem;
+            display: none;
+            align-items: center;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .vid-controls.visible {
+            display: flex;
+        }
+
+        .vc-btn {
+            display: flex;
+            align-items: center;
+            gap: 0.35rem;
+            font-size: 0.74rem;
+            color: var(--text2);
+            cursor: pointer;
+            background: none;
+            border: none;
+            transition: color 0.2s;
+            font-family: 'Inter';
+            white-space: nowrap;
+        }
+
+        .vc-btn:hover {
+            color: #fff;
+        }
+
+        .vc-btn.accent {
+            color: #34A853;
+        }
+
+        .vc-btn.completed-btn {
+            color: #2d9e5f;
+        }
+
+        .vc-btn:disabled {
+            opacity: 0.3;
+            cursor: not-allowed;
+        }
+
+        .vc-sep {
+            width: 1px;
+            height: 14px;
+            background: var(--border);
+        }
+
+        .vc-title {
+            font-family: 'Space Grotesk';
+            font-weight: 700;
+            font-size: 0.82rem;
+            flex: 1;
+            min-width: 0;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .vc-yt-btn {
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+            font-size: 0.71rem;
+            font-weight: 600;
+            color: rgba(255, 255, 255, 0.4);
+            cursor: pointer;
+            background: none;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 6px;
+            padding: 0.3rem 0.7rem;
+            font-family: 'Inter';
+            transition: all 0.2s;
+        }
+
+        .vc-yt-btn:hover {
+            border-color: #FF0000;
+            color: #FF0000;
+        }
+
+        /* ── TABS ── */
+        .c-tabs {
+            padding: 0 1.25rem;
+            border-bottom: 1px solid var(--border);
+            display: none;
+            background: #12121a;
+        }
+
+        .c-tabs.visible {
+            display: flex;
+        }
+
+        .ctab {
+            padding: 0.77rem 1rem;
+            font-size: 0.76rem;
+            font-weight: 600;
+            color: var(--text2);
+            cursor: pointer;
+            border: none;
+            border-bottom: 2px solid transparent;
+            transition: all 0.2s;
+            background: none;
+            font-family: 'Inter';
+        }
+
+        .ctab.active {
+            color: #fff;
+            border-bottom-color: #34A853;
+        }
+
+        .ctab:hover {
+            color: rgba(255, 255, 255, 0.8);
+        }
+
+        .tab-panel {
+            display: none;
+            padding: 1.25rem 1.5rem;
+        }
+
+        .tab-panel.active {
+            display: block;
+        }
+
+        .lesson-hd h2 {
+            font-family: 'Space Grotesk';
+            font-size: 1.05rem;
+            font-weight: 800;
+            margin-bottom: 0.35rem;
+        }
+
+        .lesson-meta {
+            display: flex;
+            gap: 1rem;
+            font-size: 0.71rem;
+            color: var(--text2);
+            margin-bottom: 1.2rem;
+        }
+
+        .lesson-desc {
+            font-size: 0.85rem;
+            color: var(--text2);
+            line-height: 1.75;
+            margin-bottom: 1.2rem;
+        }
+
+        .tip-box {
+            padding: 0.85rem 1rem;
+            background: rgba(52, 168, 83, 0.07);
+            border-left: 3px solid #34A853;
+            border-radius: 0 8px 8px 0;
+            font-size: 0.8rem;
+            color: var(--text2);
+            line-height: 1.6;
+        }
+
+        .res-list {
+            list-style: none;
+        }
+
+        .res-item {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.65rem 0;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .res-item:last-child {
+            border: none;
+        }
+
+        .res-icon {
+            font-size: 1rem;
+            width: 26px;
+            text-align: center;
+            opacity: 0.7;
+        }
+
+        .res-name {
+            font-size: 0.81rem;
+            color: var(--text2);
+            flex: 1;
+        }
+
+        .res-dl {
+            font-size: 0.69rem;
+            font-weight: 600;
+            color: #34A853;
+        }
+
+        .notes-area {
+            width: 100%;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            color: var(--text);
+            padding: 0.9rem;
+            font-family: 'Inter';
+            font-size: 0.84rem;
+            line-height: 1.6;
+            resize: vertical;
+            min-height: 160px;
+            outline: none;
+        }
+
+        .notes-area:focus {
+            border-color: #34A853;
+        }
+
+        .save-btn {
+            margin-top: 0.65rem;
+            background: #34A853;
+            color: #fff;
+            border: none;
+            padding: 0.5rem 1.1rem;
+            border-radius: 8px;
+            font-family: 'Space Grotesk';
+            font-weight: 700;
+            font-size: 0.76rem;
+            cursor: pointer;
+            transition: opacity 0.2s;
+        }
+
+        .save-btn:hover {
+            opacity: 0.85;
+        }
+
+        /* ── SIDEBAR ── */
+        .pl-sidebar {
+            background: #0e0e16;
+            border-left: 1px solid var(--border);
+            overflow-y: auto;
+            overflow-x: hidden;
+            display: flex;
+            flex-direction: column;
+            min-width: 0;
+        }
+
+        .pl-head {
+            padding: 0.9rem 1.1rem;
+            border-bottom: 1px solid var(--border);
+            position: sticky;
+            top: 0;
+            background: #0e0e16;
+            z-index: 2;
+        }
+
+        .pl-head h3 {
+            font-family: 'Space Grotesk';
+            font-size: 0.74rem;
+            font-weight: 700;
+            color: var(--text2);
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+        }
+
+        .pl-prog {
+            margin-top: 0.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-size: 0.67rem;
+            color: var(--text2);
+        }
+
+        .pl-bar {
+            height: 3px;
+            background: rgba(255, 255, 255, 0.07);
+            border-radius: 2px;
+            margin-top: 0.4rem;
+            overflow: hidden;
+        }
+
+        .pl-bar-fill {
+            height: 3px;
+            background: #34A853;
+            border-radius: 2px;
+            transition: width 0.5s;
+        }
+
+        .sec-head {
+            padding: 0.7rem 1.1rem 0.3rem;
+            font-size: 0.59rem;
+            font-weight: 700;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            color: rgba(255, 255, 255, 0.18);
+        }
+
+        .lesson-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 0.65rem;
+            padding: 0.72rem 1.1rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+            cursor: pointer;
+            transition: background 0.15s;
+        }
+
+        .lesson-item:hover {
+            background: rgba(255, 255, 255, 0.03);
+        }
+
+        .lesson-item.active {
+            background: rgba(52, 168, 83, 0.08);
+            border-left: 3px solid #34A853;
+        }
+
+        .lesson-item.done .l-num {
+            background: #2d9e5f;
+            color: #fff;
+        }
+
+        .l-num {
+            width: 21px;
+            height: 21px;
+            border-radius: 6px;
+            background: rgba(255, 255, 255, 0.08);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.62rem;
+            font-weight: 700;
+            color: var(--text2);
+            flex-shrink: 0;
+            margin-top: 1px;
+        }
+
+        .lesson-item.active .l-num {
+            background: #34A853;
+            color: #fff;
+        }
+
+        .l-info {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .l-name {
+            font-size: 0.79rem;
+            font-weight: 500;
+            color: rgba(255, 255, 255, 0.72);
+            line-height: 1.3;
+            margin-bottom: 0.2rem;
+        }
+
+        .lesson-item.active .l-name {
+            color: #fff;
+            font-weight: 600;
+        }
+
+        .l-dur {
+            font-size: 0.64rem;
+            color: var(--text2);
+        }
+
+        /* ── RESPONSIVE ── */
+        @media (max-width: 768px) {
+            body {
+                overflow: auto;
+            }
+
+            .lms,
+            .lms.panel-open {
+                grid-template-columns: 1fr;
+                height: auto;
+            }
+
+            .pl-sidebar {
+                height: 380px;
+                border-left: none;
+                border-top: 1px solid var(--border);
+            }
+
+            .prog-top {
+                display: none;
+            }
+
+            .vc-title {
+                display: none;
+            }
+
+            .course-name-top {
+                max-width: 140px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- TOPBAR -->
+    <div class="topbar">
+        <div class="tb-left">
+            <a href="index.html" class="topbar-logo">
+                <div class="topbar-logo-icon">
+                    <svg width="15" height="15" viewBox="0 0 28 28" fill="none">
+                        <rect x="2" y="2" width="24" height="24" rx="6" fill="url(#tlg)" />
+                        <path d="M8 10h12M8 14h8M8 18h10" stroke="#fff" stroke-width="2.2" stroke-linecap="round" />
+                        <defs>
+                            <linearGradient id="tlg" x1="2" y1="2" x2="26" y2="26">
+                                <stop stop-color="#34A853" />
+                                <stop offset="1" stop-color="#0D652D" />
+                            </linearGradient>
+                        </defs>
+                    </svg>
+                </div>
+                <span class="topbar-logo-text">Wazza<span class="topbar-logo-dot">.</span>Academy</span>
+            </a>
+            <div class="divider-v"></div>
+            <div class="course-name-top" id="topbar-title">Memuatkan...</div>
+        </div>
+        <div class="tb-right">
+            <button class="vc-yt-btn" onclick="logKeluar()"
+                style="border-color: rgba(255,0,0,0.3); color: #ff4d4d; margin-right: 8px;">
+                Log Keluar
+            </button>
+            <div class="prog-top">
+                <span id="topbar-progress-text">0/0</span>
+                <div class="prog-top-bar">
+                    <div class="prog-top-fill" id="topbar-progress-bar" style="width:0%"></div>
+                </div>
+                <span id="topbar-progress-pct">0%</span>
+            </div>
+            <button class="btn-toggle-panel" id="btn-toggle-panel" onclick="togglePanel()">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <rect x="3" y="3" width="18" height="18" rx="2" />
+                    <path d="M15 3v18" />
+                </svg>
+                Modul
+            </button>
+        </div>
+    </div>
+
+    <!-- LAYOUT -->
+    <div class="lms" id="lms-layout">
+        <div class="vid-area" id="vid-area">
+
+            <!-- WELCOME (shown by default, hidden when lesson selected) -->
+            <div class="welcome-screen" id="welcome-screen">
+                <div class="welcome-inner">
+                    <div class="welcome-logo-wrap">
+                        <svg width="32" height="32" viewBox="0 0 28 28" fill="none">
+                            <rect x="2" y="2" width="24" height="24" rx="6" fill="url(#wlg)" />
+                            <path d="M8 10h12M8 14h8M8 18h10" stroke="#fff" stroke-width="2" stroke-linecap="round" />
+                            <defs>
+                                <linearGradient id="wlg" x1="2" y1="2" x2="26" y2="26">
+                                    <stop stop-color="#34A853" />
+                                    <stop offset="1" stop-color="#0D652D" />
+                                </linearGradient>
+                            </defs>
+                        </svg>
+                    </div>
+                    <div class="welcome-tag">Wazza Academy</div>
+                    <h1>Selamat Datang ke<br><span id="welcome-course-name">Kursus Anda</span></h1>
+                    <p>Anda berjaya log masuk. Tekan butang <strong>Modul</strong> di sudut kanan atas, kemudian pilih
+                        video yang ingin anda tonton untuk mula belajar.</p>
+                    <div class="welcome-hint">
+                        <svg class="hint-arrow" width="15" height="15" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="2.2" stroke-linecap="round">
+                            <path d="M5 12h14M13 6l6 6-6 6" />
+                        </svg>
+                        Klik <strong>Modul</strong> → pilih video → mula belajar
+                    </div>
+                </div>
+            </div>
+
+            <!-- VIDEO -->
+            <div class="vid-wrap" id="video-wrap">
+                <div id="video-container"></div>
+            </div>
+
+            <!-- Error hint note (visible once video is loaded) -->
+            <div class="vid-error-note" id="vid-error-note">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                    style="flex-shrink:0;opacity:0.8">
+                    <circle cx="12" cy="12" r="10" />
+                    <path d="M12 8v4m0 4h.01" />
+                </svg>
+                Jika video tidak dapat dipaparkan, tekan butang <strong>▶ YouTube</strong> di bar kawalan untuk menonton
+                terus di YouTube.
+            </div>
+
+            <!-- CONTROLS -->
+            <div class="vid-controls" id="vid-controls">
+                <span class="vc-title" id="vc-title">–</span>
+                <button class="vc-btn" id="btn-prev" onclick="navigateLesson(-1)">← Sebelum</button>
+                <div class="vc-sep"></div>
+                <button class="vc-btn accent" id="btn-mark" onclick="toggleComplete()">✓ Tandai Selesai</button>
+                <div class="vc-sep"></div>
+                <button class="vc-btn" id="btn-next" onclick="navigateLesson(1)">Seterusnya →</button>
+                <div style="flex:1"></div>
+                <button class="vc-yt-btn" onclick="openInYoutube()">
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="#FF0000">
+                        <path
+                            d="M23 7s-.3-2-1.2-2.8c-1.1-1.2-2.4-1.2-3-1.3C16.2 3 12 3 12 3s-4.2 0-6.8.2c-.6.1-1.9.1-3 1.3C1.3 5 1 7 1 7S.7 9.1.7 11.2v2c0 2.1.3 4.2.3 4.2s.3 2 1.2 2.8c1.1 1.2 2.6 1.1 3.3 1.2C7.2 21.6 12 21.6 12 21.6s4.2 0 6.8-.3c.6-.1 1.9-.1 3-1.3.9-.8 1.2-2.8 1.2-2.8s.3-2.1.3-4.2v-2C23.3 9.1 23 7 23 7zM9.7 15.5V8.4l8.1 3.6-8.1 3.5z" />
+                    </svg>
+                    YouTube
+                </button>
+            </div>
+
+            <!-- TABS -->
+            <div class="c-tabs" id="c-tabs">
+                <button class="ctab active" data-tab="overview" onclick="showTab('overview',this)">Ringkasan</button>
+                <button class="ctab" data-tab="resources" onclick="showTab('resources',this)">Sumber</button>
+                <button class="ctab" data-tab="notes" onclick="showTab('notes',this)">Nota Saya</button>
+            </div>
+            <div class="tab-panel active" id="tab-overview"></div>
+            <div class="tab-panel" id="tab-resources"></div>
+            <div class="tab-panel" id="tab-notes">
+                <div class="lesson-hd">
+                    <h2>Nota Saya</h2>
+                    <p style="font-size:0.79rem;color:var(--text2);margin-bottom:1rem">Catat perkara penting dari
+                        pelajaran ini.</p>
+                </div>
+                <textarea class="notes-area" id="notes-input" placeholder="Mula taip nota anda di sini..."></textarea>
+                <button class="save-btn" onclick="saveCurrentNote()">Simpan Nota</button>
+                <p id="save-msg" style="font-size:0.72rem;color:#2d9e5f;margin-top:0.4rem;display:none">✓ Nota disimpan!
+                </p>
+            </div>
+        </div>
+
+        <!-- SIDEBAR (hidden by default) -->
+        <div class="pl-sidebar" id="pl-sidebar">
+            <div class="pl-head">
+                <h3>Senarai Modul</h3>
+                <div class="pl-prog">
+                    <span id="pl-progress-text">0 dari 0 selesai</span>
+                    <span id="pl-progress-pct">0%</span>
+                </div>
+                <div class="pl-bar">
+                    <div class="pl-bar-fill" id="pl-progress-bar" style="width:0%"></div>
+                </div>
+            </div>
+            <div id="playlist-container"></div>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+    <script>
+        WazzaAuth.requireAuth();
+
+        let currentCourse = null;
+        let currentCourseId = '';
+        let currentLessonId = '';
+        let allLessons = [];
+        let currentVideoUrl = '';
+        let panelOpen = false;
+
+        const params = new URLSearchParams(window.location.search);
+        const courseIdParam = params.get('id') || 'senarai-video-autocrat';
+        const lessonParam = params.get('lesson');
+
+        function togglePanel() {
+            panelOpen = !panelOpen;
+            document.getElementById('lms-layout').classList.toggle('panel-open', panelOpen);
+            document.getElementById('btn-toggle-panel').classList.toggle('panel-open', panelOpen);
+        }
+
+        async function initCourse() {
+            currentCourseId = courseIdParam;
+            currentCourse = await WazzaCourses.getCourse(currentCourseId);
+            if (!currentCourse) { document.getElementById('topbar-title').textContent = 'Kursus tidak dijumpai'; return; }
+            if (!WazzaStore.isEnrolled(currentCourseId)) WazzaStore.enrollCourse(currentCourseId);
+
+            allLessons = WazzaCourses.getAllLessons(currentCourse);
+            document.getElementById('topbar-title').textContent = currentCourse.title;
+            document.getElementById('welcome-course-name').textContent = currentCourse.title;
+            document.title = `${currentCourse.title} – Wazza Academy`;
+
+            renderPlaylist();
+            updateProgress();
+
+            /*
+            const prog = WazzaStore.getProgress(currentCourseId);
+            if (lessonParam && allLessons.find(l => l.id === lessonParam)) {
+                loadLesson(lessonParam);
+            } else if (prog.lastLesson && allLessons.find(l => l.id === prog.lastLesson)) {
+                loadLesson(prog.lastLesson);
+            }
+            */
+            // else: stay on welcome screen, panel stays closed
+        }
+
+        function loadLesson(lessonId) {
+            currentLessonId = lessonId;
+            const lesson = WazzaCourses.getLesson(currentCourse, lessonId);
+            if (!lesson) return;
+
+            // Hide welcome, reveal video UI
+            document.getElementById('welcome-screen').style.display = 'none';
+            document.getElementById('video-wrap').classList.add('visible');
+            document.getElementById('vid-error-note').classList.add('visible');
+            document.getElementById('vid-controls').classList.add('visible');
+            document.getElementById('c-tabs').classList.add('visible');
+
+            WazzaStore.setLastLesson(currentCourseId, lessonId);
+            WazzaStore.logActivity('watch', currentCourseId, `Ditonton: "${lesson.title}"`);
+
+            currentVideoUrl = lesson.videoUrl || '';
+            const container = document.getElementById('video-container');
+
+            if (currentVideoUrl.trim()) {
+                container.innerHTML = `<iframe
+          src="${toEmbedUrl(currentVideoUrl)}"
+          title="${lesson.title}"
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+          allowfullscreen></iframe>`;
+            } else {
+                container.innerHTML = `
+          <div style="width:100%;aspect-ratio:16/9;background:linear-gradient(135deg,var(--surface),var(--bg2));
+               display:flex;flex-direction:column;align-items:center;justify-content:center;gap:0.75rem;color:var(--text2);">
+            <svg width="52" height="52" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" opacity="0.3"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+            <p style="font-size:0.85rem">Video akan datang tidak lama lagi</p>
+          </div>`;
+            }
+
+            document.getElementById('vc-title').textContent = lesson.title;
+            updateMarkButton();
+            const idx = WazzaCourses.getLessonIndex(currentCourse, lessonId);
+            document.getElementById('btn-prev').disabled = idx <= 0;
+            document.getElementById('btn-next').disabled = idx >= allLessons.length - 1;
+
+            // Overview tab
+            const lessonIdx = WazzaCourses.getLessonIndex(currentCourse, lessonId);
+            const desc = lesson.description || `Pelajaran ini meliputi <strong>${lesson.title}</strong>.`;
+            const tip = lesson.tip || `Ambil nota semasa menonton dan simpan dalam tab "Nota Saya".`;
+            document.getElementById('tab-overview').innerHTML = `
+        <div class="lesson-hd">
+          <h2>${lesson.title}</h2>
+          <div class="lesson-meta">
+            <span>⏱ ${lesson.duration} min</span>
+            <span>· Pelajaran ${lessonIdx + 1} dari ${allLessons.length}</span>
+          </div>
+        </div>
+        <p class="lesson-desc">${desc}</p>
+        <div class="tip-box">💡 <strong>Tips Pro:</strong> ${tip}</div>`;
+
+            // Resources tab
+            const resources = lesson.resources || [];
+            document.getElementById('tab-resources').innerHTML = `
+        <div class="lesson-hd">
+          <h2>Sumber Pelajaran</h2>
+          <p style="font-size:0.79rem;color:var(--text2);margin-bottom:1rem">Fail dan pautan untuk pelajaran ini.</p>
+        </div>
+        <ul class="res-list">${resources.length
+                    ? resources.map(r => `
+              <li class="res-item">
+                <span class="res-icon">${r.icon || '📄'}</span>
+                <span class="res-name">${r.name}</span>
+                <a href="${r.url || '#'}" target="_blank" class="res-dl">${r.label || 'Buka ↗'}</a>
+              </li>`).join('')
+                    : '<li style="padding:1.2rem 0;color:var(--text2);font-size:0.82rem">Tiada sumber untuk pelajaran ini.</li>'
+                }</ul>`;
+
+            document.getElementById('notes-input').value = WazzaStore.getNote(currentCourseId, lessonId);
+
+            document.querySelectorAll('.lesson-item').forEach(el => {
+                el.classList.remove('active');
+                const lid = el.dataset.lessonId;
+                const l = WazzaCourses.getLesson(currentCourse, lid);
+                if (lid === lessonId) {
+                    el.classList.add('active');
+                    el.querySelector('.l-dur').textContent = `⏱ ${l.duration} min · Sedang main`;
+                    setTimeout(() => el.scrollIntoView({ behavior: 'smooth', block: 'nearest' }), 350);
+                } else if (l) {
+                    el.querySelector('.l-dur').textContent = `⏱ ${l.duration} min`;
+                }
+            });
+
+            showTab('overview', document.querySelector('.ctab[data-tab="overview"]'));
+            // history.replaceState(null, '', `course.html?id=${currentCourseId}&lesson=${lessonId}`);
+        }
+
+        function openInYoutube() { if (currentVideoUrl) window.open(currentVideoUrl, '_blank'); }
+
+        function toggleComplete() {
+            if (!currentLessonId) return;
+            const isDone = WazzaStore.isLessonComplete(currentCourseId, currentLessonId);
+            if (isDone) {
+                WazzaStore.unmarkComplete(currentCourseId, currentLessonId);
+            } else {
+                WazzaStore.markComplete(currentCourseId, currentLessonId);
+                const lesson = WazzaCourses.getLesson(currentCourse, currentLessonId);
+                WazzaStore.logActivity('complete', currentCourseId, `Diselesaikan: "${lesson.title}"`);
+            }
+            updateMarkButton(); renderPlaylist();
+        }
+
+        function updateMarkButton() {
+            const btn = document.getElementById('btn-mark');
+            const isDone = WazzaStore.isLessonComplete(currentCourseId, currentLessonId);
+            btn.textContent = isDone ? '✓ Selesai' : '✓ Tandai Selesai';
+            btn.className = isDone ? 'vc-btn completed-btn' : 'vc-btn accent';
+        }
+
+        function navigateLesson(dir) {
+            const idx = WazzaCourses.getLessonIndex(currentCourse, currentLessonId);
+            const newIdx = idx + dir;
+            if (newIdx >= 0 && newIdx < allLessons.length) loadLesson(allLessons[newIdx].id);
+        }
+
+        function renderPlaylist() {
+            const container = document.getElementById('playlist-container');
+            let html = ''; let n = 0;
+            currentCourse.sections.forEach(sec => {
+                html += `<div class="sec-head">${sec.title}</div>`;
+                sec.lessons.forEach(lesson => {
+                    n++;
+                    const isDone = WazzaStore.isLessonComplete(currentCourseId, lesson.id);
+                    const isActive = lesson.id === currentLessonId;
+                    html += `
+            <div class="lesson-item${isActive ? ' active' : ''}${isDone ? ' done' : ''}"
+                 data-lesson-id="${lesson.id}" onclick="loadLesson('${lesson.id}')">
+              <div class="l-num">${isDone ? '✓' : n}</div>
+              <div class="l-info">
+                <div class="l-name">${lesson.title}</div>
+                <div class="l-dur">⏱ ${lesson.duration} min${isActive ? ' · Sedang main' : ''}</div>
+              </div>
+            </div>`;
+                });
+            });
+            container.innerHTML = html;
+            updateProgress();
+        }
+
+        function updateProgress() {
+            const prog = WazzaStore.getProgress(currentCourseId);
+            const total = allLessons.length;
+            const done = prog.completed.length;
+            const pct = total > 0 ? Math.round((done / total) * 100) : 0;
+            document.getElementById('topbar-progress-text').textContent = `${done}/${total}`;
+            document.getElementById('topbar-progress-pct').textContent = `${pct}%`;
+            document.getElementById('topbar-progress-bar').style.width = `${pct}%`;
+            document.getElementById('pl-progress-text').textContent = `${done} dari ${total} selesai`;
+            document.getElementById('pl-progress-pct').textContent = `${pct}%`;
+            document.getElementById('pl-progress-bar').style.width = `${pct}%`;
+        }
+
+        function showTab(tabId, btn) {
+            document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+            document.querySelectorAll('.ctab').forEach(t => t.classList.remove('active'));
+            document.getElementById('tab-' + tabId).classList.add('active');
+            if (btn) btn.classList.add('active');
+        }
+
+        function saveCurrentNote() {
+            const text = document.getElementById('notes-input').value;
+            WazzaStore.saveNote(currentCourseId, currentLessonId, text);
+            const l = WazzaCourses.getLesson(currentCourse, currentLessonId);
+            if (l) WazzaStore.logActivity('note', currentCourseId, `Nota: "${l.title}"`);
+            const msg = document.getElementById('save-msg');
+            msg.style.display = 'block';
+            setTimeout(() => msg.style.display = 'none', 2500);
+        }
+
+        function toEmbedUrl(url) {
+            if (!url) return url;
+            if (url.includes('youtube.com/embed/')) return url;
+            const s = url.match(/youtu\.be\/([\w-]+)/);
+            if (s) return `https://www.youtube.com/embed/${s[1]}`;
+            const w = url.match(/[?&]v=([\w-]+)/);
+            if (w) return `https://www.youtube.com/embed/${w[1]}`;
+            return url;
+        }
+
+        function logKeluar() {
+            localStorage.clear();
+            window.location.href = 'login.html';
+        }
+
+        initCourse();
+    </script>
+</body>
+
+</html>

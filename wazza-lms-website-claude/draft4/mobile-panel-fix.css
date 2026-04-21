@@ -1,0 +1,153 @@
+/* ============================================================
+   MOBILE-PANEL-FIX.CSS
+   Tambah dalam course.html <head>, SELEPAS mobile.css
+   ============================================================ */
+
+/* ── BUTANG TOGGLE — State yang betul ── */
+
+/* Default: panel tutup — butang neutral */
+.btn-toggle-panel {
+    transition: background 0.2s, border-color 0.2s, color 0.2s, transform 0.15s;
+}
+
+/* Panel TERBUKA — butang hijau */
+.btn-toggle-panel.panel-open {
+    background: rgba(52, 168, 83, 0.15) !important;
+    border-color: rgba(52, 168, 83, 0.5) !important;
+    color: #34A853 !important;
+}
+
+/* Panel TERTUTUP — butang kembali neutral (override sebarang kesan hijau) */
+.btn-toggle-panel:not(.panel-open) {
+    background: rgba(255, 255, 255, 0.05) !important;
+    border-color: rgba(255, 255, 255, 0.08) !important;
+    color: rgba(255, 255, 255, 0.55) !important;
+}
+
+/* Ikon dalam butang berputar apabila panel terbuka */
+.btn-toggle-panel .toggle-icon {
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    display: inline-flex;
+    align-items: center;
+}
+
+.btn-toggle-panel.panel-open .toggle-icon {
+    transform: rotate(180deg);
+}
+
+
+/* ── ANIMASI SLIDE SIDEBAR — DESKTOP ── */
+@media (min-width: 768px) {
+
+    /* Grid transition sudah ada, tambah opacity untuk sidebar */
+    .pl-sidebar {
+        opacity: 0;
+        transition: opacity 0.3s ease 0s, min-width 0s;
+        pointer-events: none;
+    }
+
+    .lms.panel-open .pl-sidebar {
+        opacity: 1;
+        pointer-events: auto;
+        transition: opacity 0.3s ease 0.1s;
+    }
+}
+
+
+/* ── ANIMASI SLIDE SIDEBAR — MOBILE ── */
+@media (max-width: 767px) {
+
+    /* Sidebar slide dari bawah */
+    .pl-sidebar {
+        display: block !important;
+        /* Sentiasa dalam DOM */
+        max-height: 0;
+        overflow: hidden;
+        transition: max-height 0.4s cubic-bezier(0.4, 0, 0.2, 1),
+            opacity 0.35s ease;
+        opacity: 0;
+        border-top: none;
+    }
+
+    .lms.panel-open .pl-sidebar {
+        max-height: 100vh;
+        /* Nilai besar — CSS animate ke nilai ini */
+        opacity: 1;
+        border-top: 1px solid var(--border);
+    }
+
+    /* Semua konten dalam sidebar boleh nampak bila terbuka */
+    .lms.panel-open .pl-sidebar .pl-head,
+    .lms.panel-open .pl-sidebar #playlist-container {
+        visibility: visible;
+    }
+
+    .pl-sidebar .pl-head,
+    .pl-sidebar #playlist-container {
+        visibility: hidden;
+        transition: visibility 0s linear 0.4s;
+    }
+
+    .lms.panel-open .pl-sidebar .pl-head,
+    .lms.panel-open .pl-sidebar #playlist-container {
+        visibility: visible;
+        transition: visibility 0s linear 0s;
+    }
+
+    /* Tunjuk indicator pada butang — anak panah ke bawah/atas */
+    .btn-toggle-panel::after {
+        content: ' ↓';
+        font-size: 0.7rem;
+        opacity: 0.7;
+        transition: transform 0.3s;
+        display: inline-block;
+        margin-left: 2px;
+    }
+
+    .btn-toggle-panel.panel-open::after {
+        content: ' ↑';
+    }
+
+    /* Auto-scroll ke sidebar bila panel dibuka */
+    .pl-sidebar {
+        scroll-margin-top: 52px;
+    }
+}
+
+
+/* ── TABLET (768–1023px) ── */
+@media (min-width: 768px) and (max-width: 1023px) {
+    .pl-sidebar {
+        opacity: 0;
+        transition: opacity 0.3s ease;
+        pointer-events: none;
+    }
+
+    .lms.panel-open .pl-sidebar {
+        opacity: 1;
+        pointer-events: auto;
+    }
+}
+
+
+/* ── RIPPLE EFFECT pada butang toggle ── */
+.btn-toggle-panel {
+    position: relative;
+    overflow: hidden;
+}
+
+.btn-toggle-panel .ripple {
+    position: absolute;
+    border-radius: 50%;
+    background: rgba(52, 168, 83, 0.3);
+    transform: scale(0);
+    animation: ripple-anim 0.5s linear;
+    pointer-events: none;
+}
+
+@keyframes ripple-anim {
+    to {
+        transform: scale(3);
+        opacity: 0;
+    }
+}

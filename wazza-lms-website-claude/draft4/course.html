@@ -847,13 +847,6 @@
         <div class="pl-sidebar" id="pl-sidebar">
             <div class="pl-head">
                 <h3>Senarai Modul</h3>
-                <div class="pl-prog">
-                    <span id="pl-progress-text">0 dari 0 selesai</span>
-                    <span id="pl-progress-pct">0%</span>
-                </div>
-                <div class="pl-bar">
-                    <div class="pl-bar-fill" id="pl-progress-bar" style="width:0%"></div>
-                </div>
             </div>
             <div id="playlist-container"></div>
         </div>
@@ -898,7 +891,6 @@
             document.title = `${currentCourse.title} – Wazza Academy`;
 
             renderPlaylist();
-            updateProgress();
 
             /*
             const prog = WazzaStore.getProgress(currentCourseId);
@@ -1054,20 +1046,9 @@
                 });
             });
             container.innerHTML = html;
-            updateProgress();
         }
 
-        function updateProgress() {
-            const prog = WazzaStore.getProgress(currentCourseId);
-            const total = allLessons.length;
-            const done = prog.completed.length;
-            const pct = total > 0 ? Math.round((done / total) * 100) : 0;
-            document.getElementById('pl-progress-text').textContent = `${done} dari ${total} selesai`;
-            document.getElementById('pl-progress-pct').textContent = `${pct}%`;
-            document.getElementById('pl-progress-bar').style.width = `${pct}%`;
-        }
-
-        function showTab(tabId, btn) {
+function showTab(tabId, btn) {
             document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
             document.querySelectorAll('.ctab').forEach(t => t.classList.remove('active'));
             document.getElementById('tab-' + tabId).classList.add('active');

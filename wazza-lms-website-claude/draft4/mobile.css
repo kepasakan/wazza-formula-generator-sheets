@@ -173,9 +173,11 @@
     .topbar {
         padding: 0 1rem;
         height: 52px;
-        position: sticky;
+        position: fixed;
         top: 0;
-        z-index: 50;
+        left: 0;
+        right: 0;
+        z-index: 100;
     }
 
     .topbar-logo-text {
@@ -216,6 +218,7 @@
         grid-template-columns: unset !important;
         height: auto !important;
         overflow: visible !important;
+        margin-top: 52px;
     }
 
     /* ── VIDEO AREA ── */
@@ -226,48 +229,47 @@
 
     /* ── WELCOME SCREEN ── */
     .welcome-screen {
-        min-height: calc(100dvh - 52px);
-        padding: 2rem 1.25rem;
+        flex: none;
+        min-height: 0;
+        padding: 1.25rem 1.25rem;
     }
 
     .welcome-screen h1 {
-        font-size: 1.5rem !important;
+        font-size: 1.1rem !important;
         letter-spacing: -0.3px;
+        margin-bottom: 0.5rem;
     }
 
     .welcome-screen p {
-        font-size: 0.84rem;
+        font-size: 0.8rem;
         max-width: 100%;
+        margin-bottom: 1rem;
     }
 
     .welcome-logo-wrap {
-        width: 52px;
-        height: 52px;
-        margin-bottom: 1.25rem;
+        width: 40px;
+        height: 40px;
+        border-radius: 12px;
+        margin-bottom: 0.75rem;
     }
 
-    /* Hint arrow: tukar arah ke bawah untuk mobile */
+    .welcome-tag {
+        font-size: 0.6rem;
+        margin-bottom: 0.4rem;
+    }
+
+    /* Hint: kompak dan inline untuk mobile */
     .welcome-hint {
-        flex-direction: column;
-        text-align: center;
-        gap: 0.4rem;
-        padding: 0.75rem 1rem;
+        flex-direction: row;
+        text-align: left;
+        gap: 0.35rem;
+        padding: 0.4rem 0.85rem;
+        font-size: 0.7rem;
     }
 
     .hint-arrow {
-        animation: bounceD 1.8s ease-in-out infinite;
-    }
-
-    @keyframes bounceD {
-
-        0%,
-        100% {
-            transform: translateY(0);
-        }
-
-        50% {
-            transform: translateY(5px);
-        }
+        animation: bounceR 1.8s ease-in-out infinite;
+        flex-shrink: 0;
     }
 
     /* ── VIDEO WRAP ── */
@@ -380,19 +382,17 @@
     .pl-sidebar {
         width: 100%;
         border-left: none !important;
-        border-top: 1px solid var(--border);
-        height: auto !important;
-        max-height: none !important;
-        overflow: visible !important;
     }
 
     /* Sidebar: tunjuk apabila panel-open sahaja pada mobile */
     .lms:not(.panel-open) .pl-sidebar {
-        display: none;
+        display: none !important;
     }
 
     .lms.panel-open .pl-sidebar {
-        display: flex;
+        display: flex !important;
+        flex-direction: column;
+        border-top: 1px solid var(--border);
     }
 
     .pl-head {

@@ -54,63 +54,25 @@
 }
 
 
-/* ── ANIMASI SLIDE SIDEBAR — MOBILE ── */
+/* ── SIDEBAR — MOBILE ── */
 @media (max-width: 767px) {
 
-    /* Sidebar slide dari bawah */
+    /* Sidebar scroll margin untuk auto-scroll */
     .pl-sidebar {
-        display: block !important;
-        /* Sentiasa dalam DOM */
-        max-height: 0;
-        overflow: hidden;
-        transition: max-height 0.4s cubic-bezier(0.4, 0, 0.2, 1),
-            opacity 0.35s ease;
-        opacity: 0;
-        border-top: none;
+        scroll-margin-top: 52px;
     }
 
-    .lms.panel-open .pl-sidebar {
-        max-height: 100vh;
-        /* Nilai besar — CSS animate ke nilai ini */
-        opacity: 1;
-        border-top: 1px solid var(--border);
-    }
-
-    /* Semua konten dalam sidebar boleh nampak bila terbuka */
-    .lms.panel-open .pl-sidebar .pl-head,
-    .lms.panel-open .pl-sidebar #playlist-container {
-        visibility: visible;
-    }
-
-    .pl-sidebar .pl-head,
-    .pl-sidebar #playlist-container {
-        visibility: hidden;
-        transition: visibility 0s linear 0.4s;
-    }
-
-    .lms.panel-open .pl-sidebar .pl-head,
-    .lms.panel-open .pl-sidebar #playlist-container {
-        visibility: visible;
-        transition: visibility 0s linear 0s;
-    }
-
-    /* Tunjuk indicator pada butang — anak panah ke bawah/atas */
+    /* Indicator pada butang toggle */
     .btn-toggle-panel::after {
         content: ' ↓';
         font-size: 0.7rem;
         opacity: 0.7;
-        transition: transform 0.3s;
         display: inline-block;
         margin-left: 2px;
     }
 
     .btn-toggle-panel.panel-open::after {
         content: ' ↑';
-    }
-
-    /* Auto-scroll ke sidebar bila panel dibuka */
-    .pl-sidebar {
-        scroll-margin-top: 52px;
     }
 }
 

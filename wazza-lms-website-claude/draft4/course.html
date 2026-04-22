@@ -152,7 +152,7 @@
         }
 
         .lms.panel-open {
-            grid-template-columns: 1fr 430px;
+            grid-template-columns: 1fr clamp(260px, 29%, 430px);
         }
 
         /* LEFT */
@@ -405,7 +405,7 @@
         .vc-title {
             font-family: 'Space Grotesk';
             font-weight: 700;
-            font-size: 0.82rem;
+            font-size: 1.2rem;
             flex: 1;
             min-width: 0;
             overflow: hidden;
@@ -771,13 +771,6 @@
                 style="border-color: rgba(255,0,0,0.3); color: #ff4d4d; margin-right: 8px;">
                 Log Keluar
             </button>
-            <div class="prog-top">
-                <span id="topbar-progress-text">0/0</span>
-                <div class="prog-top-bar">
-                    <div class="prog-top-fill" id="topbar-progress-bar" style="width:0%"></div>
-                </div>
-                <span id="topbar-progress-pct">0%</span>
-            </div>
             <button class="btn-toggle-panel" id="btn-toggle-panel" onclick="togglePanel()">
                 <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                     <rect x="3" y="3" width="18" height="18" rx="2" />
@@ -828,33 +821,11 @@
 
             
 
-            <!-- Error hint note (visible once video is loaded) -->
-            <div class="vid-error-note" id="vid-error-note">
-                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                    style="flex-shrink:0;opacity:0.8">
-                    <circle cx="12" cy="12" r="10" />
-                    <path d="M12 8v4m0 4h.01" />
-                </svg>
-                Jika video tidak dapat dipaparkan, tekan butang <strong>▶ YouTube</strong> di bar kawalan untuk menonton
-                terus di YouTube.
-            </div>
-
             <!-- CONTROLS -->
             <div class="vid-controls" id="vid-controls">
                 <span class="vc-title" id="vc-title">–</span>
-                <button class="vc-btn" id="btn-prev" onclick="navigateLesson(-1)">← Sebelum</button>
-                <div class="vc-sep"></div>
-                <button class="vc-btn accent" id="btn-mark" onclick="toggleComplete()">✓ Tandai Selesai</button>
-                <div class="vc-sep"></div>
-                <button class="vc-btn" id="btn-next" onclick="navigateLesson(1)">Seterusnya →</button>
-                <div style="flex:1"></div>
-                <button class="vc-yt-btn" onclick="openInYoutube()">
-                    <svg width="12" height="12" viewBox="0 0 24 24" fill="#FF0000">
-                        <path
-                            d="M23 7s-.3-2-1.2-2.8c-1.1-1.2-2.4-1.2-3-1.3C16.2 3 12 3 12 3s-4.2 0-6.8.2c-.6.1-1.9.1-3 1.3C1.3 5 1 7 1 7S.7 9.1.7 11.2v2c0 2.1.3 4.2.3 4.2s.3 2 1.2 2.8c1.1 1.2 2.6 1.1 3.3 1.2C7.2 21.6 12 21.6 12 21.6s4.2 0 6.8-.3c.6-.1 1.9-.1 3-1.3.9-.8 1.2-2.8 1.2-2.8s.3-2.1.3-4.2v-2C23.3 9.1 23 7 23 7zM9.7 15.5V8.4l8.1 3.6-8.1 3.5z" />
-                    </svg>
-                    YouTube
-                </button>
+                <button class="vc-btn" id="btn-prev" onclick="navigateLesson(-1)">⬅</button>
+                <button class="vc-btn" id="btn-next" onclick="navigateLesson(1)">➡</button>
             </div>
             
 
@@ -863,21 +834,9 @@
             <div class="c-tabs" id="c-tabs">
                 <button class="ctab active" data-tab="overview" onclick="showTab('overview',this)">Ringkasan</button>
                 <button class="ctab" data-tab="resources" onclick="showTab('resources',this)">Sumber</button>
-                <button class="ctab" data-tab="notes" onclick="showTab('notes',this)">Nota Saya</button>
             </div>
             <div class="tab-panel active" id="tab-overview"></div>
             <div class="tab-panel" id="tab-resources"></div>
-            <div class="tab-panel" id="tab-notes">
-                <div class="lesson-hd">
-                    <h2>Nota Saya</h2>
-                    <p style="font-size:0.79rem;color:var(--text2);margin-bottom:1rem">Catat perkara penting dari
-                        pelajaran ini.</p>
-                </div>
-                <textarea class="notes-area" id="notes-input" placeholder="Mula taip nota anda di sini..."></textarea>
-                <button class="save-btn" onclick="saveCurrentNote()">Simpan Nota</button>
-                <p id="save-msg" style="font-size:0.72rem;color:#2d9e5f;margin-top:0.4rem;display:none">✓ Nota disimpan!
-                </p>
-            </div>
         </div>
 
         <!-- SIDEBAR (hidden by default) -->
@@ -956,7 +915,6 @@
             // Hide welcome, reveal video UI
             document.getElementById('welcome-screen').style.display = 'none';
             document.getElementById('video-wrap').classList.add('visible');
-            document.getElementById('vid-error-note').classList.add('visible');
             document.getElementById('vid-controls').classList.add('visible');
             document.getElementById('c-tabs').classList.add('visible');
 
@@ -982,7 +940,6 @@
             }
 
             document.getElementById('vc-title').textContent = lesson.title;
-            updateMarkButton();
             const idx = WazzaCourses.getLessonIndex(currentCourse, lessonId);
             document.getElementById('btn-prev').disabled = idx <= 0;
             document.getElementById('btn-next').disabled = idx >= allLessons.length - 1;
@@ -1018,8 +975,6 @@
               </li>`).join('')
                     : '<li style="padding:1.2rem 0;color:var(--text2);font-size:0.82rem">Tiada sumber untuk pelajaran ini.</li>'
                 }</ul>`;
-
-            document.getElementById('notes-input').value = WazzaStore.getNote(currentCourseId, lessonId);
 
             document.querySelectorAll('.lesson-item').forEach(el => {
                 el.classList.remove('active');
@@ -1095,9 +1050,6 @@
             const total = allLessons.length;
             const done = prog.completed.length;
             const pct = total > 0 ? Math.round((done / total) * 100) : 0;
-            document.getElementById('topbar-progress-text').textContent = `${done}/${total}`;
-            document.getElementById('topbar-progress-pct').textContent = `${pct}%`;
-            document.getElementById('topbar-progress-bar').style.width = `${pct}%`;
             document.getElementById('pl-progress-text').textContent = `${done} dari ${total} selesai`;
             document.getElementById('pl-progress-pct').textContent = `${pct}%`;
             document.getElementById('pl-progress-bar').style.width = `${pct}%`;

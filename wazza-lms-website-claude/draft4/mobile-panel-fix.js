@@ -79,9 +79,11 @@
       btn.classList.toggle('panel-open', isOpen);
     }
 
+    // Sync segera (panel dah open by default)
+    syncBtnState();
+
     // Sync bila window resize (desktop <-> mobile)
     window.addEventListener('resize', syncBtnState);
-    syncBtnState();
   }
 
   // ── Ripple effect bila butang ditekan ──

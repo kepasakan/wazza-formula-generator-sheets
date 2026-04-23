@@ -5,6 +5,7 @@
     <base target="_top">
     <script src="https://cdn.tailwindcss.com"></script>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8">
 </head>
 
 <body class="bg-gray-900 text-white min-h-screen flex flex-col items-center justify-center p-6">
@@ -19,8 +20,12 @@
         <h2 class="text-2xl font-bold text-blue-500 text-center mb-2">Siapa Anda?</h2>
         <p class="text-center text-gray-400 text-sm mb-6">Sila login untuk Clock Out.</p>
 
-        <input type="text" id="userInput" placeholder="Username"
-            class="w-full p-3 mb-4 rounded bg-gray-700 border border-gray-600 text-white">
+        <div class="mb-4">
+            <label class="block text-gray-400 text-xs font-bold mb-1 uppercase">Sila Pilih Nama</label>
+            <select id="userSelect"
+                class="w-full p-3 rounded-lg bg-gray-700 border border-gray-600 text-white outline-none focus:border-blue-500 transition appearance-none cursor-pointer">
+            </select>
+        </div>
         <input type="password" id="passInput" placeholder="Password"
             class="w-full p-3 mb-6 rounded bg-gray-700 border border-gray-600 text-white">
 
@@ -49,17 +54,13 @@
 
     <script>
         // ===== CONFIG — isi sebelum deploy =====
-        const GAS_URL = "https://script.google.com/macros/s/YOUR_DEPLOYMENT_ID/exec";
-        const WEBSITE_URL = "https://your-website.com"; // tiada trailing slash
+        const GAS_URL = "https://script.google.com/macros/s/AKfycbzjwycP8S7eGC_dLML24louH75mM9pOsVxDhTJJ8qE_qSgzPcCKHJhd9hzilAaaMaoT/exec";
+        const WEBSITE_URL = "https://urus.wazza.my"; // tiada trailing slash
         // =======================================
 
         function callGAS(action, params, onSuccess, onError) {
-            const body = JSON.stringify(Object.assign({ action: action }, params || {}));
-            fetch(GAS_URL, {
-                method: "POST",
-                headers: { "Content-Type": "text/plain" },
-                body: body
-            })
+            const url = GAS_URL + "?data=" + encodeURIComponent(JSON.stringify(Object.assign({ action: action }, params || {})));
+            fetch(url)
             .then(function(res) {
                 if (!res.ok) throw new Error("HTTP " + res.status);
                 return res.json();
@@ -74,24 +75,45 @@
         let userIP = "Unknown";
 
         window.onload = function () {
-            // Cari IP
+            // Cari IP (background, tak blocking)
             fetch('https://api.ipify.org?format=json')
                 .then(res => res.json()).then(data => userIP = data.ip).catch(e => { });
 
             // Check Login
             let savedNama = localStorage.getItem("wazza_nama");
             if (savedNama) {
+                // Ada session — terus proceed clock out, loader kekal
                 performClockOut(savedNama);
             } else {
-                document.getElementById('loader').classList.add('hidden');
-                document.getElementById('loginForm').classList.remove('hidden');
+                // Tiada session — load senarai nama DULU, baru tunjuk login form
+                document.getElementById('statusText').innerText = "Memuatkan senarai nama...";
+                callGAS("getStaffList", {}, function (names) {
+                    const select = document.getElementById('userSelect');
+                    select.innerHTML = '<option value="" disabled selected>-- Sila Pilih Nama Anda --</option>';
+                    names.forEach(function(name) {
+                        let option = document.createElement("option");
+                        option.text = name;
+                        option.value = name;
+                        select.add(option);
+                    });
+                    // Senarai dah siap — baru hide loader & tunjuk login form
+                    document.getElementById('loader').classList.add('hidden');
+                    document.getElementById('loginForm').classList.remove('hidden');
+                }, function (err) {
+                    document.getElementById('statusText').innerText = "Gagal muatkan senarai. Cuba muat semula.";
+                });
             }
         };
 
         function doLogin() {
-            const u = document.getElementById('userInput').value;
+            const u = document.getElementById('userSelect').value;
             const p = document.getElementById('passInput').value;
             const btn = document.querySelector('#loginForm button');
+
+            if (!u) {
+                document.getElementById('loginError').innerText = "Sila pilih nama anda.";
+                return;
+            }
 
             btn.innerText = "Checking...";
             btn.disabled = true;

@@ -791,17 +791,13 @@
     <!-- ===== SCRIPTS ===== -->
     <script>
         // ===== CONFIG — isi sebelum deploy =====
-        const GAS_URL = "https://script.google.com/macros/s/YOUR_DEPLOYMENT_ID/exec";
-        const WEBSITE_URL = "https://your-website.com"; // tiada trailing slash
+        const GAS_URL = "https://script.google.com/macros/s/AKfycbzjwycP8S7eGC_dLML24louH75mM9pOsVxDhTJJ8qE_qSgzPcCKHJhd9hzilAaaMaoT/exec";
+        const WEBSITE_URL = "https://urus.wazza.my"; // tiada trailing slash
         // =======================================
 
         function callGAS(action, params, onSuccess, onError) {
-            const body = JSON.stringify(Object.assign({ action: action }, params || {}));
-            fetch(GAS_URL, {
-                method: "POST",
-                headers: { "Content-Type": "text/plain" },
-                body: body
-            })
+            const url = GAS_URL + "?data=" + encodeURIComponent(JSON.stringify(Object.assign({ action: action }, params || {})));
+            fetch(url)
             .then(function(res) {
                 if (!res.ok) throw new Error("HTTP " + res.status);
                 return res.json();

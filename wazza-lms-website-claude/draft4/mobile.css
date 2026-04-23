@@ -231,7 +231,7 @@
         flex: none !important;
         min-height: 0 !important;
         justify-content: flex-start !important;
-        padding: 0.5rem 1.25rem 0.3rem;   /* ← ubah nilai ni untuk adjust space atas/bawah */
+        padding: 0.5rem 1.25rem 0.1rem !important;   /* ← ubah nilai ni untuk adjust space atas/bawah */
     }
 
     .welcome-course-logo {
@@ -248,7 +248,9 @@
     }
 
     .welcome-screen p {
-        display: none;
+        display: block;
+        font-size: 0.78rem;
+        margin-bottom: 0 !important;
     }
 
     /* Welcome premium elements — compact on mobile */

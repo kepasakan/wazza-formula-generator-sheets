@@ -199,10 +199,9 @@
         /* Sembunyikan bar, ada dalam sidebar */
     }
 
-    /* Butang toggle panel */
+    /* Sembunyikan butang toggle pada mobile — sidebar sentiasa papar */
     .btn-toggle-panel {
-        padding: 0.4rem 0.7rem;
-        font-size: 0.7rem;
+        display: none !important;
     }
 
     /* Logout button teks sembunyikan kalau ada */
@@ -235,16 +234,10 @@
         padding: 0.5rem 1.25rem 0.3rem;   /* ← ubah nilai ni untuk adjust space atas/bawah */
     }
 
-    .welcome-logo-wrap {
-        width: 32px;
-        height: 32px;
-        border-radius: 9px;
-        margin-bottom: 0.5rem;
-        box-shadow: none;
-    }
-
-    .welcome-tag {
-        display: none;
+    .welcome-course-logo {
+        width: 84px !important;
+        height: 84px !important;
+        margin-bottom: 0.9rem !important;
     }
 
     .welcome-screen h1 {
@@ -258,18 +251,20 @@
         display: none;
     }
 
-    /* Hint: kompak dan inline untuk mobile */
-    .welcome-hint {
-        flex-direction: row;
-        text-align: left;
-        gap: 0.35rem;
-        padding: 0.4rem 0.85rem;
-        font-size: 0.7rem;
+    /* Welcome premium elements — compact on mobile */
+    .welcome-exclusive-badge {
+        font-size: 0.55rem !important;
+        letter-spacing: 2px;
+        padding: 0.35rem 0.85rem !important;
+        margin-bottom: 1.6rem !important;
     }
 
-    .hint-arrow {
-        animation: bounceR 1.8s ease-in-out infinite;
-        flex-shrink: 0;
+    .welcome-notice {
+        font-size: 0.68rem !important;
+        padding: 0.55rem 0.85rem !important;
+        margin-top: 0.65rem !important;
+        max-width: 100% !important;
+        gap: 0.5rem;
     }
 
     /* ── VIDEO WRAP ── */
@@ -405,12 +400,8 @@
         display: none !important;
     }
 
-    /* Sidebar: tunjuk apabila panel-open sahaja pada mobile */
-    .lms:not(.panel-open) .pl-sidebar {
-        display: none !important;
-    }
-
-    .lms.panel-open .pl-sidebar {
+    /* Mobile: sidebar sentiasa papar di bawah vid-area */
+    .pl-sidebar {
         display: flex !important;
         flex-direction: column;
         border-top: 1px solid var(--border);
@@ -428,9 +419,8 @@
         font-size: 0.65rem;
     }
 
-    .sec-head {
-        padding: 0.8rem 1rem 0.3rem;
-        font-size: 0.58rem;
+    .sec-accordion-head {
+        padding: 0.85rem 1rem 0.45rem;
     }
 
     .lesson-item {

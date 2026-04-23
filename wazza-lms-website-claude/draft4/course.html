@@ -50,10 +50,7 @@
             width: 28px;
             height: 28px;
             border-radius: 7px;
-            background: linear-gradient(135deg, #34A853, #0D652D);
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            object-fit: cover;
             flex-shrink: 0;
         }
 
@@ -229,6 +226,23 @@
             justify-content: center;
             margin-bottom: 1.75rem;
             box-shadow: 0 12px 40px rgba(52, 168, 83, 0.22);
+        }
+
+        .welcome-course-logo {
+            width: 110px;
+            height: 110px;
+            object-fit: cover;
+            border-radius: 22px;
+            margin-bottom: 1.25rem;
+            filter:
+                drop-shadow(0 0 16px rgba(52, 168, 83, 0.35))
+                drop-shadow(0 8px 24px rgba(0, 0, 0, 0.5));
+            animation: wFadeUp 0.55s ease both, logoFloat 4s ease-in-out 0.55s infinite;
+        }
+
+        @keyframes logoFloat {
+            0%, 100% { transform: translateY(0px); }
+            50%       { transform: translateY(-7px); }
         }
 
         .welcome-tag {
@@ -593,7 +607,7 @@
         }
 
         .pl-head {
-            padding: 0.9rem 1.1rem;
+            padding: 1.1rem 1.1rem 0.85rem;
             border-bottom: 1px solid var(--border);
             position: sticky;
             top: 0;
@@ -710,6 +724,204 @@
             color: var(--text2);
         }
 
+        /* ── BAHAN SECTION ── */
+        .bahan-section {
+            border-bottom: 1px solid var(--border);
+        }
+
+        .bahan-head {
+            padding: 0.9rem 1.1rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            cursor: pointer;
+            transition: background 0.15s;
+            background: #0e0e16;
+            position: sticky;
+            top: 0;
+            z-index: 3;
+        }
+
+        .bahan-head:hover {
+            background: rgba(255, 255, 255, 0.03);
+        }
+
+        .bahan-head-left {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .bahan-head h3 {
+            font-family: 'Space Grotesk';
+            font-size: 0.74rem;
+            font-weight: 700;
+            color: var(--text2);
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+        }
+
+        .bahan-chevron {
+            color: var(--text2);
+            transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+            flex-shrink: 0;
+        }
+
+        .bahan-section.open .bahan-chevron {
+            transform: rotate(180deg);
+        }
+
+        .bahan-body {
+            display: none;
+        }
+
+        .bahan-section.open .bahan-body {
+            display: block;
+        }
+
+        .bahan-item {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.7rem 1.1rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+            transition: background 0.15s;
+        }
+
+        .bahan-item:hover {
+            background: rgba(255, 255, 255, 0.03);
+        }
+
+        a.bahan-item {
+            text-decoration: none;
+            color: inherit;
+            cursor: pointer;
+        }
+
+        .bahan-icon {
+            font-size: 1rem;
+            width: 26px;
+            text-align: center;
+            opacity: 0.7;
+            flex-shrink: 0;
+        }
+
+        .bahan-name {
+            font-size: 0.79rem;
+            color: rgba(255, 255, 255, 0.72);
+            flex: 1;
+            line-height: 1.3;
+        }
+
+        .bahan-link {
+            font-size: 0.69rem;
+            font-weight: 600;
+            color: #34A853;
+            text-decoration: none;
+            white-space: nowrap;
+        }
+
+        .bahan-link:hover {
+            opacity: 0.8;
+        }
+
+        .bahan-empty {
+            padding: 0.85rem 1.1rem;
+            font-size: 0.79rem;
+            color: var(--text2);
+        }
+
+        /* ── SECTION ACCORDION ── */
+        .sec-accordion {
+            border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+        }
+
+        .sec-accordion + .sec-accordion {
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+            margin-top: 0.2rem;
+        }
+
+        .sec-accordion-head {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0.9rem 1.1rem 0.5rem;
+            cursor: pointer;
+            user-select: none;
+            transition: background 0.15s;
+        }
+
+        .sec-accordion-head:hover {
+            background: rgba(255, 255, 255, 0.02);
+        }
+
+        .sec-head-text {
+            font-size: 0.74rem;
+            font-weight: 700;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            color: var(--text2);
+        }
+
+        .sec-chevron {
+            color: var(--text2);
+            transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+            flex-shrink: 0;
+        }
+
+        .sec-accordion.open .sec-chevron {
+            transform: rotate(180deg);
+        }
+
+        .sec-accordion-body {
+            display: none;
+        }
+
+        .sec-accordion.open .sec-accordion-body {
+            display: block;
+            padding-bottom: 0.4rem;
+        }
+
+        /* ── WELCOME PREMIUM ── */
+        .welcome-exclusive-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.45rem;
+            background: linear-gradient(135deg, rgba(52, 168, 83, 0.12), rgba(251, 188, 4, 0.07));
+            border: 1px solid rgba(52, 168, 83, 0.4);
+            border-radius: 50px;
+            padding: 0.45rem 1.15rem;
+            font-size: 0.63rem;
+            font-weight: 800;
+            letter-spacing: 2.5px;
+            text-transform: uppercase;
+            color: #34A853;
+            margin-bottom: 1.85rem;
+            box-shadow: 0 0 28px rgba(52, 168, 83, 0.12);
+        }
+
+        .welcome-notice {
+            display: flex;
+            align-items: flex-start;
+            gap: 0.65rem;
+            background: rgba(255, 77, 77, 0.05);
+            border: 1px solid rgba(255, 77, 77, 0.18);
+            border-radius: 10px;
+            padding: 0.85rem 1.15rem;
+            font-size: 0.76rem;
+            color: rgba(255, 120, 120, 0.85);
+            max-width: 420px;
+            text-align: left;
+            line-height: 1.55;
+            margin-top: 1.75rem;
+        }
+
+        .welcome-notice svg {
+            flex-shrink: 0;
+            margin-top: 1px;
+            opacity: 0.75;
+        }
+
         /* ── RESPONSIVE ── */
         @media (max-width: 768px) {
             body {
@@ -749,19 +961,8 @@
     <div class="topbar">
         <div class="tb-left">
             <a href="index.html" class="topbar-logo">
-                <div class="topbar-logo-icon">
-                    <svg width="15" height="15" viewBox="0 0 28 28" fill="none">
-                        <rect x="2" y="2" width="24" height="24" rx="6" fill="url(#tlg)" />
-                        <path d="M8 10h12M8 14h8M8 18h10" stroke="#fff" stroke-width="2.2" stroke-linecap="round" />
-                        <defs>
-                            <linearGradient id="tlg" x1="2" y1="2" x2="26" y2="26">
-                                <stop stop-color="#34A853" />
-                                <stop offset="1" stop-color="#0D652D" />
-                            </linearGradient>
-                        </defs>
-                    </svg>
-                </div>
-                <span class="topbar-logo-text">Wazza<span class="topbar-logo-dot">.</span>Academy</span>
+                <img src="wazza.autocrat.png" alt="Wazza" class="topbar-logo-icon" />
+                <span class="topbar-logo-text">Wazza<span class="topbar-logo-dot">.</span>Autocrat</span>
             </a>
             <div class="divider-v"></div>
             <div class="course-name-top" id="topbar-title">Memuatkan...</div>
@@ -788,29 +989,13 @@
             <!-- WELCOME (shown by default, hidden when lesson selected) -->
             <div class="welcome-screen" id="welcome-screen">
                 <div class="welcome-inner">
-                    <div class="welcome-logo-wrap">
-                        <svg width="32" height="32" viewBox="0 0 28 28" fill="none">
-                            <rect x="2" y="2" width="24" height="24" rx="6" fill="url(#wlg)" />
-                            <path d="M8 10h12M8 14h8M8 18h10" stroke="#fff" stroke-width="2" stroke-linecap="round" />
-                            <defs>
-                                <linearGradient id="wlg" x1="2" y1="2" x2="26" y2="26">
-                                    <stop stop-color="#34A853" />
-                                    <stop offset="1" stop-color="#0D652D" />
-                                </linearGradient>
-                            </defs>
-                        </svg>
+                    <div class="welcome-exclusive-badge">
+                        <svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+                        AKSES EKSKLUSIF
                     </div>
-                    <div class="welcome-tag">Wazza Academy</div>
-                    <h1>Selamat Datang ke<br><span id="welcome-course-name">Kursus Anda</span></h1>
-                    <p>Anda berjaya log masuk. Tekan butang <strong>Modul</strong> di sudut kanan atas, kemudian pilih
-                        video yang ingin anda tonton untuk mula belajar.</p>
-                    <div class="welcome-hint">
-                        <svg class="hint-arrow" width="15" height="15" viewBox="0 0 24 24" fill="none"
-                            stroke="currentColor" stroke-width="2.2" stroke-linecap="round">
-                            <path d="M5 12h14M13 6l6 6-6 6" />
-                        </svg>
-                        Klik <strong>Modul</strong> → pilih video → mula belajar
-                    </div>
+                    <img src="wazza.autocrat.png" alt="Wazza Autocrat" class="welcome-course-logo" />
+                    <h1>Selamat Datang ke<br><span id="welcome-course-name">Pakej Ini</span></h1>
+                    <p>Pilih pelajaran dari senarai modul untuk mulakan pembelajaran anda.</p>
                 </div>
             </div>
 
@@ -837,7 +1022,7 @@
             <!-- TABS -->
             <div class="c-tabs" id="c-tabs">
                 <button class="ctab active" data-tab="overview" onclick="showTab('overview',this)">Ringkasan</button>
-                <button class="ctab" data-tab="resources" onclick="showTab('resources',this)">Sumber</button>
+                <button class="ctab" data-tab="resources" onclick="showTab('resources',this)">Nota</button>
             </div>
             <div class="tab-panel active" id="tab-overview"></div>
             <div class="tab-panel" id="tab-resources"></div>
@@ -845,6 +1030,17 @@
 
         <!-- SIDEBAR (hidden by default) -->
         <div class="pl-sidebar" id="pl-sidebar">
+            <!-- BAHAN SECTION -->
+            <div class="bahan-section" id="bahan-section">
+                <div class="bahan-head" onclick="toggleBahan()">
+                    <div class="bahan-head-left">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"/><polyline points="13 2 13 9 20 9"/></svg>
+                        <h3>Senarai Bahan</h3>
+                    </div>
+                    <svg class="bahan-chevron" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 9l6 6 6-6"/></svg>
+                </div>
+                <div class="bahan-body" id="bahan-body"></div>
+            </div>
             <div class="pl-head">
                 <h3>Senarai Modul</h3>
             </div>
@@ -891,6 +1087,7 @@
             document.title = `${currentCourse.title} – Wazza Academy`;
 
             renderPlaylist();
+            renderMaterials();
 
             /*
             const prog = WazzaStore.getProgress(currentCourseId);
@@ -916,7 +1113,7 @@
 
             // Mobile: scroll ke atas untuk tunjuk video dari atas
             if (window.innerWidth < 768) {
-                window.scrollTo({ top: 0, behavior: 'smooth' });
+                setTimeout(() => window.scrollTo({ top: 0, behavior: 'smooth' }), 80);
             }
 
             WazzaStore.setLastLesson(currentCourseId, lessonId);
@@ -960,21 +1157,22 @@
         <p class="lesson-desc">${desc}</p>
         <div class="tip-box">💡 <strong>Tips Pro:</strong> ${tip}</div>`;
 
-            // Resources tab
+            // Nota tab
             const resources = lesson.resources || [];
+            const resUrl = (u) => u ? (/^https?:\/\//.test(u) ? u : 'https://' + u) : '#';
             document.getElementById('tab-resources').innerHTML = `
         <div class="lesson-hd">
-          <h2>Sumber Pelajaran</h2>
-          <p style="font-size:0.79rem;color:var(--text2);margin-bottom:1rem">Fail dan pautan untuk pelajaran ini.</p>
+          <h2>Nota & Bahan</h2>
+          <p style="font-size:0.79rem;color:var(--text2);margin-bottom:1rem">Nota, slide deck, dan bahan untuk pelajaran ini.</p>
         </div>
         <ul class="res-list">${resources.length
                     ? resources.map(r => `
               <li class="res-item">
                 <span class="res-icon">${r.icon || '📄'}</span>
                 <span class="res-name">${r.name}</span>
-                <a href="${r.url || '#'}" target="_blank" class="res-dl">${r.label || 'Buka ↗'}</a>
+                <a href="${resUrl(r.url)}" target="_blank" class="res-dl">${r.label || 'Buka ↗'}</a>
               </li>`).join('')
-                    : '<li style="padding:1.2rem 0;color:var(--text2);font-size:0.82rem">Tiada sumber untuk pelajaran ini.</li>'
+                    : '<li style="padding:1.2rem 0;color:var(--text2);font-size:0.82rem">Tiada nota untuk pelajaran ini — nota &amp; slide deck akan ditambah kemudian.</li>'
                 }</ul>`;
 
             document.querySelectorAll('.lesson-item').forEach(el => {
@@ -1025,11 +1223,27 @@
             if (newIdx >= 0 && newIdx < allLessons.length) loadLesson(allLessons[newIdx].id);
         }
 
+        const sectionStates = {};
+
+        function toggleSection(secId) {
+            sectionStates[secId] = !sectionStates[secId];
+            const el = document.getElementById(secId);
+            if (el) el.classList.toggle('open', sectionStates[secId]);
+        }
+
         function renderPlaylist() {
             const container = document.getElementById('playlist-container');
             let html = ''; let n = 0;
-            currentCourse.sections.forEach(sec => {
-                html += `<div class="sec-head">${sec.title}</div>`;
+            currentCourse.sections.forEach((sec, secIdx) => {
+                const secId = `sec-acc-${secIdx}`;
+                if (sectionStates[secId] === undefined) sectionStates[secId] = true;
+                const isOpen = sectionStates[secId];
+                html += `<div class="sec-accordion${isOpen ? ' open' : ''}" id="${secId}">
+                    <div class="sec-accordion-head" onclick="toggleSection('${secId}')">
+                        <span class="sec-head-text">${sec.title}</span>
+                        <svg class="sec-chevron" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 9l6 6 6-6"/></svg>
+                    </div>
+                    <div class="sec-accordion-body">`;
                 sec.lessons.forEach(lesson => {
                     n++;
                     const isDone = WazzaStore.isLessonComplete(currentCourseId, lesson.id);
@@ -1044,6 +1258,7 @@
               </div>
             </div>`;
                 });
+                html += `</div></div>`;
             });
             container.innerHTML = html;
         }
@@ -1078,6 +1293,32 @@ function showTab(tabId, btn) {
         function logKeluar() {
             localStorage.clear();
             window.location.href = 'login.html';
+        }
+
+        let bahanOpen = false;
+
+        function toggleBahan() {
+            bahanOpen = !bahanOpen;
+            document.getElementById('bahan-section').classList.toggle('open', bahanOpen);
+        }
+
+        function renderMaterials() {
+            const body = document.getElementById('bahan-body');
+            if (!body || !currentCourse) return;
+            const materials = currentCourse.materials || [];
+            if (!materials.length) {
+                body.innerHTML = '<div class="bahan-empty">Tiada bahan untuk kursus ini.</div>';
+                return;
+            }
+            body.innerHTML = materials.map(m => {
+                const url = m.url ? (/^https?:\/\//.test(m.url) ? m.url : 'https://' + m.url) : '#';
+                return `
+                <a href="${url}" target="_blank" class="bahan-item">
+                    <span class="bahan-icon">${m.icon || '📄'}</span>
+                    <span class="bahan-name">${m.name}</span>
+                    <span class="bahan-link">${m.label || 'Buka ↗'}</span>
+                </a>`;
+            }).join('');
         }
 
         initCourse();

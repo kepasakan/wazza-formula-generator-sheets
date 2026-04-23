@@ -10,6 +10,15 @@
       "thumbnail": "autocrat-bg",
       "description": "Modul lengkap pengenalan Autocrat untuk menjana sijil, invois, dan dokumen secara automatik dengan mudah.",
       "icon": "grid",
+      "materials": 
+      [
+        {
+          "name": "Fail Modul Autocrat (Google Sheets)",
+          "url": "ezy.la/praktisautocrat",
+          "icon": "📊",
+          "label": "Buka ↗"
+        }
+      ],
       "sections": [
         {
           "title": "Pengenalan & Modul 1 - Asas Autocrat",

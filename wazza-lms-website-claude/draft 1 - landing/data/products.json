@@ -1,0 +1,18 @@
+[
+  {
+    "id": "wdc",
+    "title": "Wazza Digital Camp",
+    "description": "Kuasai elemen-elemen penting dalam Google Sheets dalam masa singkat dengan Modul Lengkap Berbahasa Melayu.",
+    "image_url": "./assets/wazza-digital-camp.jpg",
+    "link_url": "https://academy.wazza.my/wdc",
+    "button_text": "Klik Untuk Info Lanjut"
+  },
+  {
+    "id": "autocrat",
+    "title": "Automasi Autocrat",
+    "description": "Sistem automasi mudah untuk jana dokumen dan e-mel terus dari Google Sheets anda dengan pantas.",
+    "image_url": "./assets/images/autocrat-banner.jpg",
+    "link_url": "https://academy.wazza.my/autocrat",
+    "button_text": "Klik Untuk Info Lanjut"
+  }
+]

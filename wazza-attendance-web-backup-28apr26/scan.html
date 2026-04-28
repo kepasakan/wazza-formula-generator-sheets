@@ -5,6 +5,7 @@
     <base target="_top">
     <script src="https://cdn.tailwindcss.com"></script>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8">
 </head>
 
 <body class="bg-gray-900 text-white min-h-screen flex flex-col items-center justify-center p-6 relative">
@@ -34,10 +35,18 @@
         <input type="password" id="passInput" placeholder="Password"
             class="w-full p-3 mb-6 rounded bg-gray-700 border border-gray-600 text-white focus:outline-none focus:border-yellow-500">
 
-        <button onclick="doLogin()"
-            class="w-full bg-yellow-600 hover:bg-yellow-700 text-white font-bold py-3 rounded transition shadow-lg mb-4">LOG
-            MASUK</button>
+        <button id="loginBtn" onclick="doLogin()"
+            class="w-full bg-yellow-600 hover:bg-yellow-700 text-white font-bold py-3 rounded transition shadow-lg mb-4 flex items-center justify-center gap-2">
+            <span id="loginBtnText">LOG MASUK</span>
+            <svg id="loginSpinner" style="display:none;" class="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path>
+            </svg>
+        </button>
         <p id="loginError" class="text-red-500 text-center mt-3 text-sm"></p>
+        <p class="text-center text-gray-500 text-xs mt-5">
+            Terlupa password? Sila hubungi <span class="text-yellow-400 font-semibold">Admin</span> untuk reset.
+        </p>
 
     </div>
 
@@ -72,19 +81,33 @@
     </div>
 
     <script>
+        // ===== CONFIG — isi sebelum deploy =====
+        const GAS_URL = "https://script.google.com/macros/s/AKfycbzjwycP8S7eGC_dLML24louH75mM9pOsVxDhTJJ8qE_qSgzPcCKHJhd9hzilAaaMaoT/exec";
+        const WEBSITE_URL = "https://urus.wazza.my"; // tiada trailing slash
+        // =======================================
+
+        function callGAS(action, params, onSuccess, onError) {
+            const url = GAS_URL + "?data=" + encodeURIComponent(JSON.stringify(Object.assign({ action: action }, params || {})));
+            fetch(url)
+            .then(function(res) {
+                if (!res.ok) throw new Error("HTTP " + res.status);
+                return res.json();
+            })
+            .then(function(data) { if (onSuccess) onSuccess(data); })
+            .catch(function(err) {
+                if (onError) onError(err);
+                else console.error("callGAS error:", action, err);
+            });
+        }
+
         let scannedToken = "";
         let userIP = "Unknown";
 
-        // --- FUNGSI KE PORTAL (SERVER-SIDE URL) ---
+        // --- FUNGSI KE PORTAL ---
         function goToPortal() {
             const btn = document.querySelector("button[onclick='goToPortal()']");
-            if (btn) btn.innerText = "Loading..."; // Bagi feedback kat user
-
-            // Minta URL sebenar dari Server
-            google.script.run.withSuccessHandler(function (url) {
-                // Redirect guna URL bersih + param portal
-                window.top.location.href = url + "?page=portal";
-            }).getScriptURL();
+            if (btn) btn.innerText = "Loading...";
+            window.top.location.href = WEBSITE_URL + "/portal";
         }
 
         function logStatus(msg) {
@@ -113,26 +136,25 @@
             document.getElementById('lblUser').innerText = nama;
         }
 
+        function setLoginLoading(isLoading) {
+            const btn = document.getElementById('loginBtn');
+            const btnText = document.getElementById('loginBtnText');
+            const spinner = document.getElementById('loginSpinner');
+            btn.disabled = isLoading;
+            btnText.innerText = isLoading ? "Memuat..." : "LOG MASUK";
+            spinner.style.display = isLoading ? "block" : "none";
+            if (isLoading) {
+                btn.classList.add('opacity-75', 'cursor-not-allowed');
+            } else {
+                btn.classList.remove('opacity-75', 'cursor-not-allowed');
+            }
+        }
+
         window.onload = function () {
             try {
-                google.script.run.withSuccessHandler(function (names) {
-                    const select = document.getElementById('userInput');
-                    names.forEach(function (name) {
-                        let option = document.createElement('option');
-                        option.text = name;
-                        option.value = name;
-                        select.add(option);
-                    });
-                }).getStaffList();
-
-                fetch('https://api.ipify.org?format=json')
-                    .then(res => res.json())
-                    .then(data => userIP = data.ip)
-                    .catch(e => console.log("IP Error"));
-
                 logStatus("Mula semakan token...");
 
-                let tokenFromServer = "<?= serverToken ?>";
+                let tokenFromServer = "";
                 const urlParams = new URLSearchParams(window.location.search);
                 let tokenFromURL = urlParams.get('token');
 
@@ -146,22 +168,40 @@
                     throw new Error("Token Tak Jumpa. Sila refresh Dashboard.");
                 }
 
-                logStatus("Semak memori phone...");
+                // Fetch IP background
+                fetch('https://api.ipify.org?format=json')
+                    .then(res => res.json())
+                    .then(data => userIP = data.ip)
+                    .catch(e => console.log("IP Error"));
+
                 let savedNama = null;
-                try {
-                    savedNama = localStorage.getItem("wazza_nama");
-                } catch (e) { }
+                try { savedNama = localStorage.getItem("wazza_nama"); } catch (e) { }
 
                 if (savedNama) {
+                    // Dah ada saved login — terus clock in, tak perlu load staff list
                     showLoggedInUI(savedNama);
                     performClockIn(savedNama);
                 } else {
-                    document.getElementById('loader').classList.add('hidden');
-                    document.getElementById('loginForm').classList.remove('hidden');
+                    // Tunggu staff list siap load DULU, baru tunjuk login form
+                    logStatus("Memuatkan senarai staf...");
+                    callGAS("getStaffList", {}, function (names) {
+                        const select = document.getElementById('userInput');
+                        names.forEach(function (name) {
+                            let option = document.createElement('option');
+                            option.text = name;
+                            option.value = name;
+                            select.add(option);
+                        });
+                        document.getElementById('loader').classList.add('hidden');
+                        document.getElementById('loginForm').classList.remove('hidden');
+                    }, function (err) {
+                        document.getElementById('loader').classList.add('hidden');
+                        document.getElementById('errorScreen').classList.remove('hidden');
+                        document.getElementById('errorMsg').innerText = "Gagal muatkan senarai staf: " + err.message;
+                    });
                 }
 
             } catch (err) {
-                // Error biasa (Token tak jumpa dsb)
                 document.getElementById('loader').classList.add('hidden');
                 document.getElementById('errorScreen').classList.remove('hidden');
                 document.getElementById('errorMsg').innerText = err.message;
@@ -171,17 +211,16 @@
         function doLogin() {
             const u = document.getElementById('userInput').value;
             const p = document.getElementById('passInput').value;
-            const btn = document.querySelector('#loginForm button');
 
             if (!u || !p) {
                 document.getElementById('loginError').innerText = "Sila pilih nama dan masukkan password.";
                 return;
             }
 
-            btn.innerText = "Checking...";
-            btn.disabled = true;
+            document.getElementById('loginError').innerText = "";
+            setLoginLoading(true);
 
-            google.script.run.withSuccessHandler(function (res) {
+            callGAS("verifyLogin", { u: u, p: p }, function (res) {
                 if (res.status === 'SUCCESS') {
                     try { localStorage.setItem("wazza_nama", res.nama); } catch (e) { }
 
@@ -191,10 +230,12 @@
                     performClockIn(res.nama);
                 } else {
                     document.getElementById('loginError').innerText = res.message;
-                    btn.innerText = "LOG MASUK";
-                    btn.disabled = false;
+                    setLoginLoading(false);
                 }
-            }).verifyLogin(u, p);
+            }, function (err) {
+                document.getElementById('loginError').innerText = "Ralat rangkaian: " + err.message;
+                setLoginLoading(false);
+            });
         }
 
         function performClockIn(nama) {
@@ -233,7 +274,7 @@
                 device: navigator.userAgent
             };
 
-            google.script.run.withSuccessHandler(function (res) {
+            callGAS("processScan", { payload: payload }, function (res) {
                 document.getElementById('loader').classList.add('hidden');
                 if (res.status === 'SUCCESS') {
                     document.getElementById('successScreen').classList.remove('hidden');
@@ -242,7 +283,10 @@
                 } else {
                     showErrorWithPortal(res.message);
                 }
-            }).processScan(payload);
+            }, function (err) {
+                document.getElementById('loader').classList.add('hidden');
+                showErrorWithPortal("Ralat rangkaian: " + err.message);
+            });
         }
 
         function showErrorWithPortal(msg) {

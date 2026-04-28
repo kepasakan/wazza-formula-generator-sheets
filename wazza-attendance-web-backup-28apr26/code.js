@@ -8,36 +8,99 @@ const CONFIG_SHEET = SS.getSheetByName("Config");
 const LOG_SHEET = SS.getSheetByName("Log_Kehadiran");
 const USER_SHEET = SS.getSheetByName("Users");
 
-//  untuk menguruskan paparan halaman HTML (routing).
+// doGet mengendalikan semua API calls dari HTML luar (CORS-safe).
+// Data dihantar sebagai query param: ?data={"action":"...","key":"val"}
 function doGet(e) {
-  if (e.parameter.page == 'clockout') {
-    return HtmlService.createTemplateFromFile('ClockOut') 
-      .evaluate().addMetaTag('viewport', 'width=device-width, initial-scale=1').setTitle('Wazza Clock-Out');
+  var output = ContentService.createTextOutput();
+  output.setMimeType(ContentService.MimeType.JSON);
+
+  if (e.parameter && e.parameter.data) {
+    var result;
+    try {
+      var body = JSON.parse(e.parameter.data);
+      var action = body.action;
+
+      if      (action === "getStaffList")                  result = getStaffList();
+      else if (action === "verifyLogin")                   result = verifyLogin(body.u, body.p);
+      else if (action === "verifyAdminLogin")              result = verifyAdminLogin(body.username, body.password);
+      else if (action === "processScan")                   result = processScan(body.payload);
+      else if (action === "processClockOut")               result = processClockOut(body.payload);
+      else if (action === "getDashboardStatus")            result = getDashboardStatus();
+      else if (action === "getAdminDashboardData")         result = getAdminDashboardData(body.targetDateRaw);
+      else if (action === "getStaffDashboardData")         result = getStaffDashboardData(body.username);
+      else if (action === "getStaffAttendanceByDateRange") result = getStaffAttendanceByDateRange(body.username, body.dateStart, body.dateEnd);
+      else if (action === "getAllLeaveLog")                 result = getAllLeaveLog();
+      else if (action === "getLeaveTypes")                 result = getLeaveTypes();
+      else if (action === "processLeaveStatus")            result = processLeaveStatus(body.rowIndex, body.status);
+      else if (action === "setStaffLate")                  result = setStaffLate(body.nama);
+      else if (action === "getSystemConfig")               result = getSystemConfig();
+      else if (action === "saveSystemConfig")              result = saveSystemConfig(body.payload);
+      else if (action === "generateNewToken")              result = generateNewToken();
+      else if (action === "getStaffManagementData")        result = getStaffManagementData();
+      else if (action === "saveStaffData")                 result = saveStaffData(body.payload);
+      else if (action === "getOutstationList")             result = getOutstationList();
+      else if (action === "saveOutstation")                result = saveOutstation(body.payload);
+      else if (action === "deleteOutstation")              result = deleteOutstation(body.rowIndex);
+      else if (action === "processOutstationAutoClockIn")  result = processOutstationAutoClockIn();
+      else if (action === "setupOutstationTrigger")        result = setupOutstationTrigger(body.triggerTime);
+      else if (action === "saveOutstationTriggerTime_web") result = saveOutstationTriggerTime_web(body.triggerTime);
+      else if (action === "getOutstationTriggerTime")      result = getOutstationTriggerTime();
+      else result = { status: "ERROR", message: "Unknown action: " + action };
+    } catch (err) {
+      result = { status: "ERROR", message: "Router error: " + err.toString() };
+    }
+    output.setContent(JSON.stringify(result));
+    return output;
   }
 
-  if (e.parameter.page == 'portal') {
-    return HtmlService.createTemplateFromFile('StaffPortal') 
-      .evaluate().addMetaTag('viewport', 'width=device-width, initial-scale=1').setTitle('Portal Staf Wazza');
-  }
-
-  if (e.parameter.token) {
-    var template = HtmlService.createTemplateFromFile('ScanHandler');
-    template.serverToken = e.parameter.token; 
-    return template.evaluate().addMetaTag('viewport', 'width=device-width, initial-scale=1').setTitle('Wazza Clock-In');
-  }
-
-  if (e.parameter.page == 'admin') {
-    return HtmlService.createTemplateFromFile('DashboardAdmin') 
-      .evaluate().addMetaTag('viewport', 'width=device-width, initial-scale=1').setTitle('Wazza Admin Dashboard');
-  }
-
-  return HtmlService.createTemplateFromFile('DashboardQR')
-      .evaluate().addMetaTag('viewport', 'width=device-width, initial-scale=1').setTitle('Admin Dashboard');
+  // Tiada data param — balik status sahaja
+  output.setContent(JSON.stringify({ status: "OK", message: "Wazza API running." }));
+  return output;
 }
 
-function getScriptURL() {
-  return ScriptApp.getService().getUrl();
-}
+// Router utama untuk semua panggilan dari HTML luar.
+// HTML hantar POST dengan Content-Type: text/plain (untuk elak CORS preflight).
+// Body: JSON string dengan field "action" + parameter lain.
+function doPost(e) {
+  var output = ContentService.createTextOutput();
+  output.setMimeType(ContentService.MimeType.JSON);
+  var result;
+  try {
+    var body = JSON.parse(e.postData.contents);
+    var action = body.action;
+
+    if      (action === "getStaffList")                  result = getStaffList();
+    else if (action === "verifyLogin")                   result = verifyLogin(body.u, body.p);
+    else if (action === "verifyAdminLogin")              result = verifyAdminLogin(body.username, body.password);
+    else if (action === "processScan")                   result = processScan(body.payload);
+    else if (action === "processClockOut")               result = processClockOut(body.payload);
+    else if (action === "getDashboardStatus")            result = getDashboardStatus();
+    else if (action === "getAdminDashboardData")         result = getAdminDashboardData(body.targetDateRaw);
+    else if (action === "getStaffDashboardData")         result = getStaffDashboardData(body.username);
+    else if (action === "getStaffAttendanceByDateRange") result = getStaffAttendanceByDateRange(body.username, body.dateStart, body.dateEnd);
+    else if (action === "getAllLeaveLog")                 result = getAllLeaveLog();
+    else if (action === "getLeaveTypes")                 result = getLeaveTypes();
+    else if (action === "processCuti")                   result = processCuti(body.formData);
+    else if (action === "processLeaveStatus")            result = processLeaveStatus(body.rowIndex, body.status);
+    else if (action === "setStaffLate")                  result = setStaffLate(body.nama);
+    else if (action === "getSystemConfig")               result = getSystemConfig();
+    else if (action === "saveSystemConfig")              result = saveSystemConfig(body.payload);
+    else if (action === "generateNewToken")              result = generateNewToken();
+    else if (action === "getStaffManagementData")        result = getStaffManagementData();
+    else if (action === "saveStaffData")                 result = saveStaffData(body.payload);
+    else if (action === "getOutstationList")             result = getOutstationList();
+    else if (action === "saveOutstation")                result = saveOutstation(body.payload);
+    else if (action === "deleteOutstation")              result = deleteOutstation(body.rowIndex);
+    else if (action === "processOutstationAutoClockIn")  result = processOutstationAutoClockIn();
+    else if (action === "setupOutstationTrigger")        result = setupOutstationTrigger(body.triggerTime);
+    else if (action === "saveOutstationTriggerTime_web") result = saveOutstationTriggerTime_web(body.triggerTime);
+    else if (action === "getOutstationTriggerTime")      result = getOutstationTriggerTime();
+    else result = { status: "ERROR", message: "Unknown action: " + action };
+  } catch (err) {
+    result = { status: "ERROR", message: "Router error: " + err.toString() };
+  }
+  output.setContent(JSON.stringify(result));
+  return output;}
 
 // ==========================================
 // Triggers.gs - (Automasi & Menu)
@@ -47,8 +110,11 @@ function onOpen() {
   const ui = SpreadsheetApp.getUi();
   ui.createMenu('⚡ WAZZA MENU')
     .addItem('🔄 Set Auto Checkout (Ikut Config B6)', 'setupAutoCheckoutTrigger')
-    .addSeparator() 
-    .addItem('🌙 Set Auto-Refresh Token (Setiap 12 Malam)', 'setupMidnightTokenTrigger') 
+    .addSeparator()
+    .addItem('🌙 Set Auto-Refresh Token (Setiap 12 Malam)', 'setupMidnightTokenTrigger')
+    .addSeparator()
+    .addItem('🗺️ Proses Auto Clock-In Outstation (Hari Ini)', 'processOutstationAutoClockIn')
+    .addItem('⚙️ Setup Auto Trigger Outstation (Harian)', 'setupOutstationTriggerFromMenu')
     .addToUi();
 }
 
@@ -169,6 +235,8 @@ function processScan(payload) {
   const rawStart = configMasa[0][0]; 
   const rawEnd = configMasa[1][0];   
 
+  const nowStr = Utilities.formatDate(new Date(), "GMT+8", "HH:mm");
+
   if (rawStart && rawEnd) {
     const formatTime = (input) => {
       if (input instanceof Date) return Utilities.formatDate(input, "GMT+8", "HH:mm");
@@ -177,7 +245,6 @@ function processScan(payload) {
 
     const startTime = formatTime(rawStart);
     const endTime = formatTime(rawEnd);
-    const nowStr = Utilities.formatDate(new Date(), "GMT+8", "HH:mm");
 
     if (nowStr < startTime || nowStr > endTime) {
       return { status: 'ERROR', message: 'GAGAL: Waktu Clock-In sudah TAMAT!\n(' + nowStr + '). Sila guna QR Merah.' };
@@ -189,24 +256,28 @@ function processScan(payload) {
     return { status: 'ERROR', message: 'QR Code Tamat Tempoh / Salah Tarikh!' };
   }
 
-  // --- BACA SETTING GEOFENCING ---
+  // --- BACA SETTING GEOFENCING & LATE THRESHOLD ---
   const allConfig = CONFIG_SHEET.getDataRange().getValues();
-  let offLat = "", offLng = "", offRad = 0;
+  let offLat = "", offLng = "", offRad = 0, lateStart = "";
   for (let i = 0; i < allConfig.length; i++) {
       let key = String(allConfig[i][0]).trim().toUpperCase();
       if (key === "OFFICE_LAT") offLat = parseFloat(allConfig[i][1]);
       if (key === "OFFICE_LNG") offLng = parseFloat(allConfig[i][1]);
       if (key === "OFFICE_RADIUS") offRad = parseInt(allConfig[i][1]);
+      if (key === "LATE-START") {
+        let lv = allConfig[i][1];
+        lateStart = lv instanceof Date ? Utilities.formatDate(lv, "GMT+8", "HH:mm") : String(lv).trim().substring(0, 5);
+      }
   }
 
   // --- LOGIK HALANGAN RADIUS (GEOFENCING) ---
-  if (offLat && offLng && offRad > 0 && !isWfhToday()) {
+  if (offLat && offLng && offRad > 0 && !isWfhToday() && !isOutstationToday(payload.nama)) {
       if (!payload.lat || !payload.lng) {
           return { status: 'ERROR', message: 'GAGAL: Sila pastikan GPS/Location phone anda dibuka untuk sahkan lokasi pejabat.' };
       }
-      
+
       let distance = getDistanceInMeters(payload.lat, payload.lng, offLat, offLng);
-      
+
       if (distance > offRad) {
           return { status: 'ERROR', message: `GAGAL: Anda berada di luar radius pejabat!\nJarak anda: ${Math.round(distance)}m\nHad Sah: ${offRad}m` };
       }
@@ -228,6 +299,17 @@ function processScan(payload) {
     }
   }
 
+  // --- SEMAK LAMBAT ---
+  const isLate = lateStart.length === 5 && nowStr > lateStart;
+  if (isLate && (!payload.sebabLambat || String(payload.sebabLambat).trim() === "")) {
+    return {
+      status: 'LATE_PROMPT',
+      lateTime: nowStr,
+      lateStart: lateStart,
+      message: 'Anda lewat daripada masa yang ditetapkan (' + lateStart + '). Sila berikan sebab kelewatan.'
+    };
+  }
+
   let alamat = "Tiada Lokasi";
   if (payload.lat && payload.lng) {
     try {
@@ -236,19 +318,23 @@ function processScan(payload) {
     } catch (e) {}
   }
 
+  const statusMasuk = isLate ? "LEWAT" : "CLOCK-IN";
+  const notaSebab   = isLate ? "Lewat. Sebab: " + String(payload.sebabLambat).trim() : "Auto-Scan";
+
   LOG_SHEET.appendRow([
     new Date(),
     payload.token,
-    payload.nama, 
-    "CLOCK-IN",
+    payload.nama,
+    statusMasuk,
     payload.lat + "," + payload.lng,
     alamat,
     payload.ip,
     payload.device,
-    "Auto-Scan"
+    notaSebab
   ]);
 
-  return { status: 'SUCCESS', message: 'Hadir: ' + payload.nama, time: new Date().toLocaleTimeString() };
+  const msgOut = isLate ? 'Lewat: ' + payload.nama : 'Hadir: ' + payload.nama;
+  return { status: 'SUCCESS', isLate: isLate, message: msgOut, time: new Date().toLocaleTimeString() };
 }
 
 //  (Clock-Out)
@@ -264,13 +350,13 @@ function processClockOut(payload) {
   }
 
   // --- LOGIK HALANGAN RADIUS (GEOFENCING) UNTUK CLOCK-OUT ---
-  if (offLat && offLng && offRad > 0 && !isWfhToday()) {
+  if (offLat && offLng && offRad > 0 && !isWfhToday() && !isOutstationToday(payload.nama)) {
       if (!payload.lat || !payload.lng) {
           return { status: 'ERROR', message: 'GAGAL: Sila pastikan GPS/Location phone anda dibuka untuk sahkan lokasi pejabat.' };
       }
-      
+
       let distance = getDistanceInMeters(payload.lat, payload.lng, offLat, offLng);
-      
+
       if (distance > offRad) {
           return { status: 'ERROR', message: `GAGAL: Anda berada di luar radius pejabat!\nJarak anda: ${Math.round(distance)}m\nHad Sah: ${offRad}m` };
       }
@@ -710,9 +796,11 @@ function getAdminDashboardData(targetDateRaw) {
   Array.from(combinedStaffList).sort().forEach(name => {
     if (attendanceMap[name]) {
       presentCount++;
-      if(attendanceMap[name].status === "LEWAT (MANUAL)") lateCount++;
+      var rawStatus = attendanceMap[name].status;
+      var isLateStatus = rawStatus === "LEWAT (MANUAL)" || rawStatus === "LEWAT";
+      if (isLateStatus) lateCount++;
       finalAttendanceList.push({
-        nama: name, status: attendanceMap[name].status === "LEWAT (MANUAL)" ? "LEWAT" : "HADIR",
+        nama: name, status: isLateStatus ? "LEWAT" : "HADIR",
         masaMasuk: attendanceMap[name].masaMasuk, masaKeluar: attendanceMap[name].masaKeluar,
         coordsIn: attendanceMap[name].coordsIn, coordsOut: attendanceMap[name].coordsOut,
         alamatIn: attendanceMap[name].alamatIn, alamatOut: attendanceMap[name].alamatOut  
@@ -916,14 +1004,15 @@ function getSystemConfig() {
     let conf = {
       startQr: "",
       endQr: "",
+      lateStart: "",
       linkFolder: "",
       adminUser: "",
       adminPass: "",
       officeLat: "",
       officeLng: "",
       officeRadius: 0,
-      wfhDays: [],       // Array hari WFH tetap, cth: ["Isnin","Jumaat"]
-      wfhDates: []       // Array tarikh override WFH, cth: ["2026-04-25","2026-05-01"]
+      wfhDays: [],
+      wfhDates: []
     };
 
     for (let i = 0; i < configData.length; i++) {
@@ -938,6 +1027,11 @@ function getSystemConfig() {
       }
       if (key === "end-qr") {
         conf.endQr = val instanceof Date
+          ? Utilities.formatDate(val, "GMT+8", "HH:mm")
+          : String(val).trim().substring(0, 5);
+      }
+      if (key === "late-start") {
+        conf.lateStart = val instanceof Date
           ? Utilities.formatDate(val, "GMT+8", "HH:mm")
           : String(val).trim().substring(0, 5);
       }
@@ -1015,12 +1109,30 @@ function saveSystemConfig(payload) {
       Array.isArray(payload.wfhDates) ? payload.wfhDates.join(",") : ""
     );
 
+    // late-start (cari row, update atau tambah)
+    _saveConfigByKey("late-start", payload.lateStart || "");
+
     lock.releaseLock();
 
     return { status: "SUCCESS", message: "Tetapan sistem berjaya disimpan!" };
   } catch (e) {
     return { status: "ERROR", message: "Gagal simpan tetapan: " + e.toString() };
   }
+}
+
+function _saveConfigByKey(key, value) {
+  try {
+    const data = CONFIG_SHEET.getDataRange().getValues();
+    for (let i = 0; i < data.length; i++) {
+      if (String(data[i][0]).trim().toLowerCase() === key.toLowerCase()) {
+        CONFIG_SHEET.getRange(i + 1, 2).setValue(value);
+        return;
+      }
+    }
+    let r = CONFIG_SHEET.getLastRow() + 1;
+    CONFIG_SHEET.getRange(r, 1).setValue(key);
+    CONFIG_SHEET.getRange(r, 2).setValue(value);
+  } catch(e) {}
 }
 
 
@@ -1074,6 +1186,278 @@ function isWfhToday() {
   }
 }
 
+// ==========================================
+// Outstation.gs - (Pengecualian Outstation)
+// ==========================================
+
+function isOutstationToday(nama) {
+  try {
+    const sheet = SS.getSheetByName("Log_Outstation");
+    if (!sheet) return false;
+    const lastRow = sheet.getLastRow();
+    if (lastRow <= 1) return false;
+    const today = new Date();
+    const todayStr = Utilities.formatDate(today, "Asia/Kuala_Lumpur", "yyyy-MM-dd");
+    const data = sheet.getRange(2, 1, lastRow - 1, 3).getValues();
+    for (let i = 0; i < data.length; i++) {
+      let staffNama = String(data[i][1]).trim();
+      let tarikhRaw = data[i][2];
+      let tarikhStr = tarikhRaw instanceof Date
+        ? Utilities.formatDate(tarikhRaw, "Asia/Kuala_Lumpur", "yyyy-MM-dd")
+        : String(tarikhRaw).trim();
+      if (staffNama === nama && tarikhStr === todayStr) return true;
+    }
+    return false;
+  } catch (e) { return false; }
+}
+
+function _parseMasaStr(raw) {
+  if (!raw) return "08:00";
+  if (raw instanceof Date) return Utilities.formatDate(raw, "Asia/Kuala_Lumpur", "HH:mm");
+  let s = String(raw).trim();
+  return s.length >= 5 ? s.substring(0, 5) : "08:00";
+}
+
+function getOutstationList() {
+  try {
+    const sheet = SS.getSheetByName("Log_Outstation");
+    if (!sheet) return { status: 'SUCCESS', data: [] };
+    const lastRow = sheet.getLastRow();
+    if (lastRow <= 1) return { status: 'SUCCESS', data: [] };
+    const data = sheet.getRange(2, 1, lastRow - 1, 7).getValues();
+    let list = [];
+    for (let i = 0; i < data.length; i++) {
+      if (!data[i][1] || String(data[i][1]).trim() === "") continue;
+      let tarikhRaw = data[i][2];
+      let tarikhStr = tarikhRaw instanceof Date
+        ? Utilities.formatDate(tarikhRaw, "Asia/Kuala_Lumpur", "yyyy-MM-dd")
+        : String(tarikhRaw).trim();
+      let tsStr = data[i][0] instanceof Date
+        ? Utilities.formatDate(data[i][0], "Asia/Kuala_Lumpur", "dd/MM/yyyy HH:mm")
+        : String(data[i][0]);
+      list.push({
+        rowIndex: i + 2,
+        timestamp: tsStr,
+        nama: String(data[i][1]).trim(),
+        tarikh: tarikhStr,
+        autoClockIn: String(data[i][3]).toUpperCase() === "TRUE",
+        masaClockIn: _parseMasaStr(data[i][4]),
+        sebab: data[i][5] ? String(data[i][5]) : "",
+        status: data[i][6] ? String(data[i][6]) : "PENDING"
+      });
+    }
+    return { status: 'SUCCESS', data: list };
+  } catch (e) { return { status: 'ERROR', message: e.toString() }; }
+}
+
+function saveOutstation(payload) {
+  try {
+    let sheet = SS.getSheetByName("Log_Outstation");
+    if (!sheet) {
+      sheet = SS.insertSheet("Log_Outstation");
+      sheet.appendRow(["Timestamp", "Nama_Staf", "Tarikh_Outstation", "Auto_ClockIn", "Masa_ClockIn", "Sebab", "Status"]);
+    }
+    let tarikhDate = new Date(payload.tarikh);
+    if (payload.rowIndex) {
+      let r = payload.rowIndex;
+      sheet.getRange(r, 2).setValue(payload.nama);
+      sheet.getRange(r, 3).setValue(tarikhDate);
+      sheet.getRange(r, 4).setValue(payload.autoClockIn ? "TRUE" : "FALSE");
+      sheet.getRange(r, 5).setValue(payload.masaClockIn || "08:00");
+      sheet.getRange(r, 6).setValue(payload.sebab || "");
+    } else {
+      sheet.appendRow([new Date(), payload.nama, tarikhDate, payload.autoClockIn ? "TRUE" : "FALSE", payload.masaClockIn || "08:00", payload.sebab || "", "PENDING"]);
+    }
+    return { status: 'SUCCESS', message: 'Rekod outstation berjaya disimpan!' };
+  } catch (e) { return { status: 'ERROR', message: e.toString() }; }
+}
+
+function deleteOutstation(rowIndex) {
+  try {
+    const sheet = SS.getSheetByName("Log_Outstation");
+    if (!sheet) return { status: 'ERROR', message: 'Sheet tidak wujud.' };
+    sheet.deleteRow(rowIndex);
+    return { status: 'SUCCESS' };
+  } catch (e) { return { status: 'ERROR', message: e.toString() }; }
+}
+
+function _applyOutstationClockIn(sheet, rowNum, nama, masaStr, sebab, today, logData) {
+  let alreadyIn = false;
+  for (let j = 1; j < logData.length; j++) {
+    let rowDate = new Date(logData[j][0]);
+    if (String(logData[j][2]) === nama &&
+        rowDate.getDate() === today.getDate() &&
+        rowDate.getMonth() === today.getMonth() &&
+        rowDate.getFullYear() === today.getFullYear()) {
+      alreadyIn = true; break;
+    }
+  }
+  sheet.getRange(rowNum, 7).setValue("DONE");
+  if (!alreadyIn) {
+    let clockInTime = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+    let masParts = masaStr.split(":");
+    if (masParts.length >= 2) {
+      let h = parseInt(masParts[0]);
+      let m = parseInt(masParts[1]);
+      if (!isNaN(h) && !isNaN(m)) clockInTime.setHours(h, m, 0, 0);
+    }
+    LOG_SHEET.appendRow([
+      clockInTime, "OUTSTATION-AUTO", nama, "CLOCK-IN",
+      "", "Outstation. Sebab: " + sebab, "", "Auto-System", "Outstation"
+    ]);
+    return true;
+  }
+  return false;
+}
+
+// Dipanggil manual dari Admin Dashboard (proses semua pending hari ini tanpa semak masa)
+function processOutstationAutoClockIn() {
+  try {
+    const sheet = SS.getSheetByName("Log_Outstation");
+    if (!sheet) return { status: 'SUCCESS', processed: 0, names: [] };
+    const lastRow = sheet.getLastRow();
+    if (lastRow <= 1) return { status: 'SUCCESS', processed: 0, names: [] };
+    const today = new Date();
+    const todayStr = Utilities.formatDate(today, "Asia/Kuala_Lumpur", "yyyy-MM-dd");
+    const data = sheet.getRange(2, 1, lastRow - 1, 7).getValues();
+    const logData = LOG_SHEET.getDataRange().getValues();
+    let processed = 0;
+    let names = [];
+    for (let i = 0; i < data.length; i++) {
+      if (!data[i][1] || String(data[i][1]).trim() === "") continue;
+      let tarikhRaw = data[i][2];
+      let tarikhStr = tarikhRaw instanceof Date
+        ? Utilities.formatDate(tarikhRaw, "Asia/Kuala_Lumpur", "yyyy-MM-dd")
+        : String(tarikhRaw).trim();
+      let autoClockIn = String(data[i][3]).toUpperCase() === "TRUE";
+      let status = String(data[i][6] || "PENDING");
+      if (tarikhStr !== todayStr || !autoClockIn || status === "DONE") continue;
+      let nama = String(data[i][1]).trim();
+      let masaStr = _parseMasaStr(data[i][4]);
+      let sebab = data[i][5] ? String(data[i][5]) : "Outstation";
+      let didClockIn = _applyOutstationClockIn(sheet, i + 2, nama, masaStr, sebab, today, logData);
+      if (didClockIn) { processed++; names.push(nama); }
+    }
+    return { status: 'SUCCESS', processed: processed, names: names };
+  } catch (e) { return { status: 'ERROR', message: e.toString() }; }
+}
+
+// Dipanggil sekali sehari oleh daily trigger
+// Proses semua rekod outstation hari ini, clock-in ikut masa yang dikonfigure tiap rekod
+function processOutstationTrigger() {
+  try {
+    const sheet = SS.getSheetByName("Log_Outstation");
+    if (!sheet) return;
+    const lastRow = sheet.getLastRow();
+    if (lastRow <= 1) return;
+    const today = new Date();
+    const todayStr = Utilities.formatDate(today, "Asia/Kuala_Lumpur", "yyyy-MM-dd");
+    const data = sheet.getRange(2, 1, lastRow - 1, 7).getValues();
+    const logData = LOG_SHEET.getDataRange().getValues();
+    for (let i = 0; i < data.length; i++) {
+      if (!data[i][1] || String(data[i][1]).trim() === "") continue;
+      let tarikhRaw = data[i][2];
+      let tarikhStr = tarikhRaw instanceof Date
+        ? Utilities.formatDate(tarikhRaw, "Asia/Kuala_Lumpur", "yyyy-MM-dd")
+        : String(tarikhRaw).trim();
+      let autoClockIn = String(data[i][3]).toUpperCase() === "TRUE";
+      let status = String(data[i][6] || "PENDING");
+      if (tarikhStr !== todayStr || !autoClockIn || status === "DONE") continue;
+      let nama = String(data[i][1]).trim();
+      let masaStr = _parseMasaStr(data[i][4]);
+      let sebab = data[i][5] ? String(data[i][5]) : "Outstation";
+      _applyOutstationClockIn(sheet, i + 2, nama, masaStr, sebab, today, logData);
+    }
+  } catch (e) { console.log("processOutstationTrigger error: " + e); }
+}
+
+// Dipanggil dari web admin — SIMPAN MASA KE CONFIG SAHAJA, tak create trigger
+function saveOutstationTriggerTime_web(triggerTime) {
+  try {
+    let timeStr = triggerTime ? String(triggerTime).trim().substring(0, 5) : "09:00";
+    _saveOutstationTriggerTime(timeStr);
+    return { status: 'SUCCESS', message: 'Masa trigger disimpan: ' + timeStr + '. Pergi WAZZA MENU → Setup Auto Trigger untuk apply.' };
+  } catch(e) {
+    return { status: 'ERROR', message: e.toString() };
+  }
+}
+
+// Core function — create trigger (version-tied jika dipanggil dari web app)
+function setupOutstationTrigger(triggerTime) {
+  try {
+    let timeStr = triggerTime ? String(triggerTime).trim().substring(0, 5) : "09:00";
+    let hour = 9, minute = 0;
+    if (timeStr.includes(":")) {
+      let parts = timeStr.split(":");
+      hour = parseInt(parts[0]) || 9;
+      minute = parseInt(parts[1]) || 0;
+    }
+
+    const triggers = ScriptApp.getProjectTriggers();
+    for (let i = 0; i < triggers.length; i++) {
+      if (triggers[i].getHandlerFunction() === 'processOutstationTrigger') ScriptApp.deleteTrigger(triggers[i]);
+    }
+    ScriptApp.newTrigger('processOutstationTrigger')
+      .timeBased().everyDays(1).atHour(hour).nearMinute(minute).create();
+
+    _saveOutstationTriggerTime(timeStr);
+
+    let jam = String(hour).padStart(2, '0') + ':' + String(minute).padStart(2, '0');
+    return { status: 'SUCCESS', message: 'Auto Trigger ditetapkan pada jam ' + jam + ' setiap hari secara automatik.' };
+  } catch (e) {
+    return { status: 'ERROR', message: e.toString() };
+  }
+}
+
+// Wrapper untuk GAS menu — auto-baca masa dari Config, create HEAD trigger
+function setupOutstationTriggerFromMenu() {
+  const ui = SpreadsheetApp.getUi();
+  let configTime = "09:00";
+  try {
+    let r = getOutstationTriggerTime();
+    if (r.time && r.time.length === 5) configTime = r.time;
+  } catch(e) {}
+
+  let res = ui.alert(
+    '⚙️ Setup Auto Trigger Outstation',
+    'Trigger akan ditetapkan pada jam ' + configTime + ' (dari Tetapan Sistem).\n\nTeruskan?',
+    ui.ButtonSet.YES_NO
+  );
+  if (res === ui.Button.YES) {
+    let result = setupOutstationTrigger(configTime);
+    ui.alert(result.status === 'SUCCESS' ? '✅ ' + result.message : '❌ ' + result.message);
+  }
+}
+
+function _saveOutstationTriggerTime(timeStr) {
+  try {
+    const configData = CONFIG_SHEET.getDataRange().getValues();
+    for (let i = 0; i < configData.length; i++) {
+      if (String(configData[i][0]).trim().toLowerCase() === "outstation_trigger") {
+        CONFIG_SHEET.getRange(i + 1, 2).setValue(timeStr);
+        return;
+      }
+    }
+    let newRow = CONFIG_SHEET.getLastRow() + 1;
+    CONFIG_SHEET.getRange(newRow, 1).setValue("outstation_trigger");
+    CONFIG_SHEET.getRange(newRow, 2).setValue(timeStr);
+  } catch(e) {}
+}
+
+function getOutstationTriggerTime() {
+  try {
+    const configData = CONFIG_SHEET.getDataRange().getValues();
+    for (let i = 0; i < configData.length; i++) {
+      if (String(configData[i][0]).trim().toLowerCase() === "outstation_trigger") {
+        return { status: 'SUCCESS', time: _parseMasaStr(configData[i][1]) || "09:00" };
+      }
+    }
+    return { status: 'SUCCESS', time: "09:00" };
+  } catch(e) {
+    return { status: 'SUCCESS', time: "09:00" };
+  }
+}
+
 function getDailyToken() {
   var token = CONFIG_SHEET.getRange("B2").getValue();
   if (token == "") {
@@ -1101,21 +1485,18 @@ function generateNewToken() {
 
 function getDashboardStatus() {
   const configData = CONFIG_SHEET.getRange("B2:B5").getValues();
-  let token = configData[0][0];       
-  let startTime = configData[2][0];   
-  let endTime = configData[3][0];     
+  let token = configData[0][0];
+  let startTime = configData[2][0];
+  let endTime = configData[3][0];
 
-  if (token == "") {
-    token = generateNewToken();
-  }
+  if (token == "") token = generateNewToken();
 
-  let isOpen = true; 
+  let isOpen = true;
   let message = "";
+  const now = new Date();
+  const nowStr = Utilities.formatDate(now, "GMT+8", "HH:mm");
 
   if (startTime && endTime) {
-    const now = new Date();
-    const nowStr = Utilities.formatDate(now, "GMT+8", "HH:mm");
-    
     if (nowStr >= startTime && nowStr <= endTime) {
       isOpen = true;
     } else {
@@ -1124,5 +1505,15 @@ function getDashboardStatus() {
     }
   }
 
-  return { token: token, isOpen: isOpen, statusMsg: message };
+  let lateStart = "";
+  const allConfig = CONFIG_SHEET.getDataRange().getValues();
+  for (let i = 0; i < allConfig.length; i++) {
+    if (String(allConfig[i][0]).trim().toUpperCase() === "LATE-START") {
+      let lv = allConfig[i][1];
+      lateStart = lv instanceof Date ? Utilities.formatDate(lv, "GMT+8", "HH:mm") : String(lv).trim().substring(0, 5);
+    }
+  }
+
+  const isLate = isOpen && lateStart.length === 5 && nowStr > lateStart;
+  return { token: token, isOpen: isOpen, statusMsg: message, isLate: isLate, lateStart: lateStart };
 }

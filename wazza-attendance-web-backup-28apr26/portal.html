@@ -11,6 +11,7 @@
             font-family: 'Inter', sans-serif;
         }
     </style>
+    <meta charset="UTF-8">
 </head>
 
 <body class="bg-gray-900 text-gray-200 min-h-screen relative">
@@ -41,9 +42,17 @@
                         class="w-full p-3 rounded-lg bg-gray-700 border border-gray-600 text-white outline-none focus:border-yellow-500 transition">
                 </div>
                 <button type="submit" id="btnLogin"
-                    class="w-full bg-yellow-600 hover:bg-yellow-500 text-gray-900 font-black tracking-widest py-3 rounded-lg mt-4 transition shadow-lg">
-                    MASUK PENGESAHAN
+                    class="w-full bg-yellow-600 hover:bg-yellow-500 text-gray-900 font-black tracking-widest py-3 rounded-lg mt-4 transition shadow-lg flex items-center justify-center gap-2">
+                    <span id="loginBtnText">MASUK PENGESAHAN</span>
+                    <svg id="loginSpinner" style="display:none;" class="animate-spin h-5 w-5 text-gray-900" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path>
+                    </svg>
                 </button>
+                <p id="loginError" class="text-red-400 text-center text-xs mt-3 min-h-[1rem]"></p>
+                <p class="text-center text-gray-500 text-xs mt-3">
+                    Terlupa password? Sila hubungi <span class="text-yellow-400 font-semibold">Admin</span> untuk reset.
+                </p>
             </form>
         </div>
     </div>
@@ -240,6 +249,37 @@
     </div>
 
     <script>
+        // ===== CONFIG — isi sebelum deploy =====
+        const GAS_URL = "https://script.google.com/macros/s/AKfycbzjwycP8S7eGC_dLML24louH75mM9pOsVxDhTJJ8qE_qSgzPcCKHJhd9hzilAaaMaoT/exec";
+        const WEBSITE_URL = "https://urus.wazza.my"; // tiada trailing slash
+        // =======================================
+
+        function callGAS(action, params, onSuccess, onError) {
+            // processCuti guna POST sebab ada base64 file — terlalu besar untuk URL param
+            if (action === "processCuti") {
+                fetch(GAS_URL, {
+                    method: "POST",
+                    headers: { "Content-Type": "text/plain" },
+                    body: JSON.stringify(Object.assign({ action: action }, params || {}))
+                })
+                .then(function(res) { return res.json(); })
+                .then(function(data) { if (onSuccess) onSuccess(data); })
+                .catch(function(err) { if (onError) onError(err); else console.error("callGAS error:", action, err); });
+                return;
+            }
+            const url = GAS_URL + "?data=" + encodeURIComponent(JSON.stringify(Object.assign({ action: action }, params || {})));
+            fetch(url)
+            .then(function(res) {
+                if (!res.ok) throw new Error("HTTP " + res.status);
+                return res.json();
+            })
+            .then(function(data) { if (onSuccess) onSuccess(data); })
+            .catch(function(err) {
+                if (onError) onError(err);
+                else console.error("callGAS error:", action, err);
+            });
+        }
+
         let currentUser = localStorage.getItem("wazza_nama");
         let leaveRules = { al_advance: 0, al_streak_doc_req: 0, mc_streak_doc_req: 0 };
 
@@ -250,7 +290,7 @@
                 loadDashboard(currentUser);
                 setupFormInit();
             } else {
-                google.script.run.withSuccessHandler(function (names) {
+                callGAS("getStaffList", {}, function (names) {
                     const select = document.getElementById('loginUserSelect');
                     select.innerHTML = '<option value="" disabled selected>-- Sila Pilih Nama Anda --</option>';
                     names.forEach(name => {
@@ -261,16 +301,29 @@
                     });
                     document.getElementById('pageLoader').classList.add('hidden');
                     document.getElementById('loginOverlay').classList.remove('hidden');
-                }).getStaffList();
+                });
             }
         };
 
-        function handlePortalLogin(form) {
+        function setPortalLoginLoading(isLoading) {
             const btn = document.getElementById('btnLogin');
-            btn.innerText = "MENYEMAK...";
-            btn.disabled = true;
+            const btnText = document.getElementById('loginBtnText');
+            const spinner = document.getElementById('loginSpinner');
+            btn.disabled = isLoading;
+            btnText.innerText = isLoading ? "MEMUAT..." : "MASUK PENGESAHAN";
+            spinner.style.display = isLoading ? "block" : "none";
+            if (isLoading) {
+                btn.classList.add('opacity-75', 'cursor-not-allowed');
+            } else {
+                btn.classList.remove('opacity-75', 'cursor-not-allowed');
+            }
+        }
 
-            google.script.run.withSuccessHandler(function (res) {
+        function handlePortalLogin(form) {
+            document.getElementById('loginError').innerText = "";
+            setPortalLoginLoading(true);
+
+            callGAS("verifyLogin", { u: form.username.value, p: form.password.value }, function (res) {
                 if (res.status === 'SUCCESS') {
                     currentUser = res.nama;
                     localStorage.setItem("wazza_nama", res.nama);
@@ -278,11 +331,13 @@
                     loadDashboard(currentUser);
                     setupFormInit();
                 } else {
-                    alert(res.message);
-                    btn.innerText = "MASUK PENGESAHAN";
-                    btn.disabled = false;
+                    document.getElementById('loginError').innerText = res.message;
+                    setPortalLoginLoading(false);
                 }
-            }).verifyLogin(form.username.value, form.password.value);
+            }, function (err) {
+                document.getElementById('loginError').innerText = "Ralat rangkaian: " + err.message;
+                setPortalLoginLoading(false);
+            });
         }
 
         function logoutPortal() {
@@ -310,14 +365,14 @@
             document.getElementById('searchDateStart').value = firstDayStr;
             document.getElementById('searchDateEnd').value = todayStr;
 
-            google.script.run.withSuccessHandler(res => { leaveRules = res; }).getLeaveValidationConfig();
+            callGAS("getLeaveValidationConfig", {}, function (res) { leaveRules = res; });
 
             fetch('https://api.ipify.org?format=json')
                 .then(res => res.json())
                 .then(data => document.getElementById('formIp').value = data.ip)
                 .catch(e => { document.getElementById('formIp').value = "Unknown"; });
 
-            google.script.run.withSuccessHandler(function (types) {
+            callGAS("getLeaveTypes", {}, function (types) {
                 const select = document.getElementById('formJenis');
                 select.innerHTML = '<option value="" disabled selected>-- Pilih Jenis --</option>';
                 types.forEach(type => {
@@ -326,7 +381,7 @@
                     option.value = type;
                     select.add(option);
                 });
-            }).getLeaveTypes();
+            });
 
             if (navigator.geolocation) {
                 navigator.geolocation.getCurrentPosition(
@@ -472,7 +527,7 @@
                 fileName: fileName
             };
 
-            google.script.run.withSuccessHandler(function (response) {
+            callGAS("processCuti", { formData: formData }, function (response) {
                 resetSubmitState();
                 if (response && response.status === 'ERROR') {
                     alert(response.message);
@@ -481,8 +536,10 @@
                 document.getElementById('leaveForm').classList.add('hidden');
                 document.getElementById('formSuccess').classList.remove('hidden');
                 loadDashboard(currentUser);
-
-            }).processCuti(formData);
+            }, function (err) {
+                resetSubmitState();
+                alert("Ralat rangkaian: " + err.message);
+            });
         }
 
         function resetSubmitState() {
@@ -512,10 +569,10 @@
             btn.innerText = "Mencari..."; btn.disabled = true;
             document.getElementById('attList').innerHTML = `<div class="animate-pulse bg-gray-800 h-16 rounded-xl text-center text-xs text-gray-500 py-5">Menarik rekod...</div>`;
 
-            google.script.run.withSuccessHandler(function (logs) {
+            callGAS("getStaffAttendanceByDateRange", { username: currentUser, dateStart: ds, dateEnd: de }, function (logs) {
                 renderAttendanceLogs(logs, "Tiada rekod dijumpai pada julat tarikh ini.");
                 btn.innerText = "Cari Rekod"; btn.disabled = false;
-            }).getStaffAttendanceByDateRange(currentUser, ds, de);
+            });
         }
 
         function renderAttendanceLogs(logs, emptyMsg) {
@@ -555,14 +612,11 @@
         // --- TAMBAHAN FUNGSI LOADDASHBOARD (WAJIB ADA) ---
         function loadDashboard(u) {
             document.getElementById('pageLoader').classList.remove('hidden'); // Tunjuk loading
-            google.script.run
-                .withSuccessHandler(renderDashboard)
-                .withFailureHandler(function (err) {
-                    alert("Gagal menghubungi pelayan. Sila refresh semula.\nSebab: " + err);
-                    document.getElementById('staffName').innerText = "Ralat!";
-                    document.getElementById('pageLoader').classList.add('hidden'); // Tutup loading kalau error
-                })
-                .getStaffDashboardData(u);
+            callGAS("getStaffDashboardData", { username: u }, renderDashboard, function (err) {
+                alert("Gagal menghubungi pelayan. Sila refresh semula.\nSebab: " + err.message);
+                document.getElementById('staffName').innerText = "Ralat!";
+                document.getElementById('pageLoader').classList.add('hidden'); // Tutup loading kalau error
+            });
         }
         // ------------------------------------------------
 

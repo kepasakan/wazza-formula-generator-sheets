@@ -71,6 +71,26 @@
         <p id="errorMsg" class="text-red-100 mt-4 font-medium"></p>
     </div>
 
+    <div id="lateReasonScreen"
+        class="hidden w-full max-w-sm bg-orange-950 p-6 rounded-xl shadow-2xl border-2 border-orange-500">
+        <div class="text-center mb-4">
+            <div class="text-5xl mb-2">⏰</div>
+            <h2 class="text-xl font-bold text-orange-300">Anda Lambat</h2>
+            <p id="lateTimeMsg" class="text-sm text-orange-200 mt-1"></p>
+        </div>
+        <div class="mb-4">
+            <label class="block text-orange-300 text-xs font-bold mb-2 uppercase tracking-wider">Sebab Kelewatan</label>
+            <textarea id="lateReasonInput" rows="3"
+                placeholder="Contoh: Tersekat jalan, Kenderaan rosak, Urusan kecemasan..."
+                class="w-full p-3 rounded-lg bg-gray-900 border border-orange-600 text-white focus:outline-none focus:border-orange-400 resize-none text-sm"></textarea>
+            <p id="lateReasonError" class="text-red-400 text-xs mt-1 hidden">Sila masukkan sebab kelewatan.</p>
+        </div>
+        <button onclick="submitLateReason()"
+            class="w-full bg-orange-600 hover:bg-orange-500 text-white font-bold py-3 rounded-lg transition shadow-lg">
+            Hantar & Clock In Lewat
+        </button>
+    </div>
+
     <div id="logoutSection" class="hidden fixed bottom-8 flex flex-col items-center space-y-3">
         <p class="text-xs text-gray-500">Login sebagai: <span id="lblUser" class="text-gray-300 font-bold">...</span>
         </p>
@@ -262,7 +282,9 @@
             }
         }
 
-        function sendData(nama, lat, lng) {
+        var _lateNama = "", _lateLat = null, _lateLng = null;
+
+        function sendData(nama, lat, lng, sebabLambat) {
             logStatus("Menghantar Data...");
 
             const payload = {
@@ -273,13 +295,43 @@
                 ip: userIP,
                 device: navigator.userAgent
             };
+            if (sebabLambat) payload.sebabLambat = sebabLambat;
 
             callGAS("processScan", { payload: payload }, function (res) {
+                // Sembunyikan semua screen dulu
                 document.getElementById('loader').classList.add('hidden');
+                document.getElementById('loginForm').classList.add('hidden');
+
                 if (res.status === 'SUCCESS') {
-                    document.getElementById('successScreen').classList.remove('hidden');
-                    document.getElementById('successName').innerText = res.message.replace('Hadir: ', '');
-                    document.getElementById('successTime').innerText = res.time;
+                    var screen = document.getElementById('successScreen');
+                    if (res.isLate) {
+                        screen.className = "text-center bg-orange-950 p-8 rounded-xl shadow-2xl w-full max-w-sm border-2 border-orange-500";
+                        screen.querySelector('.text-6xl').innerText = "⏰";
+                        screen.querySelector('h2').innerText = "CLOCK IN LEWAT";
+                        screen.querySelector('h2').className = "text-2xl font-bold text-orange-300";
+                        document.getElementById('successTime').style.color = "#fb923c";
+                    } else {
+                        screen.className = "text-center bg-green-900 p-8 rounded-xl shadow-2xl w-full max-w-sm border-2 border-green-600";
+                        screen.querySelector('.text-6xl').innerText = "✅";
+                        screen.querySelector('h2').innerText = "BERJAYA!";
+                        screen.querySelector('h2').className = "text-3xl font-bold text-white";
+                        document.getElementById('successTime').style.color = "";
+                    }
+                    screen.classList.remove('hidden');
+                    var displayName = res.message.replace('Hadir: ', '').replace('Lewat: ', '');
+                    document.getElementById('successName').innerText = displayName;
+                    document.getElementById('successTime').innerText = res.isLate ? '⏰ ' + res.time + ' (Lewat)' : res.time;
+
+                } else if (res.status === 'LATE_PROMPT') {
+                    _lateNama = nama;
+                    _lateLat = lat;
+                    _lateLng = lng;
+                    document.getElementById('lateReasonInput').value = "";
+                    document.getElementById('lateReasonError').classList.add('hidden');
+                    document.getElementById('lateTimeMsg').innerText =
+                        'Jam semasa: ' + res.lateTime + ' (Masa tepat: ' + res.lateStart + ')';
+                    document.getElementById('lateReasonScreen').classList.remove('hidden');
+
                 } else {
                     showErrorWithPortal(res.message);
                 }
@@ -287,6 +339,19 @@
                 document.getElementById('loader').classList.add('hidden');
                 showErrorWithPortal("Ralat rangkaian: " + err.message);
             });
+        }
+
+        function submitLateReason() {
+            var reason = document.getElementById('lateReasonInput').value.trim();
+            var errEl = document.getElementById('lateReasonError');
+            if (!reason) {
+                errEl.classList.remove('hidden');
+                return;
+            }
+            errEl.classList.add('hidden');
+            document.getElementById('lateReasonScreen').classList.add('hidden');
+            document.getElementById('loader').classList.remove('hidden');
+            sendData(_lateNama, _lateLat, _lateLng, reason);
         }
 
         function showErrorWithPortal(msg) {

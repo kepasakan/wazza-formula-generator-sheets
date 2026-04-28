@@ -790,6 +790,25 @@
 
     <!-- ===== SCRIPTS ===== -->
     <script>
+        // ===== CONFIG — isi sebelum deploy =====
+        const GAS_URL = "https://script.google.com/macros/s/AKfycbzjwycP8S7eGC_dLML24louH75mM9pOsVxDhTJJ8qE_qSgzPcCKHJhd9hzilAaaMaoT/exec";
+        const WEBSITE_URL = "https://urus.wazza.my"; // tiada trailing slash
+        // =======================================
+
+        function callGAS(action, params, onSuccess, onError) {
+            const url = GAS_URL + "?data=" + encodeURIComponent(JSON.stringify(Object.assign({ action: action }, params || {})));
+            fetch(url)
+            .then(function(res) {
+                if (!res.ok) throw new Error("HTTP " + res.status);
+                return res.json();
+            })
+            .then(function(data) { if (onSuccess) onSuccess(data); })
+            .catch(function(err) {
+                if (onError) onError(err);
+                else console.error("callGAS error:", action, err);
+            });
+        }
+
         // ==========================================
         // ADMIN LOGIN
         // ==========================================
@@ -816,26 +835,23 @@
             btn.innerText = "MENYEMAK...";
             btn.disabled = true;
 
-            google.script.run
-                .withSuccessHandler(function (res) {
-                    if (res.status === 'SUCCESS') {
-                        localStorage.setItem('wazza_admin_access', 'VERIFIED');
-                        unlockDashboard();
-                    } else {
-                        errDiv.innerText = res.message || 'Akses ditolak.';
-                        errDiv.classList.remove('hidden');
-                        btn.innerText = "Akses Dashboard";
-                        btn.disabled = false;
-                        document.getElementById('loginPass').value = "";
-                    }
-                })
-                .withFailureHandler(function (err) {
-                    errDiv.innerText = "Ralat sistem: " + err.message;
+            callGAS("verifyAdminLogin", { username: u, password: p }, function (res) {
+                if (res.status === 'SUCCESS') {
+                    localStorage.setItem('wazza_admin_access', 'VERIFIED');
+                    unlockDashboard();
+                } else {
+                    errDiv.innerText = res.message || 'Akses ditolak.';
                     errDiv.classList.remove('hidden');
                     btn.innerText = "Akses Dashboard";
                     btn.disabled = false;
-                })
-                .verifyAdminLogin(u, p);
+                    document.getElementById('loginPass').value = "";
+                }
+            }, function (err) {
+                errDiv.innerText = "Ralat sistem: " + err.message;
+                errDiv.classList.remove('hidden');
+                btn.innerText = "Akses Dashboard";
+                btn.disabled = false;
+            });
         }
 
         function unlockDashboard() {
@@ -893,10 +909,9 @@
         // ==========================================
         function loadLiveDashboard() {
             document.getElementById('loaderLive').classList.remove('hidden');
-            google.script.run
-                .withSuccessHandler(renderDashboard)
-                .withFailureHandler(function (e) { document.getElementById('loaderLive').classList.add('hidden'); })
-                .getAdminDashboardData();
+            callGAS("getAdminDashboardData", {}, renderDashboard, function () {
+                document.getElementById('loaderLive').classList.add('hidden');
+            });
         }
 
         function renderDashboard(data) {
@@ -925,15 +940,13 @@
             btn.innerText = "Mencari...";
             btn.disabled = true;
 
-            google.script.run
-                .withSuccessHandler(function (data) {
-                    document.getElementById('historyResult').classList.remove('hidden');
-                    document.getElementById('historyTitle').innerText = "Rekod: " + data.stats.date;
-                    renderTable('tableHistory', data.attendance, "Tiada rekod pada tarikh ini.", data.stats.date, data.calendarEvents);
-                    btn.innerText = "🔍 Cari Rekod";
-                    btn.disabled = false;
-                })
-                .getAdminDashboardData(dateVal);
+            callGAS("getAdminDashboardData", { targetDateRaw: dateVal }, function (data) {
+                document.getElementById('historyResult').classList.remove('hidden');
+                document.getElementById('historyTitle').innerText = "Rekod: " + data.stats.date;
+                renderTable('tableHistory', data.attendance, "Tiada rekod pada tarikh ini.", data.stats.date, data.calendarEvents);
+                btn.innerText = "🔍 Cari Rekod";
+                btn.disabled = false;
+            });
         }
 
         function renderTable(tableId, list, emptyMsg, dateStrDDMMYYYY, leaveEventsArray) {
@@ -1065,18 +1078,16 @@
         function processLeave(idx, status) {
             if (confirm(status === 'DILULUSKAN' ? "Luluskan permohonan ini?" : "Tolak permohonan ini?")) {
                 document.getElementById('card-' + idx).style.opacity = "0.5";
-                google.script.run
-                    .withSuccessHandler(function () {
-                        document.getElementById('card-' + idx).remove();
-                        if (status === 'DILULUSKAN') loadLiveDashboard();
-                    })
-                    .processLeaveStatus(idx, status);
+                callGAS("processLeaveStatus", { rowIndex: idx, status: status }, function () {
+                    document.getElementById('card-' + idx).remove();
+                    if (status === 'DILULUSKAN') loadLiveDashboard();
+                });
             }
         }
 
         function markLate(nama) {
             if (confirm("Tanda '" + nama + "' sebagai LEWAT?")) {
-                google.script.run.withSuccessHandler(loadLiveDashboard).setStaffLate(nama);
+                callGAS("setStaffLate", { nama: nama }, loadLiveDashboard);
             }
         }
 
@@ -1086,10 +1097,10 @@
         function loadAllLeaveLog() {
             var tbody = document.getElementById('tableAllLeaveLog');
             tbody.innerHTML = '<tr><td colspan="4" class="p-8 text-center text-yellow-500 animate-pulse">Menarik Rekod dari Pangkalan Data...</td></tr>';
-            google.script.run.withSuccessHandler(function (data) {
+            callGAS("getAllLeaveLog", {}, function (data) {
                 globalAllLeaveLog = data;
                 filterLeaveLog();
-            }).getAllLeaveLog();
+            });
         }
 
         function renderAllLeaveLogTable(list) {
@@ -1165,16 +1176,14 @@
         function loadStaffManagement() {
             var tbody = document.getElementById('tableStaff');
             tbody.innerHTML = '<tr><td colspan="5" class="p-8 text-center text-yellow-500 animate-pulse">Menarik Data Staf...</td></tr>';
-            google.script.run
-                .withSuccessHandler(function (res) {
-                    if (res.status === 'SUCCESS') {
-                        globalStaffList = res.data;
-                        renderStaffTable(res.data);
-                    } else {
-                        tbody.innerHTML = '<tr><td colspan="5" class="p-8 text-center text-red-500">' + res.message + '</td></tr>';
-                    }
-                })
-                .getStaffManagementData();
+            callGAS("getStaffManagementData", {}, function (res) {
+                if (res.status === 'SUCCESS') {
+                    globalStaffList = res.data;
+                    renderStaffTable(res.data);
+                } else {
+                    tbody.innerHTML = '<tr><td colspan="5" class="p-8 text-center text-red-500">' + res.message + '</td></tr>';
+                }
+            });
         }
 
         function renderStaffTable(list) {
@@ -1246,18 +1255,16 @@
                 status: document.getElementById('sf_status').value
             };
 
-            google.script.run
-                .withSuccessHandler(function (res) {
-                    btn.innerText = "Simpan";
-                    btn.disabled = false;
-                    if (res.status === 'SUCCESS') {
-                        closeStaffModal();
-                        loadStaffManagement();
-                    } else {
-                        alert(res.message);
-                    }
-                })
-                .saveStaffData(payload);
+            callGAS("saveStaffData", { payload: payload }, function (res) {
+                btn.innerText = "Simpan";
+                btn.disabled = false;
+                if (res.status === 'SUCCESS') {
+                    closeStaffModal();
+                    loadStaffManagement();
+                } else {
+                    alert(res.message);
+                }
+            });
         }
 
         // ==========================================
@@ -1270,21 +1277,18 @@
             document.getElementById('configContent').classList.add('hidden');
             document.getElementById('configNotif').classList.add('hidden');
 
-            google.script.run
-                .withSuccessHandler(function (res) {
-                    document.getElementById('configLoader').classList.add('hidden');
-                    if (res.status === 'SUCCESS') {
-                        populateConfigForm(res.data);
-                        document.getElementById('configContent').classList.remove('hidden');
-                    } else {
-                        document.getElementById('configLoader').innerText = "⚠️ Gagal baca tetapan: " + res.message;
-                        document.getElementById('configLoader').classList.remove('hidden');
-                    }
-                })
-                .withFailureHandler(function (err) {
-                    document.getElementById('configLoader').innerText = "⚠️ Ralat: " + err.message;
-                })
-                .getSystemConfig();
+            callGAS("getSystemConfig", {}, function (res) {
+                document.getElementById('configLoader').classList.add('hidden');
+                if (res.status === 'SUCCESS') {
+                    populateConfigForm(res.data);
+                    document.getElementById('configContent').classList.remove('hidden');
+                } else {
+                    document.getElementById('configLoader').innerText = "⚠️ Gagal baca tetapan: " + res.message;
+                    document.getElementById('configLoader').classList.remove('hidden');
+                }
+            }, function (err) {
+                document.getElementById('configLoader').innerText = "⚠️ Ralat: " + err.message;
+            });
         }
 
         function populateConfigForm(data) {
@@ -1375,31 +1379,28 @@
                 wfhDates: wfhDatesArray.slice()
             };
 
-            google.script.run
-                .withSuccessHandler(function (res) {
-                    btn.innerText = "💾 Simpan Semua";
-                    btn.disabled = false;
-                    notif.classList.remove('hidden');
-                    if (res.status === 'SUCCESS') {
-                        notif.className = "rounded-lg px-4 py-3 text-sm font-bold border bg-green-900/40 border-green-700 text-green-300";
-                        notif.innerText = "✅ " + res.message;
-                        // Kosongkan field password selepas save berjaya
-                        document.getElementById('cfg_adminPass').value = "";
-                    } else {
-                        notif.className = "rounded-lg px-4 py-3 text-sm font-bold border bg-red-900/40 border-red-700 text-red-300";
-                        notif.innerText = "❌ " + res.message;
-                    }
-                    // Auto sembunyi notif selepas 5 saat
-                    setTimeout(function () { notif.classList.add('hidden'); }, 5000);
-                })
-                .withFailureHandler(function (err) {
-                    btn.innerText = "💾 Simpan Semua";
-                    btn.disabled = false;
-                    notif.classList.remove('hidden');
+            callGAS("saveSystemConfig", { payload: payload }, function (res) {
+                btn.innerText = "💾 Simpan Semua";
+                btn.disabled = false;
+                notif.classList.remove('hidden');
+                if (res.status === 'SUCCESS') {
+                    notif.className = "rounded-lg px-4 py-3 text-sm font-bold border bg-green-900/40 border-green-700 text-green-300";
+                    notif.innerText = "✅ " + res.message;
+                    // Kosongkan field password selepas save berjaya
+                    document.getElementById('cfg_adminPass').value = "";
+                } else {
                     notif.className = "rounded-lg px-4 py-3 text-sm font-bold border bg-red-900/40 border-red-700 text-red-300";
-                    notif.innerText = "❌ Ralat sistem: " + err.message;
-                })
-                .saveSystemConfig(payload);
+                    notif.innerText = "❌ " + res.message;
+                }
+                // Auto sembunyi notif selepas 5 saat
+                setTimeout(function () { notif.classList.add('hidden'); }, 5000);
+            }, function (err) {
+                btn.innerText = "💾 Simpan Semua";
+                btn.disabled = false;
+                notif.classList.remove('hidden');
+                notif.className = "rounded-lg px-4 py-3 text-sm font-bold border bg-red-900/40 border-red-700 text-red-300";
+                notif.innerText = "❌ Ralat sistem: " + err.message;
+            });
         }
 
     </script>

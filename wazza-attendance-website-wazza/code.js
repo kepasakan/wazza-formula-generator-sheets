@@ -259,14 +259,16 @@ function processScan(payload) {
   // --- BACA SETTING GEOFENCING & LATE THRESHOLD ---
   const allConfig = CONFIG_SHEET.getDataRange().getValues();
   let offLat = "", offLng = "", offRad = 0, lateStart = "";
+  let _lateStartFound = false;
   for (let i = 0; i < allConfig.length; i++) {
       let key = String(allConfig[i][0]).trim().toUpperCase();
       if (key === "OFFICE_LAT") offLat = parseFloat(allConfig[i][1]);
       if (key === "OFFICE_LNG") offLng = parseFloat(allConfig[i][1]);
       if (key === "OFFICE_RADIUS") offRad = parseInt(allConfig[i][1]);
-      if (key === "LATE-START") {
+      if (key === "LATE-START" && !_lateStartFound) {
         let lv = allConfig[i][1];
         lateStart = lv instanceof Date ? Utilities.formatDate(lv, "GMT+8", "HH:mm") : String(lv).trim().substring(0, 5);
+        _lateStartFound = true;
       }
   }
 
@@ -1015,12 +1017,14 @@ function getSystemConfig() {
       wfhDates: []
     };
 
+    let seenKeys = {};
     for (let i = 0; i < configData.length; i++) {
       let key = String(configData[i][0]).trim().toLowerCase();
+      if (!key || seenKeys[key]) continue; // skip blank rows and duplicate keys
+      seenKeys[key] = true;
       let val = configData[i][1];
 
       if (key === "start-qr") {
-        // Nilai masa boleh jadi Date object atau string
         conf.startQr = val instanceof Date
           ? Utilities.formatDate(val, "GMT+8", "HH:mm")
           : String(val).trim().substring(0, 5);
@@ -1042,14 +1046,11 @@ function getSystemConfig() {
       if (key === "office_lng")     conf.officeLng     = val ? String(val).trim() : "";
       if (key === "office_radius")  conf.officeRadius  = parseInt(val) || 0;
 
-      // Row 16 ke bawah: wfh_days dan wfh_dates
       if (key === "wfh_days") {
-        // Simpan sebagai string dipisah koma, cth: "Isnin,Jumaat"
         let raw = String(val).trim();
         conf.wfhDays = raw !== "" ? raw.split(",").map(d => d.trim()) : [];
       }
       if (key === "wfh_dates") {
-        // Simpan sebagai string dipisah koma, cth: "2026-04-25,2026-05-01"
         let raw = String(val).trim();
         conf.wfhDates = raw !== "" ? raw.split(",").map(d => d.trim()).filter(d => d !== "") : [];
       }
@@ -1109,8 +1110,28 @@ function saveSystemConfig(payload) {
       Array.isArray(payload.wfhDates) ? payload.wfhDates.join(",") : ""
     );
 
-    // late-start (cari row, update atau tambah)
-    _saveConfigByKey("late-start", payload.lateStart || "");
+    // late-start — simpan sebagai TEKS supaya elak GAS menukar ke Date serial
+    // (GAS setValue pada cell masa menggunakan LMT sejarah epoch 1899, menyebabkan +1h offset)
+    {
+      const lsAll = CONFIG_SHEET.getDataRange().getValues();
+      let lsFound = false;
+      for (let ki = 0; ki < lsAll.length; ki++) {
+        if (String(lsAll[ki][0]).trim().toLowerCase() === "late-start") {
+          let lsCell = CONFIG_SHEET.getRange(ki + 1, 2);
+          lsCell.setNumberFormat("@");
+          lsCell.setValue(payload.lateStart || "");
+          lsFound = true;
+          break;
+        }
+      }
+      if (!lsFound) {
+        let lr = CONFIG_SHEET.getLastRow() + 1;
+        CONFIG_SHEET.getRange(lr, 1).setValue("late-start");
+        let lsCell = CONFIG_SHEET.getRange(lr, 2);
+        lsCell.setNumberFormat("@");
+        lsCell.setValue(payload.lateStart || "");
+      }
+    }
 
     lock.releaseLock();
 
@@ -1511,6 +1532,7 @@ function getDashboardStatus() {
     if (String(allConfig[i][0]).trim().toUpperCase() === "LATE-START") {
       let lv = allConfig[i][1];
       lateStart = lv instanceof Date ? Utilities.formatDate(lv, "GMT+8", "HH:mm") : String(lv).trim().substring(0, 5);
+      break; // first match wins — ignore any duplicate rows
     }
   }
 

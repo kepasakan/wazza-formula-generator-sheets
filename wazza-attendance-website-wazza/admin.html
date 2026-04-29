@@ -1172,14 +1172,17 @@
                 if (staff.status === "HADIR") {
                     statusBadge = '<span class="bg-green-900 text-green-300 px-2 py-0.5 rounded text-[10px] border border-green-700">HADIR</span>';
                 } else if (staff.status === "LEWAT" || staff.status === "LEWAT (MANUAL)") {
-                    statusBadge = '<span class="bg-red-900 text-red-300 px-2 py-0.5 rounded text-[10px] border border-red-700">LEWAT</span>';
+                    statusBadge = '<div class="flex items-center gap-1.5 flex-wrap">' +
+                        '<span class="bg-red-900 text-red-300 px-2 py-0.5 rounded text-[10px] border border-red-700 whitespace-nowrap">LEWAT</span>' +
+                        '<button onclick="convertLateToPresent(\'' + staff.nama.replace(/'/g, "\\'") + '\')" class="text-[10px] text-green-400 hover:text-white border border-green-600/50 bg-green-600/10 hover:bg-green-600/20 px-2 py-0.5 rounded whitespace-nowrap transition">✓ Tukar Awal</button>' +
+                        '</div>';
                 } else if (String(staff.status).includes("CUTI") || cutiEvent) {
                     var jenisCuti = cutiEvent ? cutiEvent.type : staff.status.replace("CUTI - ", "");
                     statusBadge = '<span class="bg-yellow-900 text-yellow-300 px-2 py-0.5 rounded text-[10px] border border-yellow-700 font-bold uppercase">CUTI - ' + jenisCuti + '</span>';
                 } else {
                     statusBadge = '<div class="flex items-center gap-1.5 flex-wrap">' +
                         '<span class="bg-gray-700 text-gray-400 px-2 py-0.5 rounded text-[10px] border border-gray-600 whitespace-nowrap">ABSENT</span>' +
-                        '<button onclick="markLate(\'' + staff.nama.replace(/'/g, "\\'") + '\')" class="text-[10px] text-yellow-400 hover:text-white border border-yellow-600/50 bg-yellow-600/10 hover:bg-yellow-600/20 px-2 py-0.5 rounded whitespace-nowrap transition">Mark Lewat</button>' +
+                        '<button onclick="markPresent(\'' + staff.nama.replace(/'/g, "\\'") + '\')" class="text-[10px] text-green-400 hover:text-white border border-green-600/50 bg-green-600/10 hover:bg-green-600/20 px-2 py-0.5 rounded whitespace-nowrap transition">✓ Mark Hadir</button>' +
                         '</div>';
                 }
 
@@ -1296,9 +1299,25 @@
             }
         }
 
-        function markLate(nama) {
-            if (confirm("Tanda '" + nama + "' sebagai LEWAT?")) {
-                callGAS("setStaffLate", { nama: nama }, loadLiveDashboard);
+        function markPresent(nama) {
+            if (confirm("Tandakan '" + nama + "' sebagai HADIR?")) {
+                callGAS("setStaffPresent", { nama: nama }, function(res) {
+                    if (res && res.status === "ERROR") {
+                        alert("Gagal: " + res.message);
+                    }
+                    loadLiveDashboard();
+                });
+            }
+        }
+
+        function convertLateToPresent(nama) {
+            if (confirm("Tukar status '" + nama + "' dari LEWAT kepada HADIR (Tukar Awal)?")) {
+                callGAS("setLateToPresent", { nama: nama }, function(res) {
+                    if (res && res.status === "ERROR") {
+                        alert("Gagal: " + res.message);
+                    }
+                    loadLiveDashboard();
+                });
             }
         }
 

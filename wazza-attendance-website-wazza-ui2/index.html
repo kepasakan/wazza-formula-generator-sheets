@@ -1,0 +1,490 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <base target="_top">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    /* ============================================================
+       WAZZA DESIGN SYSTEM v1.0
+       Shared tokens — standardized across all pages
+    ============================================================ */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:            #0A0C0F;
+      --surface:       #111318;
+      --surface-2:     #181C23;
+      --surface-3:     #1E2330;
+      --border:        rgba(255,255,255,0.07);
+      --border-hover:  rgba(255,255,255,0.14);
+      --accent:        #4F8EF7;
+      --accent-dim:    rgba(79,142,247,0.12);
+      --accent-glow:   rgba(79,142,247,0.22);
+      --success:       #3ECF8E;
+      --success-dim:   rgba(62,207,142,0.10);
+      --success-border:rgba(62,207,142,0.28);
+      --warning:       #F5A524;
+      --warning-dim:   rgba(245,165,36,0.10);
+      --warning-border:rgba(245,165,36,0.28);
+      --danger:        #F16565;
+      --danger-dim:    rgba(241,101,101,0.10);
+      --danger-border: rgba(241,101,101,0.28);
+      --info:          #4F8EF7;
+      --info-dim:      rgba(79,142,247,0.10);
+      --info-border:   rgba(79,142,247,0.28);
+      --text-primary:  #F0F2F5;
+      --text-secondary:#7A8194;
+      --text-muted:    #4A5068;
+      --radius:        14px;
+      --radius-sm:     8px;
+      --font:          'DM Sans', system-ui, sans-serif;
+      --mono:          'DM Mono', monospace;
+    }
+
+    html, body {
+      height: 100%;
+      background: var(--bg);
+      color: var(--text-primary);
+      font-family: var(--font);
+      font-size: 15px;
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    body {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 24px 16px;
+      background-image:
+        radial-gradient(ellipse 55% 35% at 15% 0%,  rgba(62,207,142,0.06) 0%, transparent 60%),
+        radial-gradient(ellipse 55% 35% at 85% 100%, rgba(79,142,247,0.06) 0%, transparent 60%);
+    }
+
+    /* ── Wordmark ── */
+    .wordmark {
+      font-family: var(--mono);
+      font-size: 11px;
+      letter-spacing: 0.14em;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      margin-bottom: 24px;
+      text-align: center;
+    }
+
+    /* ── Cards grid ── */
+    .cards-row {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      width: 100%;
+      max-width: 1080px;
+    }
+    @media (min-width: 900px) {
+      .cards-row { flex-direction: row; align-items: stretch; }
+      .card-main   { flex: 1; }
+      .card-portal { width: 268px; flex-shrink: 0; }
+    }
+
+    /* ── Base Card ── */
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 20px;
+      position: relative;
+      overflow: hidden;
+      transition: border-color 0.2s, transform 0.2s;
+    }
+    .card:hover { transform: translateY(-2px); }
+
+    .card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 2px;
+      opacity: 0.55;
+    }
+
+    /* Colour themes */
+    .card-success { border-color: var(--success-border); }
+    .card-success::before { background: linear-gradient(90deg, transparent, var(--success), transparent); }
+
+    .card-info    { border-color: var(--info-border); }
+    .card-info::before    { background: linear-gradient(90deg, transparent, var(--info),    transparent); }
+
+    .card-warning { border-color: var(--warning-border); }
+    .card-warning::before { background: linear-gradient(90deg, transparent, var(--warning), transparent); }
+
+    .card-late    { border-color: var(--warning-border) !important; }
+    .card-late::before { background: linear-gradient(90deg, transparent, var(--warning), transparent) !important; }
+
+    .card-closed  { border-color: var(--danger-border) !important; }
+    .card-closed::before { background: linear-gradient(90deg, transparent, var(--danger), transparent) !important; }
+
+    /* ── Badge ── */
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 10px;
+      font-weight: 500;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      padding: 4px 11px;
+      border-radius: 999px;
+      border: 1px solid;
+      margin-bottom: 14px;
+    }
+    .badge-dot {
+      width: 5px; height: 5px;
+      border-radius: 50%;
+      display: inline-block;
+    }
+    .badge-success { background: var(--success-dim); border-color: var(--success-border); color: var(--success); }
+    .badge-success .badge-dot { background: var(--success); }
+    .badge-info    { background: var(--info-dim);    border-color: var(--info-border);    color: var(--info); }
+    .badge-info    .badge-dot { background: var(--info); }
+    .badge-warning { background: var(--warning-dim); border-color: var(--warning-border); color: var(--warning); }
+    .badge-warning .badge-dot { background: var(--warning); }
+    .badge-danger  { background: var(--danger-dim);  border-color: var(--danger-border);  color: var(--danger); }
+    .badge-danger  .badge-dot { background: var(--danger); }
+
+    /* ── Card inner layout ── */
+    .card-body {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      gap: 18px;
+    }
+    @media (min-width: 900px) {
+      .card-body { flex-direction: column; align-items: center; }
+    }
+
+    /* ── QR Frame ── */
+    .qr-frame {
+      background: #fff;
+      border-radius: var(--radius-sm);
+      padding: 7px;
+      flex-shrink: 0;
+      width: 116px; height: 116px;
+      display: flex; align-items: center; justify-content: center;
+      position: relative;
+      overflow: hidden;
+    }
+    @media (min-width: 480px)  { .qr-frame { width: 140px; height: 140px; } }
+    @media (min-width: 900px)  { .qr-frame { width: 172px; height: 172px; } }
+    @media (min-width: 1060px) { .qr-frame { width: 200px; height: 200px; } }
+
+    .qr-frame img { width: 100%; height: 100%; object-fit: contain; border-radius: 3px; }
+
+    .qr-spinner {
+      position: absolute; inset: 0; background: #fff;
+      display: flex; align-items: center; justify-content: center; z-index: 10;
+    }
+    .spin-ring {
+      width: 24px; height: 24px;
+      border: 2px solid #e5e7eb;
+      border-top-color: #3ECF8E;
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .qr-closed {
+      position: absolute; inset: 0;
+      background: var(--surface-2);
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      gap: 5px;
+      z-index: 20;
+    }
+    .qr-closed-icon { font-size: 24px; }
+    .qr-closed-label {
+      font-family: var(--mono);
+      font-size: 9px;
+      font-weight: 500;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--danger);
+    }
+
+    /* ── Card info ── */
+    .card-info-section {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    @media (min-width: 900px) {
+      .card-info-section { align-items: center; text-align: center; width: 100%; }
+    }
+
+    .token-value {
+      font-family: var(--mono);
+      font-size: 22px;
+      font-weight: 500;
+      letter-spacing: 0.1em;
+      color: var(--success);
+      transition: color 0.3s;
+    }
+    .token-value.late   { color: var(--warning); }
+    .token-value.locked { color: var(--danger); }
+
+    .token-label {
+      font-size: 10px;
+      color: var(--text-muted);
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      margin-top: 3px;
+    }
+
+    .card-desc { font-size: 13px; color: var(--text-secondary); line-height: 1.5; }
+    .card-desc strong { color: var(--text-primary); font-weight: 500; }
+    .card-note { font-size: 11px; color: var(--text-muted); font-family: var(--mono); }
+
+    /* ── Buttons ── */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 7px;
+      padding: 9px 18px;
+      border-radius: var(--radius-sm);
+      font-family: var(--font);
+      font-size: 13px;
+      font-weight: 500;
+      letter-spacing: 0.03em;
+      text-decoration: none;
+      cursor: pointer;
+      border: none;
+      transition: opacity 0.2s, transform 0.15s;
+      width: 100%;
+    }
+    .btn:active { transform: scale(0.97); }
+    .btn:hover  { opacity: 0.84; }
+
+    .btn-success { background: var(--success); color: #0A0C0F; }
+    .btn-info    { background: var(--info);    color: #fff; }
+    .btn-warning { background: var(--warning); color: #0A0C0F; }
+    .btn-disabled {
+      background: var(--surface-3) !important;
+      color: var(--text-muted) !important;
+      pointer-events: none;
+    }
+
+    /* ── Live clock ── */
+    .live-clock {
+      font-family: var(--mono);
+      font-size: 26px;
+      font-weight: 400;
+      letter-spacing: 0.1em;
+      color: var(--text-muted);
+      text-align: center;
+      margin-top: 20px;
+    }
+
+    /* ── Utility ── */
+    .hidden { display: none !important; }
+    @media (max-width: 899px) { .desktop-only { display: none !important; } }
+  </style>
+</head>
+<body>
+
+  <div class="wordmark">Wazza Digital &nbsp;·&nbsp; Sistem Kehadiran</div>
+
+  <div class="cards-row">
+
+    <!-- ══════════ CLOCK IN ══════════ -->
+    <div id="clockInCard" class="card card-main card-success">
+      <div id="clockInBadge" class="badge badge-success">
+        <span class="badge-dot"></span> Clock In
+      </div>
+      <div class="card-body">
+        <div class="qr-frame">
+          <div id="qrSpinner" class="qr-spinner"><div class="spin-ring"></div></div>
+          <div id="qrClosed" class="qr-closed hidden">
+            <span class="qr-closed-icon">⊘</span>
+            <span id="qrClosedMsg" class="qr-closed-label">Tutup</span>
+          </div>
+          <img id="qrImageGreen" src="" alt="QR Clock In">
+        </div>
+        <div class="card-info-section">
+          <div>
+            <p id="tokenDisplay" class="token-value">· · ·</p>
+            <p class="token-label">Token Harian · Waktu Pagi</p>
+          </div>
+          <a id="btnClockIn" href="#" target="_blank" class="btn btn-success">
+            ↗ Buka Clock In
+          </a>
+          <p class="card-note desktop-only">atau scan QR di atas</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══════════ CLOCK OUT ══════════ -->
+    <div class="card card-main card-info">
+      <div class="badge badge-info">
+        <span class="badge-dot"></span> Clock Out
+      </div>
+      <div class="card-body">
+        <div class="qr-frame">
+          <img id="qrImageBlue" src="" alt="QR Clock Out">
+        </div>
+        <div class="card-info-section">
+          <div>
+            <p class="card-desc"><strong>Balik Awal / Emergency?</strong><br>Kemaskini masa keluar anda.</p>
+            <p class="card-note" style="margin-top:6px;">*Auto-checkout 6:00 PM</p>
+          </div>
+          <a id="btnClockOut" href="#" target="_blank" class="btn btn-info">
+            ↗ Buka Clock Out
+          </a>
+          <p class="card-note desktop-only">atau scan QR di atas</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══════════ PORTAL STAF ══════════ -->
+    <div class="card card-portal card-warning">
+      <div class="badge badge-warning">
+        <span class="badge-dot"></span> Portal Staf
+      </div>
+      <div class="card-body">
+        <div class="qr-frame">
+          <img id="qrImagePortal" src="" alt="QR Portal Staf">
+        </div>
+        <div class="card-info-section">
+          <div>
+            <p class="card-desc"><strong>Cuti / Lambat?</strong><br>Mohon cuti atau lapor kelewatan.</p>
+          </div>
+          <a id="btnPortal" href="#" target="_blank" class="btn btn-warning">
+            ↗ Buka Portal
+          </a>
+          <p class="card-note desktop-only">atau scan QR di atas</p>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- LIVE CLOCK -->
+  <p id="liveClock" class="live-clock"></p>
+
+  <script>
+    const GAS_URL     = "https://script.google.com/macros/s/AKfycbzjwycP8S7eGC_dLML24louH75mM9pOsVxDhTJJ8qE_qSgzPcCKHJhd9hzilAaaMaoT/exec";
+    const WEBSITE_URL = "https://urus.wazza.my";
+
+    function callGAS(action, params, onSuccess, onError) {
+      const url = GAS_URL + "?data=" + encodeURIComponent(JSON.stringify(Object.assign({ action: action }, params || {})));
+      fetch(url)
+        .then(r => { if (!r.ok) throw new Error("HTTP " + r.status); return r.json(); })
+        .then(d => { if (onSuccess) onSuccess(d); })
+        .catch(e => { if (onError) onError(e); else console.error("callGAS:", action, e); });
+    }
+
+    function qrURL(link, size) {
+      return "https://quickchart.io/qr?text=" + encodeURIComponent(link) + "&size=" + size + "&margin=1&dark=000000&light=ffffff";
+    }
+
+    let currentToken = "";
+
+    function setClockInState(state) {
+      const card  = document.getElementById('clockInCard');
+      const badge = document.getElementById('clockInBadge');
+      const token = document.getElementById('tokenDisplay');
+      const btn   = document.getElementById('btnClockIn');
+
+      card.classList.remove('card-success','card-late','card-closed');
+      badge.className = 'badge';
+      token.classList.remove('late','locked');
+      btn.className = 'btn';
+
+      if (state === 'open') {
+        card.classList.add('card-success');
+        badge.classList.add('badge-success');
+        badge.innerHTML = '<span class="badge-dot"></span> Clock In';
+        btn.classList.add('btn-success');
+        btn.textContent = '↗ Buka Clock In';
+      } else if (state === 'late') {
+        card.classList.add('card-late');
+        badge.classList.add('badge-warning');
+        badge.innerHTML = '<span class="badge-dot"></span> Clock In — Lewat';
+        token.classList.add('late');
+        btn.classList.add('btn-warning');
+        btn.textContent = '↗ Buka Clock In';
+      } else {
+        card.classList.add('card-closed');
+        badge.classList.add('badge-danger');
+        badge.innerHTML = '<span class="badge-dot"></span> Clock In — Ditutup';
+        token.classList.add('locked');
+        btn.classList.add('btn-disabled');
+        btn.textContent = 'Waktu Clock In Tamat';
+      }
+    }
+
+    function checkTokenUpdate() {
+      callGAS("getDashboardStatus", {}, function (data) {
+        const tokenEl = document.getElementById('tokenDisplay');
+        const btnCI   = document.getElementById('btnClockIn');
+        const spinner = document.getElementById('qrSpinner');
+        const closed  = document.getElementById('qrClosed');
+
+        if (data.isOpen) {
+          closed.classList.add('hidden');
+          tokenEl.innerText = data.token;
+          const scanURL = WEBSITE_URL + "/scan?token=" + data.token;
+          btnCI.href = scanURL;
+          setClockInState(data.isLate ? 'late' : 'open');
+
+          if (data.token !== currentToken && data.token !== "") {
+            currentToken = data.token;
+            spinner.classList.remove('hidden');
+            const img = new Image();
+            img.src = qrURL(scanURL, 350);
+            img.onload = function () {
+              document.getElementById('qrImageGreen').src = img.src;
+              spinner.classList.add('hidden');
+            };
+          }
+        } else {
+          spinner.classList.add('hidden');
+          closed.classList.remove('hidden');
+          if (data.statusMsg) document.getElementById('qrClosedMsg').innerText = data.statusMsg;
+          tokenEl.innerText = "TUTUP";
+          btnCI.href = "#";
+          setClockInState('closed');
+        }
+      });
+    }
+
+    function initDashboard() {
+      const outURL    = WEBSITE_URL + "/clockout";
+      const portalURL = WEBSITE_URL + "/portal";
+      document.getElementById('btnClockOut').href     = outURL;
+      document.getElementById('qrImageBlue').src      = qrURL(outURL, 350);
+      document.getElementById('btnPortal').href        = portalURL;
+      document.getElementById('qrImagePortal').src     = qrURL(portalURL, 300);
+      checkTokenUpdate();
+      setInterval(checkTokenUpdate, 5000);
+    }
+
+    function updateClock() {
+      const n = new Date();
+      document.getElementById('liveClock').innerText =
+        String(n.getHours()).padStart(2,'0') + ' : ' +
+        String(n.getMinutes()).padStart(2,'0') + ' : ' +
+        String(n.getSeconds()).padStart(2,'0');
+    }
+    updateClock();
+    setInterval(updateClock, 1000);
+
+    initDashboard();
+  </script>
+</body>
+</html>

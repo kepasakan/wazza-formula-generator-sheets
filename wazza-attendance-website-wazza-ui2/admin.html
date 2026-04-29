@@ -1,0 +1,2476 @@
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+    /* ============================================================
+       WAZZA DESIGN SYSTEM v1.0 — admin.html
+    ============================================================ */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+        --bg:             #0A0C0F;
+        --surface:        #111318;
+        --surface-2:      #181C23;
+        --surface-3:      #1E2330;
+        --border:         rgba(255,255,255,0.07);
+        --border-hover:   rgba(255,255,255,0.14);
+        --accent:         #4F8EF7;
+        --accent-dim:     rgba(79,142,247,0.12);
+        --accent-glow:    rgba(79,142,247,0.22);
+        --success:        #3ECF8E;
+        --success-dim:    rgba(62,207,142,0.10);
+        --success-border: rgba(62,207,142,0.28);
+        --warning:        #F5A524;
+        --warning-dim:    rgba(245,165,36,0.10);
+        --warning-border: rgba(245,165,36,0.28);
+        --danger:         #F16565;
+        --danger-dim:     rgba(241,101,101,0.10);
+        --danger-border:  rgba(241,101,101,0.28);
+        --info:           #4F8EF7;
+        --info-dim:       rgba(79,142,247,0.10);
+        --info-border:    rgba(79,142,247,0.28);
+        --text-primary:   #F0F2F5;
+        --text-secondary: #7A8194;
+        --text-muted:     #4A5068;
+        --radius:         12px;
+        --radius-sm:      8px;
+        --radius-xs:      5px;
+        --font:           'DM Sans', system-ui, sans-serif;
+        --mono:           'DM Mono', monospace;
+        --sidebar-w:      220px;
+    }
+
+    html, body {
+        height: 100%; overflow: hidden;
+        background: var(--bg);
+        color: var(--text-primary);
+        font-family: var(--font);
+        font-size: 14px;
+        line-height: 1.5;
+        -webkit-font-smoothing: antialiased;
+    }
+
+    /* ── Scrollbar ── */
+    ::-webkit-scrollbar { width: 4px; height: 4px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: var(--surface-3); border-radius: 4px; }
+
+    /* ─────────────────────────────────────
+       LOGIN OVERLAY
+    ───────────────────────────────────── */
+    #adminLoginOverlay {
+        position: fixed; inset: 0;
+        background: var(--bg);
+        z-index: 999;
+        display: flex; flex-direction: column;
+        align-items: center; justify-content: center;
+        padding: 24px;
+        background-image: radial-gradient(ellipse 60% 40% at 50% 0%, rgba(79,142,247,0.07) 0%, transparent 60%);
+    }
+
+    .login-card {
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        padding: 36px 32px;
+        width: 100%; max-width: 360px;
+        animation: fadeUp 0.4s ease both;
+    }
+    @keyframes fadeUp {
+        from { opacity: 0; transform: translateY(10px); }
+        to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .login-logo-wrap {
+        width: 48px; height: 48px;
+        background: var(--accent-dim);
+        border: 1px solid var(--info-border);
+        border-radius: var(--radius-sm);
+        display: flex; align-items: center; justify-content: center;
+        font-size: 20px;
+        margin: 0 auto 20px;
+    }
+
+    .login-title {
+        text-align: center;
+        font-family: var(--mono);
+        font-size: 18px;
+        font-weight: 500;
+        letter-spacing: 0.08em;
+        color: var(--text-primary);
+        margin-bottom: 4px;
+    }
+    .login-title span { color: var(--accent); }
+
+    .login-sub {
+        text-align: center;
+        font-size: 11px;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        color: var(--text-muted);
+        margin-bottom: 28px;
+    }
+
+    /* ── Form fields ── */
+    .field { margin-bottom: 14px; }
+    .field label {
+        display: block;
+        font-size: 10px;
+        font-weight: 500;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        color: var(--text-secondary);
+        margin-bottom: 6px;
+    }
+
+    input[type="text"],
+    input[type="password"],
+    input[type="date"],
+    input[type="month"],
+    input[type="time"],
+    input[type="number"],
+    select,
+    textarea {
+        width: 100%;
+        padding: 9px 12px;
+        background: var(--surface-2);
+        border: 1px solid var(--border);
+        border-radius: var(--radius-sm);
+        color: var(--text-primary);
+        font-family: var(--font);
+        font-size: 13px;
+        outline: none;
+        appearance: none;
+        transition: border-color 0.2s, box-shadow 0.2s;
+    }
+    input:focus, select:focus, textarea:focus {
+        border-color: var(--accent);
+        box-shadow: 0 0 0 3px var(--accent-glow);
+    }
+    input::placeholder { color: var(--text-muted); }
+    select option { background: #1a1e28; }
+
+    input[type="date"]::-webkit-calendar-picker-indicator,
+    input[type="month"]::-webkit-calendar-picker-indicator,
+    input[type="time"]::-webkit-calendar-picker-indicator {
+        filter: invert(0.4);
+        cursor: pointer;
+    }
+
+    /* ── Error bar ── */
+    .login-error {
+        background: var(--danger-dim);
+        border: 1px solid var(--danger-border);
+        color: var(--danger);
+        font-size: 12px;
+        font-weight: 500;
+        text-align: center;
+        padding: 8px 12px;
+        border-radius: var(--radius-xs);
+        margin-bottom: 14px;
+    }
+
+    /* ── Buttons ── */
+    .btn {
+        display: inline-flex; align-items: center; justify-content: center; gap: 6px;
+        padding: 9px 16px;
+        border-radius: var(--radius-sm);
+        font-family: var(--font);
+        font-size: 13px;
+        font-weight: 500;
+        letter-spacing: 0.02em;
+        cursor: pointer;
+        border: none;
+        transition: opacity 0.2s, transform 0.15s;
+        text-decoration: none;
+    }
+    .btn:active { transform: scale(0.97); }
+    .btn:hover  { opacity: 0.84; }
+    .btn:disabled { opacity: 0.5; pointer-events: none; }
+
+    .btn-primary  { background: var(--accent);   color: #fff; width: 100%; justify-content: center; }
+    .btn-success  { background: var(--success);  color: #0A0C0F; }
+    .btn-danger   { background: var(--danger);   color: #fff; }
+    .btn-warning  { background: var(--warning);  color: #0A0C0F; }
+    .btn-info     { background: var(--info);     color: #fff; }
+    .btn-ghost {
+        background: transparent;
+        border: 1px solid var(--border);
+        color: var(--text-secondary);
+    }
+    .btn-ghost:hover { border-color: var(--border-hover); color: var(--text-primary); }
+
+    .btn-sm { padding: 5px 11px; font-size: 11px; }
+
+    /* ─────────────────────────────────────
+       MAIN LAYOUT
+    ───────────────────────────────────── */
+    #mainDashboardWrapper {
+        height: 100%;
+        display: flex;
+    }
+
+    /* ─────────────────────────────────────
+       SIDEBAR
+    ───────────────────────────────────── */
+    #sidebar {
+        width: var(--sidebar-w);
+        background: var(--surface);
+        border-right: 1px solid var(--border);
+        display: flex; flex-direction: column;
+        flex-shrink: 0;
+        height: 100%;
+    }
+
+    .sidebar-logo {
+        height: 56px;
+        display: flex; align-items: center;
+        padding: 0 18px;
+        border-bottom: 1px solid var(--border);
+        flex-shrink: 0;
+    }
+    .sidebar-logo-text {
+        font-family: var(--mono);
+        font-size: 14px;
+        font-weight: 500;
+        letter-spacing: 0.06em;
+        color: var(--text-primary);
+    }
+    .sidebar-logo-text span { color: var(--accent); }
+
+    .sidebar-nav {
+        flex: 1;
+        padding: 12px 10px;
+        overflow-y: auto;
+        display: flex; flex-direction: column; gap: 2px;
+    }
+
+    .nav-item {
+        display: flex; align-items: center; gap: 10px;
+        padding: 8px 12px;
+        border-radius: var(--radius-sm);
+        font-size: 13px;
+        color: var(--text-secondary);
+        background: transparent;
+        border: none;
+        cursor: pointer;
+        width: 100%;
+        text-align: left;
+        transition: background 0.15s, color 0.15s;
+    }
+    .nav-item:hover { background: var(--surface-2); color: var(--text-primary); }
+    .nav-item.active {
+        background: var(--accent-dim);
+        color: var(--accent);
+        font-weight: 500;
+    }
+    .nav-icon {
+        width: 16px; height: 16px;
+        flex-shrink: 0; opacity: 0.7;
+        font-size: 14px; line-height: 1;
+        text-align: center;
+    }
+    .nav-item.active .nav-icon { opacity: 1; }
+
+    .sidebar-footer {
+        padding: 12px 10px;
+        border-top: 1px solid var(--border);
+        flex-shrink: 0;
+    }
+    .btn-logout {
+        display: flex; align-items: center; justify-content: center; gap: 6px;
+        width: 100%;
+        padding: 8px 12px;
+        background: var(--danger-dim);
+        border: 1px solid var(--danger-border);
+        border-radius: var(--radius-sm);
+        color: var(--danger);
+        font-size: 12px;
+        font-weight: 500;
+        cursor: pointer;
+        transition: opacity 0.2s;
+    }
+    .btn-logout:hover { opacity: 0.8; }
+
+    /* ─────────────────────────────────────
+       MAIN CONTENT
+    ───────────────────────────────────── */
+    #mainContent {
+        flex: 1;
+        display: flex; flex-direction: column;
+        height: 100%;
+        overflow: hidden;
+        min-width: 0;
+    }
+
+    /* Mobile header */
+    #mobileHeader {
+        display: none;
+        background: var(--surface);
+        border-bottom: 1px solid var(--border);
+        padding: 0 14px;
+        height: 52px;
+        align-items: center;
+        justify-content: space-between;
+        flex-shrink: 0;
+    }
+    .mobile-logo {
+        font-family: var(--mono);
+        font-size: 13px;
+        font-weight: 500;
+        letter-spacing: 0.06em;
+    }
+    .mobile-logo span { color: var(--accent); }
+    .mobile-nav-btns { display: flex; gap: 4px; align-items: center; flex-wrap: wrap; }
+    .mobile-nav-btn {
+        background: var(--surface-2);
+        border: 1px solid var(--border);
+        border-radius: var(--radius-xs);
+        padding: 5px 7px;
+        font-size: 12px;
+        cursor: pointer;
+        color: var(--text-secondary);
+        transition: color 0.15s;
+    }
+    .mobile-nav-btn:hover { color: var(--text-primary); }
+
+    @media (max-width: 767px) {
+        #sidebar { display: none; }
+        #mobileHeader { display: flex; }
+    }
+
+    /* ── Pages ── */
+    .page {
+        flex: 1;
+        overflow-y: auto;
+        padding: 24px;
+        background: var(--bg);
+    }
+
+    /* ── Page header ── */
+    .page-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-end;
+        padding-bottom: 18px;
+        margin-bottom: 20px;
+        border-bottom: 1px solid var(--border);
+    }
+    .page-title { font-size: 18px; font-weight: 500; color: var(--text-primary); }
+    .page-subtitle { font-size: 12px; color: var(--text-secondary); margin-top: 3px; }
+
+    /* ─────────────────────────────────────
+       STAT CARDS
+    ───────────────────────────────────── */
+    .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+        gap: 10px;
+        margin-bottom: 20px;
+    }
+
+    .stat-card {
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        padding: 16px;
+    }
+    .stat-card-label {
+        font-size: 10px;
+        font-weight: 500;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        color: var(--text-muted);
+        margin-bottom: 8px;
+    }
+    .stat-card-value {
+        font-size: 28px;
+        font-weight: 500;
+        line-height: 1;
+        color: var(--text-primary);
+    }
+    .stat-card-sub {
+        font-size: 12px;
+        color: var(--text-secondary);
+        margin-left: 4px;
+    }
+
+    .stat-card-bar {
+        margin-top: 10px;
+        background: var(--surface-3);
+        border-radius: 99px;
+        height: 3px;
+        overflow: hidden;
+    }
+    .stat-card-bar-fill {
+        height: 100%;
+        border-radius: 99px;
+        background: var(--success);
+        transition: width 1s ease;
+    }
+
+    /* Accent left-border variants */
+    .stat-card.success { border-left: 3px solid var(--success); }
+    .stat-card.warning { border-left: 3px solid var(--warning); }
+    .stat-card.danger  { border-left: 3px solid var(--danger); }
+    .stat-card.success .stat-card-value { color: var(--success); }
+    .stat-card.warning .stat-card-value { color: var(--warning); }
+    .stat-card.danger  .stat-card-value { color: var(--danger); }
+
+    /* ─────────────────────────────────────
+       TABLES
+    ───────────────────────────────────── */
+    .table-card {
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        overflow: hidden;
+    }
+
+    .table-header {
+        padding: 12px 16px;
+        border-bottom: 1px solid var(--border);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 10px;
+        flex-wrap: wrap;
+    }
+    .table-header-title {
+        font-size: 13px;
+        font-weight: 500;
+        color: var(--text-primary);
+    }
+
+    .table-wrap { overflow-x: auto; }
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 13px;
+    }
+    thead tr {
+        background: var(--surface-2);
+    }
+    thead th {
+        padding: 10px 14px;
+        font-size: 10px;
+        font-weight: 500;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        color: var(--text-muted);
+        text-align: left;
+        white-space: nowrap;
+    }
+    tbody tr {
+        border-bottom: 1px solid var(--border);
+        transition: background 0.15s;
+    }
+    tbody tr:last-child { border-bottom: none; }
+    tbody tr:hover { background: var(--surface-2); }
+    td { padding: 10px 14px; color: var(--text-secondary); vertical-align: middle; }
+    td.text-center, th.text-center { text-align: center; }
+
+    /* ─────────────────────────────────────
+       BADGES
+    ───────────────────────────────────── */
+    .badge {
+        display: inline-flex; align-items: center;
+        padding: 3px 9px;
+        border-radius: 99px;
+        font-size: 10px;
+        font-weight: 500;
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
+        border: 1px solid;
+        white-space: nowrap;
+    }
+    .badge-success { background: var(--success-dim); border-color: var(--success-border); color: var(--success); }
+    .badge-warning { background: var(--warning-dim); border-color: var(--warning-border); color: var(--warning); }
+    .badge-danger  { background: var(--danger-dim);  border-color: var(--danger-border);  color: var(--danger); }
+    .badge-info    { background: var(--info-dim);    border-color: var(--info-border);    color: var(--info); }
+    .badge-muted   { background: var(--surface-3);   border-color: var(--border);         color: var(--text-muted); }
+
+    /* ─────────────────────────────────────
+       NOTIF BAR
+    ───────────────────────────────────── */
+    .notif-bar {
+        padding: 10px 14px;
+        border-radius: var(--radius-sm);
+        font-size: 12px;
+        font-weight: 500;
+        border: 1px solid;
+        margin-bottom: 16px;
+    }
+    .notif-success { background: var(--success-dim); border-color: var(--success-border); color: var(--success); }
+    .notif-danger  { background: var(--danger-dim);  border-color: var(--danger-border);  color: var(--danger); }
+    .notif-info    { background: var(--info-dim);    border-color: var(--info-border);    color: var(--info); }
+
+    /* ─────────────────────────────────────
+       CONFIG CARDS
+    ───────────────────────────────────── */
+    .cfg-card {
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        padding: 20px;
+    }
+    .cfg-card-title {
+        font-size: 13px;
+        font-weight: 500;
+        color: var(--text-primary);
+        margin-bottom: 16px;
+        display: flex; align-items: center; gap: 8px;
+    }
+    .cfg-card-title-icon { color: var(--warning); }
+    .cfg-label {
+        display: block;
+        font-size: 10px;
+        font-weight: 500;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        color: var(--text-secondary);
+        margin-bottom: 6px;
+    }
+    .cfg-hint {
+        font-size: 11px;
+        color: var(--text-muted);
+        margin-top: 5px;
+        line-height: 1.4;
+    }
+
+    /* ─────────────────────────────────────
+       WFH DAY LABELS
+    ───────────────────────────────────── */
+    .wfh-day-label {
+        display: flex; align-items: center; gap: 8px;
+        background: var(--surface-2);
+        border: 1px solid var(--border);
+        border-radius: var(--radius-sm);
+        padding: 8px 12px;
+        cursor: pointer;
+        user-select: none;
+        transition: border-color 0.2s, background 0.2s;
+        font-size: 13px;
+        color: var(--text-secondary);
+    }
+    .wfh-day-label:hover { border-color: var(--border-hover); }
+    .wfh-day-label input { accent-color: var(--warning); width: 14px; height: 14px; }
+    .wfh-day-label:has(input:checked) {
+        border-color: var(--warning-border);
+        background: var(--warning-dim);
+        color: var(--warning);
+    }
+
+    /* ─────────────────────────────────────
+       CALENDAR
+    ───────────────────────────────────── */
+    .calendar-header-row {
+        display: grid;
+        grid-template-columns: repeat(7, minmax(0, 1fr));
+        gap: 4px;
+        margin-bottom: 6px;
+    }
+    .calendar-header-cell {
+        text-align: center;
+        font-size: 10px;
+        font-weight: 500;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        color: var(--text-muted);
+        padding-bottom: 6px;
+    }
+    .calendar-header-cell.weekend { color: var(--danger); opacity: 0.7; }
+
+    .calendar-grid {
+        display: grid;
+        grid-template-columns: repeat(7, minmax(0, 1fr));
+        gap: 4px;
+    }
+
+    .calendar-day {
+        min-height: 88px;
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: var(--radius-sm);
+        padding: 7px;
+        position: relative;
+        overflow: visible;
+    }
+    .calendar-day.today {
+        border-color: var(--warning-border);
+        background: var(--warning-dim);
+    }
+
+    .day-number {
+        font-size: 11px;
+        font-weight: 500;
+        color: var(--text-muted);
+        position: absolute;
+        top: 6px; right: 8px;
+    }
+    .today .day-number { color: var(--warning); font-weight: 600; }
+
+    /* Event badges in calendar */
+    .event-badge {
+        font-size: 10px;
+        padding: 2px 5px;
+        border-radius: 3px;
+        margin-top: 3px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        display: block;
+        font-weight: 500;
+        cursor: pointer;
+        position: relative;
+        transition: opacity 0.15s;
+    }
+    .event-badge:hover { opacity: 0.85; }
+    .event-badge:hover .tooltip-content { visibility: visible; opacity: 1; bottom: 110%; }
+
+    .tooltip-content {
+        visibility: hidden;
+        opacity: 0;
+        position: absolute;
+        bottom: 100%;
+        left: 50%;
+        transform: translateX(-50%);
+        background: #000;
+        color: var(--text-primary);
+        border: 1px solid var(--warning-border);
+        padding: 8px 10px;
+        border-radius: var(--radius-sm);
+        z-index: 999;
+        width: max-content;
+        max-width: 200px;
+        font-size: 11px;
+        font-weight: 400;
+        line-height: 1.5;
+        text-align: center;
+        box-shadow: 0 8px 24px rgba(0,0,0,0.5);
+        transition: opacity 0.15s;
+        white-space: normal;
+        pointer-events: none;
+    }
+    .tooltip-arrow {
+        position: absolute;
+        top: 100%; left: 50%;
+        margin-left: -4px;
+        border-width: 4px;
+        border-style: solid;
+        border-color: var(--warning) transparent transparent transparent;
+    }
+
+    /* ─────────────────────────────────────
+       PENDING LEAVE CARDS
+    ───────────────────────────────────── */
+    .pending-card {
+        background: var(--surface-2);
+        border: 1px solid var(--border);
+        border-radius: var(--radius-sm);
+        padding: 12px;
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        gap: 10px;
+        margin-bottom: 8px;
+        transition: border-color 0.15s;
+    }
+    .pending-card:hover { border-color: var(--border-hover); }
+
+    /* ─────────────────────────────────────
+       FILTERS ROW
+    ───────────────────────────────────── */
+    .filter-bar {
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        padding: 14px 16px;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        margin-bottom: 16px;
+    }
+    @media (min-width: 640px) {
+        .filter-bar { flex-direction: row; align-items: center; }
+    }
+
+    /* ─────────────────────────────────────
+       TAB BAR (Outstation)
+    ───────────────────────────────────── */
+    .tab-bar {
+        display: flex;
+        background: var(--surface-2);
+        border: 1px solid var(--border);
+        border-radius: var(--radius-sm);
+        padding: 3px;
+        gap: 2px;
+    }
+    .ost-tab {
+        padding: 5px 12px;
+        border-radius: 5px;
+        font-size: 11px;
+        font-weight: 500;
+        cursor: pointer;
+        border: none;
+        background: transparent;
+        color: var(--text-muted);
+        transition: background 0.15s, color 0.15s;
+    }
+    .ost-tab.active-tab, .ost-tab[class*="bg-blue"] {
+        background: var(--info);
+        color: #fff;
+    }
+    .ost-tab:not(.active-tab):hover { color: var(--text-primary); }
+
+    /* ─────────────────────────────────────
+       INFO PANEL (Outstation how-to)
+    ───────────────────────────────────── */
+    .info-panel {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 0;
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        overflow: hidden;
+        margin-bottom: 16px;
+    }
+    @media (max-width: 639px) { .info-panel { grid-template-columns: 1fr; } }
+
+    .info-panel-left {
+        padding: 16px;
+        border-right: 1px solid var(--border);
+        background: var(--info-dim);
+    }
+    .info-panel-right {
+        padding: 16px;
+        background: var(--warning-dim);
+    }
+    @media (max-width: 639px) {
+        .info-panel-left { border-right: none; border-bottom: 1px solid var(--border); }
+    }
+
+    .info-panel-title {
+        font-size: 10px;
+        font-weight: 500;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        margin-bottom: 10px;
+    }
+    .info-panel-left .info-panel-title { color: var(--info); }
+    .info-panel-right .info-panel-title { color: var(--warning); }
+
+    .info-row {
+        display: flex; gap: 8px; align-items: flex-start;
+        margin-bottom: 8px;
+    }
+    .info-row-icon { font-size: 12px; flex-shrink: 0; margin-top: 1px; }
+    .info-row-text { font-size: 11px; color: var(--text-secondary); line-height: 1.5; }
+    .info-row-text strong { color: var(--text-primary); font-weight: 500; }
+
+    /* ─────────────────────────────────────
+       WFH DATES TAGS
+    ───────────────────────────────────── */
+    .wfh-date-tag {
+        display: inline-flex; align-items: center; gap: 5px;
+        background: var(--warning-dim);
+        border: 1px solid var(--warning-border);
+        color: var(--warning);
+        font-family: var(--mono);
+        font-size: 11px;
+        padding: 4px 9px;
+        border-radius: 99px;
+    }
+    .wfh-date-tag button {
+        background: none; border: none; cursor: pointer;
+        color: var(--warning); font-size: 13px; line-height: 1;
+        padding: 0; opacity: 0.7;
+        transition: opacity 0.15s;
+    }
+    .wfh-date-tag button:hover { opacity: 1; }
+
+    /* ─────────────────────────────────────
+       LOADING PULSE
+    ───────────────────────────────────── */
+    .loading-pulse { animation: pulse 2s ease-in-out infinite; }
+    @keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: 0.4; } }
+
+    /* ─────────────────────────────────────
+       MODALS
+    ───────────────────────────────────── */
+    .modal-overlay {
+        position: fixed; inset: 0;
+        background: rgba(0,0,0,0.75);
+        z-index: 1000;
+        align-items: center; justify-content: center;
+        padding: 16px;
+        backdrop-filter: blur(2px);
+    }
+    .modal-box {
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        padding: 24px;
+        width: 100%; max-width: 420px;
+        animation: fadeUp 0.25s ease both;
+        max-height: 90vh;
+        overflow-y: auto;
+    }
+    .modal-title {
+        font-size: 14px;
+        font-weight: 500;
+        color: var(--text-primary);
+        margin-bottom: 18px;
+        letter-spacing: 0.02em;
+    }
+    .modal-footer {
+        display: flex; gap: 8px;
+        margin-top: 20px;
+        padding-top: 16px;
+        border-top: 1px solid var(--border);
+    }
+    .modal-footer .btn { flex: 1; }
+
+    /* Checkbox toggle row */
+    .toggle-row {
+        display: flex; align-items: flex-start; gap: 10px;
+        background: var(--surface-2);
+        border: 1px solid var(--border);
+        border-radius: var(--radius-sm);
+        padding: 10px 12px;
+        cursor: pointer;
+        transition: border-color 0.15s;
+    }
+    .toggle-row:hover { border-color: var(--info-border); }
+    .toggle-row input[type="checkbox"] {
+        width: 15px; height: 15px;
+        accent-color: var(--info);
+        flex-shrink: 0; margin-top: 2px;
+        padding: 0;
+    }
+    .toggle-label-text { font-size: 13px; font-weight: 500; color: var(--text-primary); display: block; }
+    .toggle-label-sub  { font-size: 11px; color: var(--text-muted); line-height: 1.4; }
+
+    /* ─────────────────────────────────────
+       MISC UTILS
+    ───────────────────────────────────── */
+    .hidden  { display: none !important; }
+    .space-y-4 > * + * { margin-top: 14px; }
+    .space-y-3 > * + * { margin-top: 10px; }
+
+    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+    .grid-auto { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 14px; }
+    @media (max-width: 480px) { .grid-2 { grid-template-columns: 1fr; } }
+
+    .input-row { display: flex; gap: 8px; align-items: flex-end; }
+    .input-row input, .input-row select { flex: 1; }
+
+    .text-muted  { color: var(--text-muted); }
+    .text-secondary { color: var(--text-secondary); }
+    .text-sm     { font-size: 12px; }
+    .text-xs     { font-size: 11px; }
+    .text-mono   { font-family: var(--mono); }
+    .font-medium { font-weight: 500; }
+    .fw          { width: 100%; }
+
+    /* loader spinner */
+    .spin { animation: spin 0.9s linear infinite; display: inline-block; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* attach link */
+    a.attach-link {
+        display: inline-flex; align-items: center; gap: 4px;
+        font-size: 11px;
+        color: var(--info);
+        text-decoration: none;
+        margin-top: 6px;
+        padding: 3px 8px;
+        border: 1px solid var(--info-border);
+        border-radius: var(--radius-xs);
+        background: var(--info-dim);
+        transition: opacity 0.15s;
+    }
+    a.attach-link:hover { opacity: 0.75; }
+    </style>
+</head>
+<body>
+
+<!-- ═══════════════════════════════════════
+     LOGIN OVERLAY
+═══════════════════════════════════════ -->
+<div id="adminLoginOverlay">
+    <div class="login-card">
+        <div class="login-logo-wrap">🔐</div>
+        <h1 class="login-title">Wazza<span>Admin</span></h1>
+        <p class="login-sub">Kawasan Kawalan Keselamatan</p>
+
+        <div id="loginError" class="login-error hidden"></div>
+
+        <div class="field">
+            <label>ID Pengguna</label>
+            <input type="text" id="loginUser" autocomplete="username" placeholder="Username">
+        </div>
+        <div class="field">
+            <label>Kata Laluan</label>
+            <input type="password" id="loginPass" placeholder="Password"
+                onkeydown="if(event.key==='Enter') handleAdminLogin()">
+        </div>
+        <button onclick="handleAdminLogin()" id="btnAdminLogin" class="btn btn-primary" style="margin-top:8px;">
+            Akses Dashboard
+        </button>
+    </div>
+</div>
+
+<!-- ═══════════════════════════════════════
+     MAIN DASHBOARD
+═══════════════════════════════════════ -->
+<div id="mainDashboardWrapper" class="hidden" style="opacity:0; transition: opacity 0.4s;">
+
+    <!-- SIDEBAR -->
+    <aside id="sidebar">
+        <div class="sidebar-logo">
+            <span class="sidebar-logo-text">Wazza<span>Admin</span></span>
+        </div>
+        <nav class="sidebar-nav">
+            <button onclick="switchPage('dashboard')" id="nav-dashboard" class="nav-item active">
+                <span class="nav-icon">⊞</span> Dashboard Utama
+            </button>
+            <button onclick="switchPage('history')" id="nav-history" class="nav-item">
+                <span class="nav-icon">◷</span> Rekod Terdahulu
+            </button>
+            <button onclick="switchPage('leave')" id="nav-leave" class="nav-item">
+                <span class="nav-icon">▦</span> Laporan Cuti
+            </button>
+            <button onclick="switchPage('allLeaveLog')" id="nav-allLeaveLog" class="nav-item">
+                <span class="nav-icon">≡</span> Senarai Cuti
+            </button>
+            <button onclick="switchPage('staff')" id="nav-staff" class="nav-item">
+                <span class="nav-icon">◎</span> Pengurusan Staf
+            </button>
+            <button onclick="switchPage('outstation')" id="nav-outstation" class="nav-item">
+                <span class="nav-icon">◈</span> Outstation
+            </button>
+            <button onclick="switchPage('config')" id="nav-config" class="nav-item">
+                <span class="nav-icon">⚙</span> Tetapan Sistem
+            </button>
+        </nav>
+        <div class="sidebar-footer">
+            <button onclick="logoutAdmin()" class="btn-logout">
+                ⏻ &nbsp;Keluar Sistem
+            </button>
+        </div>
+    </aside>
+
+    <!-- MAIN CONTENT -->
+    <div id="mainContent">
+
+        <!-- Mobile Header -->
+        <header id="mobileHeader">
+            <span class="mobile-logo">Wazza<span>Admin</span></span>
+            <div class="mobile-nav-btns">
+                <button onclick="switchPage('dashboard')" class="mobile-nav-btn">⊞</button>
+                <button onclick="switchPage('history')"   class="mobile-nav-btn">◷</button>
+                <button onclick="switchPage('leave')"     class="mobile-nav-btn">▦</button>
+                <button onclick="switchPage('allLeaveLog')" class="mobile-nav-btn">≡</button>
+                <button onclick="switchPage('staff')"     class="mobile-nav-btn">◎</button>
+                <button onclick="switchPage('outstation')" class="mobile-nav-btn">◈</button>
+                <button onclick="switchPage('config')"    class="mobile-nav-btn">⚙</button>
+                <button onclick="logoutAdmin()" class="mobile-nav-btn" style="color:var(--danger);border-color:var(--danger-border);">✕</button>
+            </div>
+        </header>
+
+        <!-- ════ PAGE: DASHBOARD ════ -->
+        <div id="page-dashboard" class="page">
+            <div class="page-header">
+                <div>
+                    <p class="page-title">Dashboard Hari Ini</p>
+                    <p class="page-subtitle" id="liveDateDisplay">—</p>
+                </div>
+                <div style="display:flex; align-items:center; gap:8px;">
+                    <span id="loaderLive" class="hidden text-xs text-mono loading-pulse" style="color:var(--warning);">Updating...</span>
+                    <button onclick="loadLiveDashboard()" class="btn btn-ghost btn-sm">↻ Refresh</button>
+                </div>
+            </div>
+
+            <!-- Stats -->
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <p class="stat-card-label">Total Staf</p>
+                    <p id="liveTotal" class="stat-card-value">—</p>
+                </div>
+                <div class="stat-card success">
+                    <p class="stat-card-label">Hadir</p>
+                    <p class="stat-card-value">
+                        <span id="livePresent">—</span>
+                        <span id="liveTotalSmall" class="stat-card-sub">/ —</span>
+                    </p>
+                    <div class="stat-card-bar">
+                        <div id="progressBar" class="stat-card-bar-fill" style="width:0%"></div>
+                    </div>
+                </div>
+                <div class="stat-card warning">
+                    <p class="stat-card-label">Cuti (Hari Ini)</p>
+                    <p id="liveCuti" class="stat-card-value">0</p>
+                </div>
+                <div class="stat-card danger">
+                    <p class="stat-card-label">Lewat</p>
+                    <p id="liveLate" class="stat-card-value">0</p>
+                </div>
+            </div>
+
+            <!-- Live tracker + Pending leave -->
+            <div style="display:grid; grid-template-columns:1fr; gap:14px;">
+                <div style="display:grid; grid-template-columns: 1fr; gap:14px;">
+                    <div id="trackerCard" class="table-card" style="grid-column: 1 / -1;">
+                        <div class="table-header">
+                            <span class="table-header-title">Live Attendance Tracker</span>
+                        </div>
+                        <div class="table-wrap">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Nama</th>
+                                        <th>Status</th>
+                                        <th>In / Out</th>
+                                        <th>Koordinat</th>
+                                        <th>Lokasi Terkini</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="tableLive"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="table-card">
+                    <div class="table-header">
+                        <span class="table-header-title">Permohonan Cuti Pending</span>
+                    </div>
+                    <div id="pendingLeaveList" style="padding:12px; max-height:400px; overflow-y:auto;"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ════ PAGE: HISTORY ════ -->
+        <div id="page-history" class="page hidden">
+            <div class="page-header">
+                <div>
+                    <p class="page-title">Semakan Rekod Lama</p>
+                    <p class="page-subtitle">Pilih tarikh untuk lihat kehadiran lepas.</p>
+                </div>
+            </div>
+
+            <div class="filter-bar" style="margin-bottom:16px;">
+                <input type="date" id="historyDateInput" style="flex:1; min-width:160px;">
+                <button onclick="loadHistoryData()"
+                    class="btn btn-info btn-sm" style="flex-shrink:0; padding:9px 20px;">
+                    ⌕ Cari Rekod
+                </button>
+            </div>
+
+            <div id="historyResult" class="table-card hidden">
+                <div class="table-header">
+                    <span id="historyTitle" class="table-header-title">—</span>
+                </div>
+                <div class="table-wrap">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Nama</th>
+                                <th>Status</th>
+                                <th>Masuk</th>
+                                <th>Keluar</th>
+                                <th>Lokasi</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tableHistory"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- ════ PAGE: LEAVE CALENDAR ════ -->
+        <div id="page-leave" class="page hidden" style="display:flex; flex-direction:column;">
+            <div class="page-header">
+                <div>
+                    <p class="page-title">Kalendar Cuti Staf</p>
+                    <p class="page-subtitle">Paparan visual cuti yang telah diluluskan.</p>
+                </div>
+                <div style="display:flex; align-items:center; gap:8px; background:var(--surface); border:1px solid var(--border); border-radius:var(--radius-sm); padding:6px 10px;">
+                    <button onclick="changeMonth(-1)" class="btn btn-ghost btn-sm" style="padding:4px 10px;">&larr;</button>
+                    <span id="calendarMonthLabel" class="text-mono" style="font-size:13px; font-weight:500; min-width:120px; text-align:center;">—</span>
+                    <button onclick="changeMonth(1)"  class="btn btn-ghost btn-sm" style="padding:4px 10px;">&rarr;</button>
+                    <input type="month" id="calendarMonthPicker" onchange="onMonthPickerChange()" style="width:auto; padding:5px 8px; font-size:12px;">
+                </div>
+            </div>
+
+            <div class="table-card" style="flex:1; padding:16px;">
+                <div class="calendar-header-row">
+                    <div class="calendar-header-cell weekend">Ahad</div>
+                    <div class="calendar-header-cell">Isnin</div>
+                    <div class="calendar-header-cell">Selasa</div>
+                    <div class="calendar-header-cell">Rabu</div>
+                    <div class="calendar-header-cell">Khamis</div>
+                    <div class="calendar-header-cell">Jumaat</div>
+                    <div class="calendar-header-cell weekend">Sabtu</div>
+                </div>
+                <div id="calendarGrid" class="calendar-grid"></div>
+            </div>
+        </div>
+
+        <!-- ════ PAGE: ALL LEAVE LOG ════ -->
+        <div id="page-allLeaveLog" class="page hidden">
+            <div class="page-header">
+                <div>
+                    <p class="page-title">Senarai Cuti</p>
+                    <p class="page-subtitle">Pangkalan data semua rekod cuti & alasan.</p>
+                </div>
+                <button onclick="loadAllLeaveLog()" class="btn btn-ghost btn-sm">↻ Refresh</button>
+            </div>
+
+            <div class="filter-bar">
+                <input type="text" id="searchLeaveLog" onkeyup="filterLeaveLog()"
+                    placeholder="Cari nama staf atau jenis cuti..." style="flex:2;">
+                <input type="date" id="dateLeaveLog" onchange="filterLeaveLog()" style="flex:1;">
+                <select id="sortLeaveLog" onchange="filterLeaveLog()" style="flex:1;">
+                    <option value="cuti_desc">Tarikh Cuti — Baru ke Lama</option>
+                    <option value="cuti_asc">Tarikh Cuti — Lama ke Baru</option>
+                    <option value="mohon_desc">Tarikh Mohon — Paling Baru</option>
+                    <option value="nama_asc">Nama Staf A–Z</option>
+                </select>
+                <button onclick="clearLeaveFilter()" class="btn btn-ghost btn-sm" style="flex-shrink:0;">Clear</button>
+            </div>
+
+            <div class="table-card">
+                <div class="table-wrap">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th style="width:20%">Info Cuti</th>
+                                <th style="width:25%">Tarikh (Mohon / Cuti)</th>
+                                <th style="width:35%">Sebab & Lampiran</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tableAllLeaveLog">
+                            <tr><td colspan="4" class="text-center" style="padding:32px; color:var(--text-muted);">Loading data...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- ════ PAGE: STAFF MANAGEMENT ════ -->
+        <div id="page-staff" class="page hidden">
+            <div class="page-header">
+                <div>
+                    <p class="page-title">Pengurusan Staf</p>
+                    <p class="page-subtitle">Tambah, Edit atau Tukar Status Pekerja.</p>
+                </div>
+                <button onclick="openStaffModal()" class="btn btn-success btn-sm">+ Tambah Staf Baru</button>
+            </div>
+
+            <div class="table-card">
+                <div class="table-header">
+                    <span class="table-header-title">Senarai Semua Staf</span>
+                    <button onclick="loadStaffManagement()" class="btn btn-ghost btn-sm">↻ Refresh</button>
+                </div>
+                <div class="table-wrap">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Staff ID</th>
+                                <th>Nama Penuh</th>
+                                <th>Jawatan & Username</th>
+                                <th class="text-center">Status</th>
+                                <th class="text-center">Tindakan</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tableStaff">
+                            <tr><td colspan="5" class="text-center" style="padding:32px; color:var(--text-muted);">Loading data...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- ════ PAGE: OUTSTATION ════ -->
+        <div id="page-outstation" class="page hidden">
+            <div class="page-header">
+                <div>
+                    <p class="page-title">Pengecualian Outstation</p>
+                    <p class="page-subtitle">Tetapkan pengecualian radius GPS untuk staf bertugas di luar pejabat.</p>
+                </div>
+                <div style="display:flex; gap:8px; flex-wrap:wrap;">
+                    <button onclick="processAutoClockInToday(event)" class="btn btn-info btn-sm">⚡ Auto Clock-In Hari Ini</button>
+                    <button onclick="openOutstationModal()"          class="btn btn-success btn-sm">+ Tambah Pengecualian</button>
+                </div>
+            </div>
+
+            <!-- Info panel -->
+            <div class="info-panel">
+                <div class="info-panel-left">
+                    <p class="info-panel-title">Cara Kerja</p>
+                    <div class="info-row">
+                        <span class="info-row-icon">📍</span>
+                        <p class="info-row-text">Staf yang disenaraikan akan <strong>dikecualikan dari semakan radius GPS</strong> pada tarikh tersebut.</p>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-row-icon">⚡</span>
+                        <p class="info-row-text">Jika <strong>Auto Clock-In</strong> diaktifkan, sistem daftarkan kehadiran secara automatik pada masa yang ditetapkan.</p>
+                    </div>
+                </div>
+                <div class="info-panel-right">
+                    <p class="info-panel-title">⚙ Auto Trigger Harian</p>
+                    <p class="text-xs text-secondary" style="margin-bottom:10px;">Trigger jalan sekali sehari — clock-in semua outstation mengikut masa masing-masing.</p>
+                    <div class="input-row">
+                        <div style="flex:1;">
+                            <label class="cfg-label">Masa Trigger</label>
+                            <input type="time" id="outstationTriggerTime" value="09:00">
+                        </div>
+                        <button onclick="saveTriggerTime(event)" class="btn btn-warning btn-sm" style="flex-shrink:0; height:36px;">Simpan</button>
+                    </div>
+                    <p id="triggerSetupMsg" class="hidden text-xs" style="margin-top:6px;"></p>
+                    <p class="text-xs text-muted" style="margin-top:8px; line-height:1.5;">Selepas simpan → Google Sheet → <strong style="color:var(--warning);">WAZZA MENU → Setup Auto Trigger Outstation</strong></p>
+                </div>
+            </div>
+
+            <div id="outstationNotif" class="notif-bar hidden"></div>
+
+            <!-- Outstation table -->
+            <div class="table-card">
+                <div class="table-header" style="flex-wrap:wrap; gap:10px;">
+                    <div style="display:flex; align-items:center; gap:10px; flex-wrap:wrap;">
+                        <span class="table-header-title">Senarai Pengecualian</span>
+                        <div class="tab-bar">
+                            <button id="tab-upcoming" onclick="switchOutstationTab('upcoming')" class="ost-tab" style="background:var(--info); color:#fff;">Akan Datang</button>
+                            <button id="tab-previous" onclick="switchOutstationTab('previous')" class="ost-tab">Lepas</button>
+                            <button id="tab-all"      onclick="switchOutstationTab('all')"      class="ost-tab">Semua</button>
+                        </div>
+                    </div>
+                    <div style="display:flex; align-items:center; gap:6px; margin-left:auto;">
+                        <label class="text-xs text-muted" style="white-space:nowrap;">Tapis Tarikh:</label>
+                        <input type="date" id="outstationDateFilter" onchange="onOutstationDateChange()" style="width:auto; padding:5px 8px; font-size:12px;">
+                        <button onclick="clearOutstationFilter()" class="btn btn-ghost btn-sm" style="padding:5px 8px;">✕</button>
+                        <button onclick="loadOutstationList()" class="btn btn-ghost btn-sm" style="padding:5px 8px; color:var(--warning);">↻</button>
+                    </div>
+                </div>
+                <div class="table-wrap">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Nama Staf</th>
+                                <th>Tarikh Outstation</th>
+                                <th>Auto Clock-In</th>
+                                <th>Sebab / Tugasan</th>
+                                <th class="text-center">Status</th>
+                                <th class="text-center">Tindakan</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tableOutstation">
+                            <tr><td colspan="6" class="text-center" style="padding:32px; color:var(--text-muted);">Loading data...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- ════ PAGE: TETAPAN SISTEM ════ -->
+        <div id="page-config" class="page hidden">
+            <div class="page-header">
+                <div>
+                    <p class="page-title">Tetapan Sistem</p>
+                    <p class="page-subtitle">Konfigurasi masa, lokasi, dan jadual kerja staf.</p>
+                </div>
+                <button onclick="saveConfigSettings()" id="btnSaveConfig" class="btn btn-warning btn-sm">
+                    ✓ Simpan Semua
+                </button>
+            </div>
+
+            <div id="configNotif" class="notif-bar hidden"></div>
+
+            <div id="configLoader" class="loading-pulse" style="text-align:center; padding:48px; color:var(--warning); font-size:13px;">
+                Membaca tetapan dari pangkalan data...
+            </div>
+
+            <div id="configContent" class="hidden space-y-4">
+
+                <!-- Row 1 -->
+                <div class="grid-2">
+                    <div class="cfg-card">
+                        <p class="cfg-card-title"><span class="cfg-card-title-icon">🕒</span> Masa Operasi QR</p>
+                        <div class="space-y-3">
+                            <div>
+                                <label class="cfg-label">Masa Mula (Start-QR)</label>
+                                <input type="time" id="cfg_startQr">
+                            </div>
+                            <div>
+                                <label class="cfg-label">Masa Tamat (End-QR)</label>
+                                <input type="time" id="cfg_endQr">
+                            </div>
+                            <div>
+                                <label class="cfg-label">Had Masa Lewat (Late Threshold)</label>
+                                <input type="time" id="cfg_lateStart">
+                                <p class="cfg-hint">Lebih dari masa ini → dikira <strong style="color:var(--danger);">LEWAT</strong>. Kosong = tiada had lewat.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="cfg-card">
+                        <p class="cfg-card-title"><span class="cfg-card-title-icon">🔐</span> Akaun Admin</p>
+                        <div class="space-y-3">
+                            <div>
+                                <label class="cfg-label">Username Admin</label>
+                                <input type="text" id="cfg_adminUser" placeholder="Cth: admin">
+                            </div>
+                            <div>
+                                <label class="cfg-label">Password Admin</label>
+                                <input type="password" id="cfg_adminPass" placeholder="Kosong = tidak berubah">
+                                <p class="cfg-hint">Biarkan kosong jika tidak mahu tukar password.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Row 2 -->
+                <div class="grid-2">
+                    <div class="cfg-card">
+                        <p class="cfg-card-title"><span class="cfg-card-title-icon">📁</span> Google Drive Folder</p>
+                        <div>
+                            <label class="cfg-label">Folder ID (untuk simpan lampiran cuti)</label>
+                            <input type="text" id="cfg_linkFolder" placeholder="Cth: 1saXvtuXv7Ei...">
+                            <p class="cfg-hint">Salin ID folder dari URL Google Drive anda.</p>
+                        </div>
+                    </div>
+                    <div class="cfg-card">
+                        <p class="cfg-card-title"><span class="cfg-card-title-icon">📍</span> Lokasi & Radius Pejabat</p>
+                        <div class="space-y-3">
+                            <div class="grid-2">
+                                <div>
+                                    <label class="cfg-label">Latitude</label>
+                                    <input type="text" id="cfg_officeLat" placeholder="2.9342...">
+                                </div>
+                                <div>
+                                    <label class="cfg-label">Longitude</label>
+                                    <input type="text" id="cfg_officeLng" placeholder="101.654...">
+                                </div>
+                            </div>
+                            <div>
+                                <label class="cfg-label">Radius Had Sah (Meter)</label>
+                                <input type="number" id="cfg_officeRadius" min="0" placeholder="Cth: 100">
+                                <p class="cfg-hint">Set <strong style="color:var(--warning);">0</strong> untuk benarkan scan dari mana-mana (matikan geofencing).</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Row 3: WFH -->
+                <div class="cfg-card">
+                    <p class="cfg-card-title"><span class="cfg-card-title-icon">🏠</span> Jadual WFH Automatik</p>
+                    <p class="text-sm text-secondary" style="margin-bottom:18px;">Pada hari/tarikh WFH, radius geofencing akan diabaikan secara automatik.</p>
+
+                    <div class="grid-2" style="gap:24px;">
+                        <div>
+                            <label class="cfg-label" style="margin-bottom:10px;">Hari WFH Tetap (Mingguan)</label>
+                            <div style="display:grid; grid-template-columns:1fr 1fr; gap:6px;">
+                                <label class="wfh-day-label"><input type="checkbox" id="wfh_isnin"  value="Isnin"><span>Isnin</span></label>
+                                <label class="wfh-day-label"><input type="checkbox" id="wfh_selasa" value="Selasa"><span>Selasa</span></label>
+                                <label class="wfh-day-label"><input type="checkbox" id="wfh_rabu"   value="Rabu"><span>Rabu</span></label>
+                                <label class="wfh-day-label"><input type="checkbox" id="wfh_khamis" value="Khamis"><span>Khamis</span></label>
+                                <label class="wfh-day-label" style="grid-column:span 2;"><input type="checkbox" id="wfh_jumaat" value="Jumaat"><span>Jumaat</span></label>
+                            </div>
+                        </div>
+
+                        <div class="space-y-3">
+                            <div>
+                                <label class="cfg-label">Tarikh Khas WFH (Override Tiba-tiba)</label>
+                                <div class="input-row">
+                                    <input type="date" id="wfhDateInput" style="flex:1;">
+                                    <button onclick="addWfhDate()" class="btn btn-warning btn-sm" style="flex-shrink:0;">+</button>
+                                </div>
+                            </div>
+                            <div>
+                                <p class="cfg-label" style="margin-bottom:8px;">Senarai Tarikh Override:</p>
+                                <div id="wfhDatesList" style="display:flex; flex-wrap:wrap; gap:6px; min-height:32px;">
+                                    <span class="text-xs text-muted">Tiada tarikh override.</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div><!-- /configContent -->
+        </div><!-- /page-config -->
+
+    </div><!-- /mainContent -->
+</div><!-- /mainDashboardWrapper -->
+
+<!-- ═══════════════════════════════════════
+     STAFF MODAL
+═══════════════════════════════════════ -->
+<div id="staffModal" class="modal-overlay hidden" style="display:none;">
+    <div class="modal-box">
+        <h2 id="staffModalTitle" class="modal-title">Tambah Staf Baru</h2>
+        <div id="staffForm" class="space-y-3">
+            <input type="hidden" id="sf_rowIndex">
+            <div>
+                <label class="cfg-label">Nama Penuh</label>
+                <input type="text" id="sf_nama" placeholder="Cth: Abu Bakar">
+            </div>
+            <div>
+                <label class="cfg-label">Jawatan</label>
+                <input type="text" id="sf_jawatan" placeholder="Cth: Editor">
+            </div>
+            <div class="grid-2">
+                <div>
+                    <label class="cfg-label">Username</label>
+                    <input type="text" id="sf_username" placeholder="Cth: abu">
+                </div>
+                <div>
+                    <label class="cfg-label">Kata Laluan (IC)</label>
+                    <input type="text" id="sf_password" placeholder="Cth: 990101...">
+                </div>
+            </div>
+            <div>
+                <label class="cfg-label">Status Pekerja</label>
+                <select id="sf_status">
+                    <option value="Aktif">Aktif</option>
+                    <option value="Berhenti">Berhenti</option>
+                </select>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button onclick="closeStaffModal()"  class="btn btn-ghost">Batal</button>
+            <button onclick="submitStaffForm()" id="btnSaveStaff" class="btn btn-warning">Simpan</button>
+        </div>
+    </div>
+</div>
+
+<!-- ═══════════════════════════════════════
+     OUTSTATION MODAL
+═══════════════════════════════════════ -->
+<div id="outstationModal" class="modal-overlay hidden" style="display:none;">
+    <div class="modal-box">
+        <h2 id="outstationModalTitle" class="modal-title">Tambah Pengecualian Outstation</h2>
+        <div class="space-y-3">
+            <input type="hidden" id="ost_rowIndex">
+            <div>
+                <label class="cfg-label">Nama Staf</label>
+                <select id="ost_nama"><option value="">— Pilih Staf —</option></select>
+            </div>
+            <div>
+                <label class="cfg-label">Tarikh Outstation</label>
+                <input type="date" id="ost_tarikh">
+            </div>
+            <div>
+                <label class="cfg-label">Sebab / Tugasan</label>
+                <input type="text" id="ost_sebab" placeholder="Cth: Lawatan kilang, Program luar, Roadshow...">
+            </div>
+            <label class="toggle-row" style="cursor:pointer;">
+                <input type="checkbox" id="ost_autoClockIn" onchange="toggleAutoClockInTime()">
+                <div>
+                    <span class="toggle-label-text">Auto Clock-In</span>
+                    <span class="toggle-label-sub">Sistem akan daftarkan kehadiran secara automatik apabila admin tekan butang proses. Staf tidak perlu scan sendiri.</span>
+                </div>
+            </label>
+            <div id="autoClockInTimeSection" class="hidden">
+                <label class="cfg-label">Masa Clock-In Automatik</label>
+                <input type="time" id="ost_masaClockIn" value="08:00">
+                <p class="cfg-hint">Masa ini akan direkodkan sebagai masa masuk dalam Log_Kehadiran.</p>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button onclick="closeOutstationModal()" class="btn btn-ghost">Batal</button>
+            <button onclick="submitOutstationForm()" id="btnSaveOutstation" class="btn btn-info">Simpan</button>
+        </div>
+    </div>
+</div>
+
+<!-- ═══════════════════════════════════════
+     SCRIPTS (100% original — untouched)
+═══════════════════════════════════════ -->
+<script>
+    // ===== CONFIG — isi sebelum deploy =====
+    const GAS_URL = "https://script.google.com/macros/s/AKfycbzjwycP8S7eGC_dLML24louH75mM9pOsVxDhTJJ8qE_qSgzPcCKHJhd9hzilAaaMaoT/exec";
+    const WEBSITE_URL = "https://urus.wazza.my"; // tiada trailing slash
+    // =======================================
+
+    function callGAS(action, params, onSuccess, onError) {
+        const url = GAS_URL + "?data=" + encodeURIComponent(JSON.stringify(Object.assign({ action: action }, params || {})));
+        fetch(url)
+        .then(function(res) {
+            if (!res.ok) throw new Error("HTTP " + res.status);
+            return res.json();
+        })
+        .then(function(data) { if (onSuccess) onSuccess(data); })
+        .catch(function(err) {
+            if (onError) onError(err);
+            else console.error("callGAS error:", action, err);
+        });
+    }
+
+    // ==========================================
+    // ADMIN LOGIN
+    // ==========================================
+    window.addEventListener('DOMContentLoaded', function () {
+        var adminToken = localStorage.getItem('wazza_admin_access');
+        if (adminToken === 'VERIFIED') {
+            unlockDashboard();
+        }
+    });
+
+    function handleAdminLogin() {
+        var btn = document.getElementById('btnAdminLogin');
+        var errDiv = document.getElementById('loginError');
+        var u = document.getElementById('loginUser').value.trim();
+        var p = document.getElementById('loginPass').value;
+
+        if (!u || !p) {
+            errDiv.innerText = "Sila isi semua maklumat.";
+            errDiv.classList.remove('hidden');
+            return;
+        }
+
+        errDiv.classList.add('hidden');
+        btn.innerText = "Menyemak...";
+        btn.disabled = true;
+
+        callGAS("verifyAdminLogin", { username: u, password: p }, function (res) {
+            if (res.status === 'SUCCESS') {
+                localStorage.setItem('wazza_admin_access', 'VERIFIED');
+                unlockDashboard();
+            } else {
+                errDiv.innerText = res.message || 'Akses ditolak.';
+                errDiv.classList.remove('hidden');
+                btn.innerText = "Akses Dashboard";
+                btn.disabled = false;
+                document.getElementById('loginPass').value = "";
+            }
+        }, function (err) {
+            errDiv.innerText = "Ralat sistem: " + err.message;
+            errDiv.classList.remove('hidden');
+            btn.innerText = "Akses Dashboard";
+            btn.disabled = false;
+        });
+    }
+
+    function unlockDashboard() {
+        document.getElementById('adminLoginOverlay').style.display = "none";
+        var wrapper = document.getElementById('mainDashboardWrapper');
+        wrapper.classList.remove('hidden');
+        setTimeout(function () { wrapper.style.opacity = "1"; }, 50);
+        switchPage('dashboard');
+        updateMonthPickerInput();
+    }
+
+    function logoutAdmin() {
+        if (confirm("Pasti untuk log keluar dari Admin Dashboard?")) {
+            localStorage.removeItem('wazza_admin_access');
+            location.reload();
+        }
+    }
+
+    // ==========================================
+    // PAGE NAVIGATION
+    // ==========================================
+    var currentMonth = new Date().getMonth();
+    var currentYear = new Date().getFullYear();
+    var globalLeaveEvents = [];
+    var globalAllLeaveLog = [];
+    var globalStaffList = [];
+    var allPages = ['dashboard', 'history', 'leave', 'allLeaveLog', 'staff', 'outstation', 'config'];
+
+    function switchPage(page) {
+        document.querySelectorAll('.nav-item').forEach(function (el) {
+            el.classList.remove('active');
+        });
+        var navEl = document.getElementById('nav-' + page);
+        if (navEl) navEl.classList.add('active');
+
+        allPages.forEach(function (p) {
+            var el = document.getElementById('page-' + p);
+            if (el) el.classList.add('hidden');
+        });
+
+        var target = document.getElementById('page-' + page);
+        if (target) target.classList.remove('hidden');
+
+        if (page === 'dashboard') loadLiveDashboard();
+        if (page === 'allLeaveLog') loadAllLeaveLog();
+        if (page === 'staff') loadStaffManagement();
+        if (page === 'outstation') loadOutstationPage();
+        if (page === 'config') loadSystemConfig();
+    }
+
+    // ==========================================
+    // DASHBOARD
+    // ==========================================
+    function loadLiveDashboard() {
+        document.getElementById('loaderLive').classList.remove('hidden');
+        callGAS("getAdminDashboardData", {}, renderDashboard, function () {
+            document.getElementById('loaderLive').classList.add('hidden');
+        });
+    }
+
+    function renderDashboard(data) {
+        document.getElementById('liveDateDisplay').innerText = data.stats.date;
+        document.getElementById('liveTotal').innerText = data.stats.totalStaff;
+        document.getElementById('livePresent').innerText = data.stats.present;
+        document.getElementById('liveTotalSmall').innerText = "/ " + data.stats.totalStaff;
+        document.getElementById('liveCuti').innerText = data.stats.cuti;
+        document.getElementById('liveLate').innerText = data.stats.late;
+
+        var percent = data.stats.totalStaff > 0 ? (data.stats.present / data.stats.totalStaff) * 100 : 0;
+        document.getElementById('progressBar').style.width = percent + "%";
+
+        globalLeaveEvents = data.calendarEvents;
+        renderTable('tableLive', data.attendance, "Tiada data staff.", data.stats.date, globalLeaveEvents);
+        renderPendingLeave(data.pendingLeaves);
+        renderCalendar(currentYear, currentMonth);
+        document.getElementById('loaderLive').classList.add('hidden');
+    }
+
+    function loadHistoryData() {
+        var dateVal = document.getElementById('historyDateInput').value;
+        if (!dateVal) { alert("Sila pilih tarikh dulu!"); return; }
+
+        var btn = event.target;
+        btn.innerText = "Mencari...";
+        btn.disabled = true;
+
+        callGAS("getAdminDashboardData", { targetDateRaw: dateVal }, function (data) {
+            document.getElementById('historyResult').classList.remove('hidden');
+            document.getElementById('historyTitle').innerText = "Rekod: " + data.stats.date;
+            renderTable('tableHistory', data.attendance, "Tiada rekod pada tarikh ini.", data.stats.date, data.calendarEvents);
+            btn.innerText = "⌕ Cari Rekod";
+            btn.disabled = false;
+        });
+    }
+
+    var trackerExpanded = false;
+    var TRACKER_LIMIT = 7;
+
+    function toggleTracker() {
+        trackerExpanded = !trackerExpanded;
+        var tbody = document.getElementById('tableLive');
+        if (!tbody) return;
+        tbody.querySelectorAll('.tracker-extra').forEach(function(el) {
+            el.classList.toggle('hidden', !trackerExpanded);
+        });
+        var btn = document.getElementById('trackerToggleBtn');
+        if (btn) {
+            var extras = tbody.querySelectorAll('.tracker-extra').length;
+            btn.innerHTML = trackerExpanded
+                ? '▲ Sembunyikan'
+                : '▼ Lihat Semua (' + extras + ' orang lagi)';
+        }
+    }
+
+    function renderTable(tableId, list, emptyMsg, dateStrDDMMYYYY, leaveEventsArray) {
+        var tbody = document.getElementById(tableId);
+        tbody.innerHTML = "";
+        if (tableId === 'tableLive') trackerExpanded = false;
+
+        if (list.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="5" style="padding:32px; text-align:center; color:var(--text-muted);">' + emptyMsg + '</td></tr>';
+            return;
+        }
+
+        var targetYMD = "";
+        if (dateStrDDMMYYYY) {
+            var parts = dateStrDDMMYYYY.split("/");
+            if (parts.length === 3) targetYMD = parts[2] + "-" + parts[1] + "-" + parts[0];
+        }
+
+        var mapBase = "https://maps.google.com/?q=";
+
+        list.forEach(function (staff, index) {
+            var statusBadge = "";
+            var cutiEvent = null;
+
+            if (targetYMD && leaveEventsArray) {
+                cutiEvent = leaveEventsArray.find(function (e) { return e.start === targetYMD && e.title === staff.nama; });
+            }
+
+            if (staff.status === "HADIR") {
+                statusBadge = '<span class="badge badge-success">HADIR</span>';
+            } else if (staff.status === "LEWAT" || staff.status === "LEWAT (MANUAL)") {
+                statusBadge = '<span class="badge badge-danger">LEWAT</span>';
+            } else if (String(staff.status).includes("CUTI") || cutiEvent) {
+                var jenisCuti = cutiEvent ? cutiEvent.type : staff.status.replace("CUTI - ", "");
+                statusBadge = '<span class="badge badge-warning">CUTI — ' + jenisCuti + '</span>';
+            } else {
+                statusBadge = '<div style="display:flex; align-items:center; gap:6px; flex-wrap:wrap;">' +
+                    '<span class="badge badge-muted">ABSENT</span>' +
+                    '<button onclick="markLate(\'' + staff.nama.replace(/'/g, "\\'") + '\')" style="font-size:11px; color:var(--warning); border:1px solid var(--warning-border); background:var(--warning-dim); padding:3px 8px; border-radius:4px; cursor:pointer; transition:opacity 0.15s;" onmouseover="this.style.opacity=0.7" onmouseout="this.style.opacity=1">Mark Lewat</button>' +
+                    '</div>';
+            }
+
+            var coordText = '<div style="font-family:var(--mono); font-size:11px; color:var(--text-muted); display:flex; flex-direction:column; gap:2px;">';
+            if (staff.coordsIn) coordText += '<a href="' + mapBase + staff.coordsIn + '" target="_blank" style="color:var(--success); max-width:150px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; display:block;">IN: ' + staff.coordsIn + '</a>';
+            if (staff.coordsOut) coordText += '<a href="' + mapBase + staff.coordsOut + '" target="_blank" style="color:var(--info); max-width:150px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; display:block;">OUT: ' + staff.coordsOut + '</a>';
+            if (!staff.coordsIn && !staff.coordsOut) coordText += '<span>—</span>';
+            coordText += '</div>';
+
+            var locationText = staff.location
+                ? '<a href="' + mapBase + staff.location + '" target="_blank" style="color:var(--info); font-size:11px; max-width:180px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; display:block;">' + staff.location + '</a>'
+                : '<span style="color:var(--text-muted);">—</span>';
+
+            var inOutText = '<div style="font-family:var(--mono); font-size:12px;">';
+            inOutText += '<div style="color:var(--success);">' + (staff.timeIn || '—') + '</div>';
+            inOutText += '<div style="color:var(--text-muted);">' + (staff.timeOut || '—') + '</div>';
+            inOutText += '</div>';
+
+            var rowClass = (index >= TRACKER_LIMIT && tableId === 'tableLive') ? 'tracker-extra hidden' : '';
+            tbody.innerHTML += '<tr class="' + rowClass + '">' +
+                '<td style="font-weight:500; color:var(--text-primary);">' + staff.nama + '</td>' +
+                '<td>' + statusBadge + '</td>' +
+                '<td>' + inOutText + '</td>' +
+                '<td>' + coordText + '</td>' +
+                '<td>' + locationText + '</td>' +
+                '</tr>';
+        });
+
+        if (tableId === 'tableLive' && list.length > TRACKER_LIMIT) {
+            var extras = list.length - TRACKER_LIMIT;
+            tbody.innerHTML += '<tr id="trackerToggleRow"><td colspan="5" style="text-align:center; padding:10px;">' +
+                '<button id="trackerToggleBtn" onclick="toggleTracker()" style="font-size:12px; color:var(--accent); background:none; border:none; cursor:pointer;">▼ Lihat Semua (' + extras + ' orang lagi)</button>' +
+                '</td></tr>';
+        }
+    }
+
+    // ==========================================
+    // CALENDAR
+    // ==========================================
+    function updateMonthPickerInput() {
+        var picker = document.getElementById('calendarMonthPicker');
+        if (picker) {
+            var m = String(currentMonth + 1).padStart(2, '0');
+            picker.value = currentYear + "-" + m;
+        }
+        updateCalendarLabel();
+    }
+
+    function updateCalendarLabel() {
+        var months = ["Januari","Februari","Mac","April","Mei","Jun","Julai","Ogos","September","Oktober","November","Disember"];
+        var el = document.getElementById('calendarMonthLabel');
+        if (el) el.innerText = months[currentMonth] + " " + currentYear;
+    }
+
+    function changeMonth(dir) {
+        currentMonth += dir;
+        if (currentMonth > 11) { currentMonth = 0; currentYear++; }
+        if (currentMonth < 0)  { currentMonth = 11; currentYear--; }
+        updateMonthPickerInput();
+        renderCalendar(currentYear, currentMonth);
+    }
+
+    function onMonthPickerChange() {
+        var val = document.getElementById('calendarMonthPicker').value;
+        if (val) {
+            var parts = val.split("-");
+            currentYear = parseInt(parts[0]);
+            currentMonth = parseInt(parts[1]) - 1;
+            updateCalendarLabel();
+            renderCalendar(currentYear, currentMonth);
+        }
+    }
+
+    function renderCalendar(year, month) {
+        var grid = document.getElementById('calendarGrid');
+        if (!grid) return;
+        grid.innerHTML = "";
+
+        var firstDay = new Date(year, month, 1).getDay();
+        var daysInMonth = new Date(year, month + 1, 0).getDate();
+        var today = new Date();
+
+        for (var i = 0; i < firstDay; i++) {
+            var blank = document.createElement('div');
+            blank.className = 'calendar-day';
+            blank.style.opacity = '0.2';
+            grid.appendChild(blank);
+        }
+
+        for (var d = 1; d <= daysInMonth; d++) {
+            var cell = document.createElement('div');
+            var dateStr = year + "-" + String(month + 1).padStart(2, '0') + "-" + String(d).padStart(2, '0');
+            var isToday = today.getFullYear() === year && today.getMonth() === month && today.getDate() === d;
+
+            cell.className = 'calendar-day' + (isToday ? ' today' : '');
+
+            var num = document.createElement('span');
+            num.className = 'day-number';
+            num.innerText = d;
+            cell.appendChild(num);
+
+            if (globalLeaveEvents) {
+                globalLeaveEvents.filter(function(e) { return e.start === dateStr; }).forEach(function(ev) {
+                    var badge = document.createElement('span');
+                    var colors = {
+                        'Cuti Tahunan': { bg: 'rgba(62,207,142,0.15)', color: '#3ECF8E' },
+                        'Cuti Sakit': { bg: 'rgba(241,101,101,0.15)', color: '#F16565' },
+                        'Cuti Kecemasan': { bg: 'rgba(245,165,36,0.15)', color: '#F5A524' },
+                    };
+                    var c = colors[ev.type] || { bg: 'rgba(79,142,247,0.15)', color: '#4F8EF7' };
+                    badge.style.cssText = 'background:' + c.bg + '; color:' + c.color + ';';
+                    badge.className = 'event-badge';
+                    badge.innerHTML = ev.title +
+                        '<span class="tooltip-content">' +
+                        '<span class="tooltip-arrow"></span>' +
+                        '<strong>' + ev.title + '</strong><br>' + ev.type +
+                        '</span>';
+                    cell.appendChild(badge);
+                });
+            }
+
+            grid.appendChild(cell);
+        }
+    }
+
+    // ==========================================
+    // PENDING LEAVE
+    // ==========================================
+    function renderPendingLeave(list) {
+        var div = document.getElementById('pendingLeaveList');
+        div.innerHTML = "";
+        if (list.length === 0) {
+            div.innerHTML = '<div style="text-align:center; padding:24px; color:var(--text-muted); font-size:12px;">Tiada permohonan baru.</div>';
+            return;
+        }
+        list.forEach(function (l) {
+            var attachHtml = "";
+            if (l.attachment && l.attachment !== "Tiada" && l.attachment !== "") {
+                attachHtml = '<a href="' + l.attachment + '" target="_blank" class="attach-link">↗ Buka Lampiran</a>';
+            }
+            div.innerHTML += '<div class="pending-card" id="card-' + l.rowIndex + '">' +
+                '<div>' +
+                '<div style="font-weight:500; color:var(--text-primary); font-size:13px;">' + l.nama + '</div>' +
+                '<div style="font-size:11px; color:var(--warning); font-weight:500; margin-top:2px; text-transform:uppercase;">' + l.jenis + ' <span style="color:var(--text-muted); font-weight:400; text-transform:none;">(' + l.tarikh + ')</span></div>' +
+                '<div style="font-size:11px; color:var(--text-secondary); font-style:italic; margin-top:4px;">"' + l.sebab + '"</div>' +
+                attachHtml +
+                '</div>' +
+                '<div style="display:flex; gap:6px; margin-left:8px; flex-shrink:0;">' +
+                '<button onclick="processLeave(' + l.rowIndex + ', \'DITOLAK\')" class="btn btn-danger btn-sm">Tolak</button>' +
+                '<button onclick="processLeave(' + l.rowIndex + ', \'DILULUSKAN\')" class="btn btn-success btn-sm">Lulus</button>' +
+                '</div></div>';
+        });
+    }
+
+    function processLeave(idx, status) {
+        if (confirm(status === 'DILULUSKAN' ? "Luluskan permohonan ini?" : "Tolak permohonan ini?")) {
+            document.getElementById('card-' + idx).style.opacity = "0.5";
+            callGAS("processLeaveStatus", { rowIndex: idx, status: status }, function () {
+                document.getElementById('card-' + idx).remove();
+                if (status === 'DILULUSKAN') loadLiveDashboard();
+            });
+        }
+    }
+
+    function markLate(nama) {
+        if (confirm("Tanda '" + nama + "' sebagai LEWAT?")) {
+            callGAS("setStaffLate", { nama: nama }, loadLiveDashboard);
+        }
+    }
+
+    // ==========================================
+    // ALL LEAVE LOG
+    // ==========================================
+    function loadAllLeaveLog() {
+        var tbody = document.getElementById('tableAllLeaveLog');
+        tbody.innerHTML = '<tr><td colspan="4" style="padding:32px; text-align:center; color:var(--warning);" class="loading-pulse">Menarik Rekod dari Pangkalan Data...</td></tr>';
+        callGAS("getAllLeaveLog", {}, function (data) {
+            globalAllLeaveLog = data;
+            filterLeaveLog();
+        });
+    }
+
+    function renderAllLeaveLogTable(list) {
+        var tbody = document.getElementById('tableAllLeaveLog');
+        tbody.innerHTML = "";
+        if (list.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="4" style="padding:32px; text-align:center; color:var(--text-muted);">Tiada rekod cuti dijumpai.</td></tr>';
+            return;
+        }
+        list.forEach(function (log) {
+            var statusBadge = "";
+            if (log.status === "DILULUSKAN")    statusBadge = '<span class="badge badge-success">LULUS</span>';
+            else if (log.status === "DITOLAK")  statusBadge = '<span class="badge badge-danger">DITOLAK</span>';
+            else                                statusBadge = '<span class="badge badge-warning">PROSES</span>';
+
+            var attachHtml = "";
+            if (log.lampiran && log.lampiran !== "Tiada" && log.lampiran !== "") {
+                attachHtml = '<a href="' + log.lampiran + '" target="_blank" class="attach-link">↗ Buka Dokumen</a>';
+            }
+
+            tbody.innerHTML += '<tr>' +
+                '<td><div style="font-weight:500; color:var(--text-primary); font-size:13px;">' + log.nama + '</div><div style="font-size:10px; color:var(--warning); font-weight:500; margin-top:3px; text-transform:uppercase;">' + log.jenis + '</div></td>' +
+                '<td><div style="font-size:10px; color:var(--text-muted); text-transform:uppercase; margin-bottom:2px;">Tarikh Cuti:</div><div class="text-mono" style="color:var(--text-secondary); font-size:12px;">' + log.tarikhCuti + '</div><div style="font-size:10px; color:var(--text-muted); margin-top:3px;">Mohon: ' + log.timestamp + '</div></td>' +
+                '<td><div style="font-size:11px; color:var(--text-secondary); font-style:italic; background:var(--surface-2); border:1px solid var(--border); padding:6px 10px; border-radius:var(--radius-xs);">"' + log.sebab + '"</div>' + attachHtml + '</td>' +
+                '<td style="text-align:center;">' + statusBadge + '</td></tr>';
+        });
+    }
+
+    function filterLeaveLog() {
+        var textInput = document.getElementById('searchLeaveLog').value.toLowerCase();
+        var dateInput = document.getElementById('dateLeaveLog').value;
+        var sortType = document.getElementById('sortLeaveLog').value;
+        var targetDateStr = "";
+        if (dateInput) {
+            var parts = dateInput.split("-");
+            if (parts.length === 3) targetDateStr = parts[2] + "/" + parts[1] + "/" + parts[0];
+        }
+        var workingList = globalAllLeaveLog.filter(function (log) {
+            var matchText = !textInput || (String(log.nama).toLowerCase().includes(textInput) || String(log.jenis).toLowerCase().includes(textInput) || String(log.sebab).toLowerCase().includes(textInput));
+            var matchDate = !targetDateStr || log.tarikhCuti === targetDateStr;
+            return matchText && matchDate;
+        });
+        workingList.sort(function (a, b) {
+            if (sortType === 'cuti_desc') return b.sortTime - a.sortTime;
+            if (sortType === 'cuti_asc') return a.sortTime - b.sortTime;
+            if (sortType === 'mohon_desc') return parseTimestampToTime(b.timestamp) - parseTimestampToTime(a.timestamp);
+            if (sortType === 'nama_asc') return a.nama.toUpperCase().localeCompare(b.nama.toUpperCase());
+            return 0;
+        });
+        renderAllLeaveLogTable(workingList);
+    }
+
+    function parseTimestampToTime(timeStr) {
+        if (!timeStr) return 0;
+        var parts = timeStr.split(" ");
+        if (parts.length < 2) return 0;
+        var dPart = parts[0].split("/");
+        var tPart = parts[1].split(":");
+        if (dPart.length === 3 && tPart.length >= 2) return new Date(dPart[2], dPart[1] - 1, dPart[0], tPart[0], tPart[1]).getTime();
+        return 0;
+    }
+
+    function clearLeaveFilter() {
+        document.getElementById('searchLeaveLog').value = "";
+        document.getElementById('dateLeaveLog').value = "";
+        document.getElementById('sortLeaveLog').value = "cuti_desc";
+        filterLeaveLog();
+    }
+
+    // ==========================================
+    // STAFF MANAGEMENT
+    // ==========================================
+    function loadStaffManagement() {
+        var tbody = document.getElementById('tableStaff');
+        tbody.innerHTML = '<tr><td colspan="5" style="padding:32px; text-align:center; color:var(--warning);" class="loading-pulse">Menarik Data Staf...</td></tr>';
+        callGAS("getStaffManagementData", {}, function (res) {
+            if (res.status === 'SUCCESS') {
+                globalStaffList = res.data;
+                renderStaffTable(res.data);
+            } else {
+                tbody.innerHTML = '<tr><td colspan="5" style="padding:32px; text-align:center; color:var(--danger);">' + res.message + '</td></tr>';
+            }
+        });
+    }
+
+    function renderStaffTable(list) {
+        var tbody = document.getElementById('tableStaff');
+        tbody.innerHTML = "";
+        if (list.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="5" style="padding:32px; text-align:center; color:var(--text-muted);">Tiada data staf.</td></tr>';
+            return;
+        }
+        list.forEach(function (staf) {
+            var statusBadge = staf.status.toUpperCase() === "AKTIF"
+                ? '<span class="badge badge-success">AKTIF</span>'
+                : '<span class="badge badge-danger">BERHENTI</span>';
+            tbody.innerHTML += '<tr>' +
+                '<td class="text-mono" style="color:var(--text-muted); font-size:12px;">' + staf.id + '</td>' +
+                '<td style="font-weight:500; color:var(--text-primary);">' + staf.nama + '</td>' +
+                '<td><div style="font-size:11px; color:var(--warning); font-weight:500; text-transform:uppercase;">' + staf.jawatan + '</div><div style="font-size:11px; color:var(--text-muted); margin-top:2px;">User: ' + staf.username + ' | Pass: ' + staf.password + '</div></td>' +
+                '<td style="text-align:center;">' + statusBadge + '</td>' +
+                '<td style="text-align:center;"><button onclick="openStaffModal(' + staf.rowIndex + ')" class="btn btn-info btn-sm">Edit</button></td>' +
+                '</tr>';
+        });
+    }
+
+    function openStaffModal(rowIndex) {
+        var modal = document.getElementById('staffModal');
+        document.getElementById('sf_rowIndex').value = "";
+        document.getElementById('sf_nama').value = "";
+        document.getElementById('sf_jawatan').value = "";
+        document.getElementById('sf_username').value = "";
+        document.getElementById('sf_password').value = "";
+        document.getElementById('sf_status').value = "Aktif";
+
+        if (rowIndex !== undefined && rowIndex !== null) {
+            var staf = globalStaffList.find(function (s) { return s.rowIndex === rowIndex; });
+            if (staf) {
+                document.getElementById('staffModalTitle').innerText = "Kemaskini Data Staf";
+                document.getElementById('sf_rowIndex').value = staf.rowIndex;
+                document.getElementById('sf_nama').value = staf.nama;
+                document.getElementById('sf_jawatan').value = staf.jawatan;
+                document.getElementById('sf_username').value = staf.username;
+                document.getElementById('sf_password').value = staf.password;
+                document.getElementById('sf_status').value = staf.status;
+            }
+        } else {
+            document.getElementById('staffModalTitle').innerText = "Tambah Staf Baru";
+        }
+        modal.style.display = 'flex';
+        modal.classList.remove('hidden');
+    }
+
+    function closeStaffModal() {
+        var modal = document.getElementById('staffModal');
+        modal.style.display = 'none';
+        modal.classList.add('hidden');
+    }
+
+    function submitStaffForm() {
+        var btn = document.getElementById('btnSaveStaff');
+        btn.innerText = "Menyimpan...";
+        btn.disabled = true;
+
+        var rowVal = document.getElementById('sf_rowIndex').value;
+        var payload = {
+            rowIndex: rowVal ? parseInt(rowVal) : null,
+            nama: document.getElementById('sf_nama').value,
+            jawatan: document.getElementById('sf_jawatan').value,
+            username: document.getElementById('sf_username').value,
+            password: document.getElementById('sf_password').value,
+            status: document.getElementById('sf_status').value
+        };
+
+        callGAS("saveStaffData", { payload: payload }, function (res) {
+            btn.innerText = "Simpan";
+            btn.disabled = false;
+            if (res.status === 'SUCCESS') {
+                closeStaffModal();
+                loadStaffManagement();
+            } else {
+                alert(res.message);
+            }
+        });
+    }
+
+    // ==========================================
+    // TETAPAN SISTEM (CONFIG)
+    // ==========================================
+    var wfhDatesArray = [];
+
+    function loadSystemConfig() {
+        document.getElementById('configLoader').classList.remove('hidden');
+        document.getElementById('configContent').classList.add('hidden');
+        document.getElementById('configNotif').classList.add('hidden');
+
+        callGAS("getSystemConfig", {}, function (res) {
+            document.getElementById('configLoader').classList.add('hidden');
+            if (res.status === 'SUCCESS') {
+                populateConfigForm(res.data);
+                document.getElementById('configContent').classList.remove('hidden');
+            } else {
+                document.getElementById('configLoader').innerText = "Gagal baca tetapan: " + res.message;
+                document.getElementById('configLoader').classList.remove('hidden');
+            }
+        }, function (err) {
+            document.getElementById('configLoader').innerText = "Ralat: " + err.message;
+        });
+    }
+
+    function populateConfigForm(data) {
+        document.getElementById('cfg_startQr').value  = data.startQr || "";
+        document.getElementById('cfg_endQr').value    = data.endQr || "";
+        document.getElementById('cfg_lateStart').value = data.lateStart || "";
+        document.getElementById('cfg_adminUser').value = data.adminUser || "";
+        document.getElementById('cfg_adminPass').value = "";
+        document.getElementById('cfg_linkFolder').value = data.linkFolder || "";
+        document.getElementById('cfg_officeLat').value  = data.officeLat || "";
+        document.getElementById('cfg_officeLng').value  = data.officeLng || "";
+        document.getElementById('cfg_officeRadius').value = data.officeRadius != null ? data.officeRadius : 0;
+
+        var dayMap = { 'isnin': 'wfh_isnin', 'selasa': 'wfh_selasa', 'rabu': 'wfh_rabu', 'khamis': 'wfh_khamis', 'jumaat': 'wfh_jumaat' };
+        Object.keys(dayMap).forEach(function (day) {
+            var el = document.getElementById(dayMap[day]);
+            if (el) el.checked = data.wfhDays.map(function (d) { return d.toLowerCase(); }).includes(day);
+        });
+
+        wfhDatesArray = Array.isArray(data.wfhDates) ? data.wfhDates.slice() : [];
+        renderWfhDates();
+    }
+
+    function addWfhDate() {
+        var input = document.getElementById('wfhDateInput');
+        var val = input.value.trim();
+        if (!val) { alert("Sila pilih tarikh terlebih dahulu."); return; }
+        if (wfhDatesArray.includes(val)) { alert("Tarikh ini sudah ada dalam senarai."); return; }
+        wfhDatesArray.push(val);
+        wfhDatesArray.sort();
+        renderWfhDates();
+        input.value = "";
+    }
+
+    function removeWfhDate(dateStr) {
+        wfhDatesArray = wfhDatesArray.filter(function (d) { return d !== dateStr; });
+        renderWfhDates();
+    }
+
+    function renderWfhDates() {
+        var container = document.getElementById('wfhDatesList');
+        if (wfhDatesArray.length === 0) {
+            container.innerHTML = '<span class="text-xs text-muted">Tiada tarikh override.</span>';
+            return;
+        }
+        container.innerHTML = wfhDatesArray.map(function (d) {
+            var parts = d.split('-');
+            var label = parts.length === 3 ? parts[2] + '/' + parts[1] + '/' + parts[0] : d;
+            return '<span class="wfh-date-tag">' + label + '<button onclick="removeWfhDate(\'' + d + '\')" title="Padam">×</button></span>';
+        }).join('');
+    }
+
+    function saveConfigSettings() {
+        var btn = document.getElementById('btnSaveConfig');
+        var notif = document.getElementById('configNotif');
+        btn.innerText = "Menyimpan...";
+        btn.disabled = true;
+        notif.classList.add('hidden');
+
+        var selectedDays = [];
+        ['wfh_isnin','wfh_selasa','wfh_rabu','wfh_khamis','wfh_jumaat'].forEach(function (id) {
+            var el = document.getElementById(id);
+            if (el && el.checked) selectedDays.push(el.value);
+        });
+
+        var payload = {
+            startQr:      document.getElementById('cfg_startQr').value.trim(),
+            endQr:        document.getElementById('cfg_endQr').value.trim(),
+            lateStart:    document.getElementById('cfg_lateStart').value.trim(),
+            linkFolder:   document.getElementById('cfg_linkFolder').value.trim(),
+            adminUser:    document.getElementById('cfg_adminUser').value.trim(),
+            adminPass:    document.getElementById('cfg_adminPass').value.trim(),
+            officeLat:    document.getElementById('cfg_officeLat').value.trim(),
+            officeLng:    document.getElementById('cfg_officeLng').value.trim(),
+            officeRadius: parseInt(document.getElementById('cfg_officeRadius').value) || 0,
+            wfhDays:      selectedDays,
+            wfhDates:     wfhDatesArray.slice()
+        };
+
+        callGAS("saveSystemConfig", { payload: payload }, function (res) {
+            btn.innerText = "✓ Simpan Semua";
+            btn.disabled = false;
+            notif.classList.remove('hidden');
+            if (res.status === 'SUCCESS') {
+                notif.className = "notif-bar notif-success";
+                notif.innerText = "✓ " + res.message;
+                document.getElementById('cfg_adminPass').value = "";
+            } else {
+                notif.className = "notif-bar notif-danger";
+                notif.innerText = "✕ " + res.message;
+            }
+            setTimeout(function () { notif.classList.add('hidden'); }, 5000);
+        }, function (err) {
+            btn.innerText = "✓ Simpan Semua";
+            btn.disabled = false;
+            notif.classList.remove('hidden');
+            notif.className = "notif-bar notif-danger";
+            notif.innerText = "✕ Ralat sistem: " + err.message;
+        });
+    }
+
+    // ==========================================
+    // OUTSTATION EXCEPTIONS
+    // ==========================================
+    var globalOutstationList = [];
+    var outstationStaffNames = [];
+    var outstationModalReqId = 0;
+    var currentOutstationTab = 'upcoming';
+
+    function switchOutstationTab(tab) {
+        currentOutstationTab = tab;
+        ['upcoming', 'previous', 'all'].forEach(function(t) {
+            var el = document.getElementById('tab-' + t);
+            if (!el) return;
+            if (t === tab) {
+                el.style.background = 'var(--info)';
+                el.style.color = '#fff';
+            } else {
+                el.style.background = 'transparent';
+                el.style.color = 'var(--text-muted)';
+            }
+        });
+        filterAndRenderOutstation();
+    }
+
+    function filterAndRenderOutstation() {
+        var dateInput = document.getElementById('outstationDateFilter');
+        var dateFilter = dateInput ? dateInput.value : '';
+        var today = new Date();
+        var todayStr = today.getFullYear() + '-' + String(today.getMonth() + 1).padStart(2, '0') + '-' + String(today.getDate()).padStart(2, '0');
+        var filtered = globalOutstationList.filter(function(rec) {
+            if (dateFilter && rec.tarikh !== dateFilter) return false;
+            if (currentOutstationTab === 'upcoming') return rec.tarikh >= todayStr;
+            if (currentOutstationTab === 'previous') return rec.tarikh < todayStr;
+            return true;
+        });
+        renderOutstationTable(filtered);
+    }
+
+    function onOutstationDateChange() {
+        var input = document.getElementById('outstationDateFilter');
+        var dateVal = input ? input.value : '';
+        if (dateVal) { switchOutstationTab('all'); }
+        else { switchOutstationTab('upcoming'); }
+    }
+
+    function clearOutstationFilter() {
+        var input = document.getElementById('outstationDateFilter');
+        if (input) input.value = '';
+        switchOutstationTab('upcoming');
+    }
+
+    function loadOutstationList() {
+        var tbody = document.getElementById('tableOutstation');
+        tbody.innerHTML = '<tr><td colspan="6" style="padding:32px; text-align:center; color:var(--warning);" class="loading-pulse">Menarik Data Outstation...</td></tr>';
+        callGAS("getOutstationList", {}, function (res) {
+            if (res.status === 'SUCCESS') {
+                globalOutstationList = res.data;
+                filterAndRenderOutstation();
+            } else {
+                tbody.innerHTML = '<tr><td colspan="6" style="padding:32px; text-align:center; color:var(--danger);">' + (res.message || 'Ralat') + '</td></tr>';
+            }
+        });
+    }
+
+    function renderOutstationTable(list) {
+        var tbody = document.getElementById('tableOutstation');
+        tbody.innerHTML = "";
+        if (list.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="6" style="padding:32px; text-align:center; color:var(--text-muted);">Tiada rekod pengecualian outstation.</td></tr>';
+            return;
+        }
+
+        list.sort(function (a, b) { return b.tarikh.localeCompare(a.tarikh); });
+
+        var today = new Date();
+        var todayStr = today.getFullYear() + "-" + String(today.getMonth() + 1).padStart(2, '0') + "-" + String(today.getDate()).padStart(2, '0');
+
+        list.forEach(function (rec) {
+            var statusBadge = "";
+            if (rec.status === "DONE") {
+                statusBadge = '<span class="badge badge-success">SELESAI</span>';
+            } else if (rec.tarikh < todayStr) {
+                statusBadge = '<span class="badge badge-muted">TAMAT</span>';
+            } else {
+                statusBadge = '<span class="badge badge-info">AKTIF</span>';
+            }
+
+            var parts = rec.tarikh.split("-");
+            var tarikhDisplay = parts.length === 3 ? parts[2] + "/" + parts[1] + "/" + parts[0] : rec.tarikh;
+            var isToday = rec.tarikh === todayStr;
+
+            var autoHtml = rec.autoClockIn
+                ? '<span class="badge badge-info">✓ ' + (rec.masaClockIn || "08:00") + '</span>'
+                : '<span style="color:var(--text-muted);">—</span>';
+
+            var todayBadge = isToday ? ' <span style="font-size:9px; background:var(--warning); color:#0A0C0F; padding:2px 6px; border-radius:99px; font-weight:600; margin-left:4px; vertical-align:middle;">HARI INI</span>' : '';
+
+            tbody.innerHTML += '<tr style="' + (isToday ? 'background:var(--info-dim);' : '') + '">' +
+                '<td style="font-weight:500; color:var(--text-primary);">' + rec.nama + '</td>' +
+                '<td><span class="text-mono" style="font-size:12px; color:' + (isToday ? 'var(--warning)' : 'var(--text-secondary)') + ';">' + tarikhDisplay + '</span>' + todayBadge + '</td>' +
+                '<td>' + autoHtml + '</td>' +
+                '<td style="font-size:11px; color:var(--text-muted); font-style:italic; max-width:200px;"><span style="display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden;">' + (rec.sebab || '—') + '</span></td>' +
+                '<td style="text-align:center;">' + statusBadge + '</td>' +
+                '<td style="text-align:center;">' +
+                '<div style="display:flex; gap:5px; justify-content:center;">' +
+                '<button onclick="openOutstationModal(' + rec.rowIndex + ')" class="btn btn-warning btn-sm">Edit</button>' +
+                '<button onclick="deleteOutstationRecord(' + rec.rowIndex + ')" class="btn btn-danger btn-sm">Padam</button>' +
+                '</div></td></tr>';
+        });
+    }
+
+    function openOutstationModal(rowIndex) {
+        document.getElementById('ost_rowIndex').value = "";
+        document.getElementById('ost_tarikh').value = "";
+        document.getElementById('ost_autoClockIn').checked = false;
+        document.getElementById('ost_masaClockIn').value = "08:00";
+        document.getElementById('ost_sebab').value = "";
+        document.getElementById('autoClockInTimeSection').classList.add('hidden');
+
+        var editRec = (rowIndex !== undefined && rowIndex !== null)
+            ? globalOutstationList.find(function (r) { return r.rowIndex === rowIndex; })
+            : null;
+
+        if (editRec) {
+            document.getElementById('outstationModalTitle').innerText = "Kemaskini Pengecualian";
+            document.getElementById('ost_rowIndex').value = editRec.rowIndex;
+            document.getElementById('ost_tarikh').value = editRec.tarikh;
+            document.getElementById('ost_autoClockIn').checked = editRec.autoClockIn;
+            document.getElementById('ost_masaClockIn').value = editRec.masaClockIn || "08:00";
+            document.getElementById('ost_sebab').value = editRec.sebab || "";
+            if (editRec.autoClockIn) document.getElementById('autoClockInTimeSection').classList.remove('hidden');
+        } else {
+            document.getElementById('outstationModalTitle').innerText = "Tambah Pengecualian Outstation";
+        }
+
+        var modal = document.getElementById('outstationModal');
+        modal.style.display = 'flex';
+        modal.classList.remove('hidden');
+
+        var sel = document.getElementById('ost_nama');
+        var reqId = ++outstationModalReqId;
+
+        function fillSelect(names) {
+            if (reqId !== outstationModalReqId) return;
+            sel.disabled = false;
+            sel.innerHTML = '<option value="">— Pilih Staf —</option>';
+            names.forEach(function (n) {
+                sel.innerHTML += '<option value="' + n + '">' + n + '</option>';
+            });
+            if (editRec) sel.value = editRec.nama;
+        }
+
+        if (outstationStaffNames.length > 0) {
+            fillSelect(outstationStaffNames);
+        } else {
+            sel.disabled = true;
+            sel.innerHTML = '<option value="">Memuatkan senarai staf...</option>';
+            callGAS("getStaffList", {}, function (names) {
+                outstationStaffNames = Array.isArray(names) ? names : [];
+                fillSelect(outstationStaffNames);
+            });
+        }
+    }
+
+    function closeOutstationModal() {
+        var modal = document.getElementById('outstationModal');
+        modal.style.display = 'none';
+        modal.classList.add('hidden');
+    }
+
+    function toggleAutoClockInTime() {
+        var checked = document.getElementById('ost_autoClockIn').checked;
+        var section = document.getElementById('autoClockInTimeSection');
+        if (checked) section.classList.remove('hidden');
+        else section.classList.add('hidden');
+    }
+
+    function submitOutstationForm() {
+        var nama = document.getElementById('ost_nama').value;
+        var tarikh = document.getElementById('ost_tarikh').value;
+        if (!nama || !tarikh) { alert("Sila pilih nama staf dan tarikh outstation."); return; }
+
+        var btn = document.getElementById('btnSaveOutstation');
+        btn.innerText = "Menyimpan...";
+        btn.disabled = true;
+
+        var rowVal = document.getElementById('ost_rowIndex').value;
+        var payload = {
+            rowIndex: rowVal ? parseInt(rowVal) : null,
+            nama: nama,
+            tarikh: tarikh,
+            autoClockIn: document.getElementById('ost_autoClockIn').checked,
+            masaClockIn: document.getElementById('ost_masaClockIn').value,
+            sebab: document.getElementById('ost_sebab').value.trim()
+        };
+
+        callGAS("saveOutstation", { payload: payload }, function (res) {
+            btn.innerText = "Simpan";
+            btn.disabled = false;
+            if (res.status === 'SUCCESS') {
+                closeOutstationModal();
+                loadOutstationList();
+            } else {
+                alert(res.message || "Gagal simpan.");
+            }
+        });
+    }
+
+    function deleteOutstationRecord(rowIndex) {
+        if (!confirm("Padam rekod pengecualian outstation ini?")) return;
+        callGAS("deleteOutstation", { rowIndex: rowIndex }, function (res) {
+            if (res.status === 'SUCCESS') loadOutstationList();
+            else alert(res.message || "Gagal padam.");
+        });
+    }
+
+    function loadOutstationPage() {
+        loadOutstationList();
+        callGAS("getOutstationTriggerTime", {}, function (res) {
+            if (res.status === 'SUCCESS' && res.time) {
+                document.getElementById('outstationTriggerTime').value = res.time;
+            }
+        });
+        outstationStaffNames = [];
+        callGAS("getStaffList", {}, function (names) {
+            outstationStaffNames = Array.isArray(names) ? names : [];
+        });
+    }
+
+    function saveTriggerTime(event) {
+        var btn = event.target;
+        var timeVal = document.getElementById('outstationTriggerTime').value;
+        if (!timeVal) { alert("Sila set masa trigger."); return; }
+
+        var origText = btn.innerText;
+        btn.innerText = "Menyimpan...";
+        btn.disabled = true;
+
+        callGAS("saveOutstationTriggerTime_web", { triggerTime: timeVal }, function (res) {
+            btn.innerText = origText;
+            btn.disabled = false;
+            var msg = document.getElementById('triggerSetupMsg');
+            msg.classList.remove('hidden');
+            if (res.status === 'SUCCESS') {
+                msg.style.color = 'var(--success)';
+                msg.innerText = "✓ Masa disimpan. Pergi WAZZA MENU → Setup Auto Trigger untuk apply.";
+            } else {
+                msg.style.color = 'var(--danger)';
+                msg.innerText = "✕ " + res.message;
+            }
+            setTimeout(function () { msg.classList.add('hidden'); }, 8000);
+        }, function (err) {
+            btn.innerText = origText;
+            btn.disabled = false;
+            alert("Ralat: " + err.message);
+        });
+    }
+
+    function processAutoClockInToday(event) {
+        if (!confirm("Proses Auto Clock-In untuk semua staf outstation hari ini?\n\nHanya staf dengan 'Auto Clock-In' aktif dan status PENDING akan diproses.")) return;
+
+        var btn = event.target;
+        var origText = btn.innerText;
+        btn.innerText = "Memproses...";
+        btn.disabled = true;
+
+        var notif = document.getElementById('outstationNotif');
+
+        callGAS("processOutstationAutoClockIn", {}, function (res) {
+            btn.innerText = origText;
+            btn.disabled = false;
+            notif.classList.remove('hidden');
+
+            if (res.status === 'SUCCESS') {
+                if (res.processed > 0) {
+                    notif.className = "notif-bar notif-success";
+                    notif.innerText = "✓ Berjaya! " + res.processed + " staf telah diclock-in: " + res.names.join(", ");
+                    loadOutstationList();
+                } else {
+                    notif.className = "notif-bar notif-info";
+                    notif.innerText = "Tiada staf outstation dengan Auto Clock-In yang perlu diproses hari ini.";
+                }
+            } else {
+                notif.className = "notif-bar notif-danger";
+                notif.innerText = "✕ Ralat: " + res.message;
+            }
+            setTimeout(function () { notif.classList.add('hidden'); }, 6000);
+        }, function (err) {
+            btn.innerText = origText;
+            btn.disabled = false;
+            alert("Ralat sistem: " + err.message);
+        });
+    }
+</script>
+</body>
+</html>

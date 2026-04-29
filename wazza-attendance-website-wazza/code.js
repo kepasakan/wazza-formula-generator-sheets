@@ -824,7 +824,7 @@ function getAdminDashboardData(targetDateRaw) {
         let todayReal = new Date(); todayReal.setHours(0,0,0,0);
         let isLambat = String(jenisLaporan).toLowerCase().includes("lambat");
 
-        if (tarikhCutiRaw >= todayReal && statusLulus !== "DILULUSKAN" && statusLulus !== "DITOLAK" && !isLambat) {
+        if (statusLulus !== "DILULUSKAN" && statusLulus !== "DITOLAK" && !isLambat) {
            let tStr = Utilities.formatDate(tarikhCutiRaw, "Asia/Kuala_Lumpur", "dd/MM/yyyy");
            // Pastikan cuti yang di-pending hanya untuk staf aktif
            if (combinedStaffList.has(cutiData[i][1])) {

@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <base target="_top">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+        :root {
+            --bg: #0A0C0F;
+            --surface: #111318;
+            --surface-2: #181C23;
+            --border: rgba(255,255,255,0.07);
+            --border-hover: rgba(255,255,255,0.14);
+            --accent: #4F8EF7;
+            --accent-dim: rgba(79,142,247,0.12);
+            --accent-glow: rgba(79,142,247,0.25);
+            --text-primary: #F0F2F5;
+            --text-secondary: #7A8194;
+            --text-muted: #4A5068;
+            --success: #3ECF8E;
+            --success-dim: rgba(62,207,142,0.1);
+            --warning: #F5A524;
+            --warning-dim: rgba(245,165,36,0.1);
+            --danger: #F16565;
+            --danger-dim: rgba(241,101,101,0.1);
+            --radius: 14px;
+            --radius-sm: 8px;
+            --font: 'DM Sans', system-ui, sans-serif;
+            --mono: 'DM Mono', monospace;
+        }
+
+        html, body {
+            height: 100%;
+            background: var(--bg);
+            color: var(--text-primary);
+            font-family: var(--font);
+            font-size: 15px;
+            line-height: 1.6;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        body {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            padding: 24px;
+            background-image:
+                radial-gradient(ellipse 80% 50% at 50% -10%, rgba(79,142,247,0.08) 0%, transparent 70%);
+        }
+
+        /* ── Wordmark ── */
+        .wordmark {
+            position: fixed;
+            top: 24px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-family: var(--mono);
+            font-size: 12px;
+            letter-spacing: 0.12em;
+            color: var(--text-muted);
+            text-transform: uppercase;
+        }
+
+        /* ── Card ── */
+        .card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 36px 32px;
+            width: 100%;
+            max-width: 400px;
+            animation: fadeUp 0.4s ease both;
+        }
+
+        @keyframes fadeUp {
+            from { opacity: 0; transform: translateY(12px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+
+        /* ── Loader ── */
+        #loader { text-align: center; }
+
+        .spinner-ring {
+            width: 48px; height: 48px;
+            border-radius: 50%;
+            border: 2px solid var(--border);
+            border-top-color: var(--accent);
+            animation: spin 0.9s linear infinite;
+            margin: 0 auto 20px;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        .loader-title {
+            font-size: 15px;
+            font-weight: 500;
+            color: var(--text-primary);
+            margin-bottom: 6px;
+        }
+        #statusText {
+            font-size: 13px;
+            color: var(--text-secondary);
+            font-family: var(--mono);
+        }
+
+        /* ── Login Form ── */
+        .form-header { margin-bottom: 28px; }
+        .form-header h2 {
+            font-size: 20px;
+            font-weight: 500;
+            color: var(--text-primary);
+            margin-bottom: 6px;
+        }
+        .form-header p {
+            font-size: 13px;
+            color: var(--text-secondary);
+        }
+
+        .field { margin-bottom: 16px; }
+        .field label {
+            display: block;
+            font-size: 11px;
+            font-weight: 500;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            color: var(--text-secondary);
+            margin-bottom: 7px;
+        }
+
+        select, input[type="password"] {
+            width: 100%;
+            padding: 10px 14px;
+            background: var(--surface-2);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sm);
+            color: var(--text-primary);
+            font-family: var(--font);
+            font-size: 14px;
+            outline: none;
+            appearance: none;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+        select:focus, input[type="password"]:focus {
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px var(--accent-glow);
+        }
+        select option { background: #1a1e28; }
+
+        /* Custom select arrow */
+        .select-wrap { position: relative; }
+        .select-wrap::after {
+            content: '';
+            position: absolute;
+            right: 13px; top: 50%;
+            transform: translateY(-50%);
+            width: 0; height: 0;
+            border-left: 4px solid transparent;
+            border-right: 4px solid transparent;
+            border-top: 5px solid var(--text-muted);
+            pointer-events: none;
+        }
+
+        .btn-primary {
+            width: 100%;
+            padding: 11px 20px;
+            background: var(--accent);
+            color: #fff;
+            border: none;
+            border-radius: var(--radius-sm);
+            font-family: var(--font);
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            letter-spacing: 0.02em;
+            transition: opacity 0.2s, transform 0.15s;
+            margin-top: 8px;
+        }
+        .btn-primary:hover:not(:disabled) { opacity: 0.88; }
+        .btn-primary:active:not(:disabled) { transform: scale(0.98); }
+        .btn-primary:disabled { opacity: 0.5; cursor: not-allowed; }
+
+        #loginError {
+            font-size: 12px;
+            color: var(--danger);
+            text-align: center;
+            margin-top: 12px;
+            min-height: 18px;
+        }
+
+        /* ── Result Screens ── */
+        .result-screen { text-align: center; }
+
+        .result-icon {
+            width: 52px; height: 52px;
+            border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            margin: 0 auto 20px;
+            font-size: 22px;
+        }
+        .icon-success { background: var(--success-dim); }
+        .icon-warning { background: var(--warning-dim); }
+        .icon-danger  { background: var(--danger-dim); }
+
+        .result-title {
+            font-size: 18px;
+            font-weight: 500;
+            margin-bottom: 8px;
+        }
+
+        .result-detail {
+            background: var(--surface-2);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sm);
+            padding: 16px 20px;
+            margin-top: 18px;
+            text-align: left;
+        }
+        .result-name {
+            font-size: 15px;
+            font-weight: 500;
+            color: var(--text-primary);
+            margin-bottom: 4px;
+        }
+        .result-time-label {
+            font-size: 12px;
+            color: var(--text-secondary);
+        }
+        .result-time {
+            font-family: var(--mono);
+            font-size: 13px;
+            color: var(--accent);
+        }
+
+        .result-msg {
+            font-size: 14px;
+            color: var(--text-secondary);
+            line-height: 1.7;
+            white-space: pre-line;
+        }
+
+        .divider {
+            border: none;
+            border-top: 1px solid var(--border);
+            margin: 24px 0 0;
+        }
+        .footer-note {
+            font-size: 11px;
+            color: var(--text-muted);
+            margin-top: 14px;
+            font-family: var(--mono);
+            letter-spacing: 0.04em;
+        }
+
+        .hidden { display: none !important; }
+    </style>
+</head>
+<body>
+
+    <div class="wordmark">Wazza · Attendance</div>
+
+    <!-- LOADER -->
+    <div id="loader" class="card">
+        <div class="spinner-ring"></div>
+        <p class="loader-title">Memproses Clock-Out...</p>
+        <p id="statusText">Mencari rekod anda...</p>
+    </div>
+
+    <!-- LOGIN FORM -->
+    <div id="loginForm" class="card hidden">
+        <div class="form-header">
+            <h2>Clock Out</h2>
+            <p>Sila log masuk untuk merekod masa keluar anda.</p>
+        </div>
+
+        <div class="field">
+            <label>Nama Pekerja</label>
+            <div class="select-wrap">
+                <select id="userSelect">
+                    <option value="" disabled selected>— Pilih nama anda —</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="field">
+            <label>Kata Laluan</label>
+            <input type="password" id="passInput" placeholder="Masukkan kata laluan">
+        </div>
+
+        <button class="btn-primary" onclick="doLogin()">Log Masuk</button>
+        <p id="loginError"></p>
+    </div>
+
+    <!-- SUCCESS SCREEN -->
+    <div id="successScreen" class="card hidden">
+        <div class="result-screen">
+            <div class="result-icon icon-success">👋</div>
+            <p class="result-title" style="color: var(--success);">Berjaya Clock Out</p>
+            <p class="result-msg" style="color: var(--text-secondary); font-size:13px;">Terima kasih. Hati-hati di jalan raya.</p>
+            <div class="result-detail">
+                <p id="successMsg" class="result-name"></p>
+                <p class="result-time-label">Masa Keluar</p>
+                <p id="outTime" class="result-time"></p>
+            </div>
+        </div>
+        <hr class="divider">
+        <p class="footer-note" style="text-align:center;">Jumpa esok ✦</p>
+    </div>
+
+    <!-- ERROR / WARNING SCREEN -->
+    <div id="errorScreen" class="card hidden">
+        <div class="result-screen">
+            <div id="errorIcon" class="result-icon icon-danger">⚠</div>
+            <p id="errorTitle" class="result-title" style="color: var(--danger);">Ralat</p>
+            <p id="errorMsg" class="result-msg"></p>
+        </div>
+    </div>
+
+    <script>
+        const GAS_URL = "https://script.google.com/macros/s/AKfycbzjwycP8S7eGC_dLML24louH75mM9pOsVxDhTJJ8qE_qSgzPcCKHJhd9hzilAaaMaoT/exec";
+        const WEBSITE_URL = "https://urus.wazza.my";
+
+        function callGAS(action, params, onSuccess, onError) {
+            const url = GAS_URL + "?data=" + encodeURIComponent(JSON.stringify(Object.assign({ action: action }, params || {})));
+            fetch(url)
+            .then(function(res) {
+                if (!res.ok) throw new Error("HTTP " + res.status);
+                return res.json();
+            })
+            .then(function(data) { if (onSuccess) onSuccess(data); })
+            .catch(function(err) {
+                if (onError) onError(err);
+                else console.error("callGAS error:", action, err);
+            });
+        }
+
+        let userIP = "Unknown";
+
+        window.onload = function () {
+            fetch('https://api.ipify.org?format=json')
+                .then(res => res.json()).then(data => userIP = data.ip).catch(e => {});
+
+            let savedNama = localStorage.getItem("wazza_nama");
+            if (savedNama) {
+                performClockOut(savedNama);
+            } else {
+                document.getElementById('statusText').innerText = "Memuatkan senarai nama...";
+                callGAS("getStaffList", {}, function (names) {
+                    const select = document.getElementById('userSelect');
+                    select.innerHTML = '<option value="" disabled selected>— Pilih nama anda —</option>';
+                    names.forEach(function(name) {
+                        let option = document.createElement("option");
+                        option.text = name;
+                        option.value = name;
+                        select.add(option);
+                    });
+                    document.getElementById('loader').classList.add('hidden');
+                    document.getElementById('loginForm').classList.remove('hidden');
+                }, function (err) {
+                    document.getElementById('statusText').innerText = "Gagal muatkan senarai. Cuba muat semula.";
+                });
+            }
+        };
+
+        function doLogin() {
+            const u = document.getElementById('userSelect').value;
+            const p = document.getElementById('passInput').value;
+            const btn = document.querySelector('#loginForm .btn-primary');
+
+            if (!u) {
+                document.getElementById('loginError').innerText = "Sila pilih nama anda.";
+                return;
+            }
+
+            btn.innerText = "Mengesahkan...";
+            btn.disabled = true;
+
+            callGAS("verifyLogin", { u: u, p: p }, function (res) {
+                if (res.status === 'SUCCESS') {
+                    localStorage.setItem("wazza_nama", res.nama);
+                    document.getElementById('loginForm').classList.add('hidden');
+                    document.getElementById('loader').classList.remove('hidden');
+                    performClockOut(res.nama);
+                } else {
+                    document.getElementById('loginError').innerText = res.message;
+                    btn.innerText = "Log Masuk";
+                    btn.disabled = false;
+                }
+            }, function (err) {
+                document.getElementById('loginError').innerText = "Ralat rangkaian: " + err.message;
+                btn.innerText = "Log Masuk";
+                btn.disabled = false;
+            });
+        }
+
+        function performClockOut(nama) {
+            document.getElementById('statusText').innerText = "Mengesan lokasi...";
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(
+                    (pos) => { sendOutData(nama, pos.coords.latitude, pos.coords.longitude); },
+                    (err) => { sendOutData(nama, 0, 0); }
+                );
+            } else {
+                sendOutData(nama, 0, 0);
+            }
+        }
+
+        function sendOutData(nama, lat, lng) {
+            document.getElementById('statusText').innerText = "Mengemas kini rekod...";
+            const payload = { nama: nama, lat: lat, lng: lng, ip: userIP };
+            callGAS("processClockOut", { payload: payload }, function (res) {
+                document.getElementById('loader').classList.add('hidden');
+                if (res.status === 'SUCCESS') {
+                    document.getElementById('successScreen').classList.remove('hidden');
+                    document.getElementById('successMsg').innerText = res.message;
+                    document.getElementById('outTime').innerText = res.time;
+                } else if (res.status === 'WARNING') {
+                    const screen = document.getElementById('errorScreen');
+                    screen.classList.remove('hidden');
+                    document.getElementById('errorIcon').className = 'result-icon icon-warning';
+                    document.getElementById('errorIcon').innerText = 'ⓘ';
+                    document.getElementById('errorTitle').style.color = 'var(--warning)';
+                    document.getElementById('errorTitle').innerText = 'Perhatian';
+                    document.getElementById('errorMsg').innerText = res.message;
+                } else {
+                    document.getElementById('errorScreen').classList.remove('hidden');
+                    document.getElementById('errorMsg').innerText = res.message;
+                }
+            }, function (err) {
+                document.getElementById('loader').classList.add('hidden');
+                document.getElementById('errorScreen').classList.remove('hidden');
+                document.getElementById('errorMsg').innerText = "Ralat rangkaian: " + err.message;
+            });
+        }
+    </script>
+</body>
+</html>

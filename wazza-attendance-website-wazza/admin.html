@@ -404,36 +404,47 @@
                 <div class="flex justify-between items-end border-b border-gray-700 pb-4">
                     <div>
                         <h2 class="text-2xl font-bold text-white">Semakan Rekod Lama</h2>
-                        <p class="text-gray-400 text-sm">Pilih tarikh untuk lihat kehadiran lepas.</p>
+                        <p class="text-gray-400 text-sm">Pilih tarikh atau julat tarikh untuk lihat kehadiran lepas.</p>
                     </div>
                 </div>
-                <div
-                    class="bg-gray-800 p-4 rounded-xl border border-gray-600 flex flex-col md:flex-row gap-4 items-center">
-                    <input type="date" id="historyDateInput"
-                        class="bg-gray-700 text-white p-2 rounded border border-gray-600 w-full md:w-auto">
-                    <button onclick="loadHistoryData()"
-                        class="bg-blue-600 hover:bg-blue-500 text-white px-6 py-2 rounded font-bold shadow w-full md:w-auto">
-                        🔍 Cari Rekod
-                    </button>
-                </div>
-                <div id="historyResult"
-                    class="hidden bg-gray-800 rounded-xl border border-gray-700 overflow-hidden shadow-xl">
-                    <div class="p-4 border-b border-gray-700 font-bold text-white" id="historyTitle">...</div>
-                    <div class="overflow-x-auto">
-                        <table class="w-full text-left text-sm">
-                            <thead class="bg-gray-900 text-gray-400 text-xs uppercase">
-                                <tr>
-                                    <th class="p-4">Nama</th>
-                                    <th class="p-4">Status</th>
-                                    <th class="p-4">Masuk</th>
-                                    <th class="p-4">Keluar</th>
-                                    <th class="p-4">Lokasi</th>
-                                </tr>
-                            </thead>
-                            <tbody id="tableHistory" class="divide-y divide-gray-700"></tbody>
-                        </table>
+                <div class="bg-gray-800 p-4 rounded-xl border border-gray-600 space-y-4">
+                    <div class="flex gap-2">
+                        <button id="btnModeSingle" onclick="setHistoryMode('single')"
+                            class="px-4 py-2 rounded-lg text-sm font-bold transition bg-blue-600 text-white">
+                            📅 Tarikh Tunggal
+                        </button>
+                        <button id="btnModeRange" onclick="setHistoryMode('range')"
+                            class="px-4 py-2 rounded-lg text-sm font-bold transition bg-gray-700 text-gray-400 hover:bg-gray-600">
+                            📆 Julat Tarikh
+                        </button>
+                    </div>
+                    <div id="historyModeSingle" style="display:flex" class="flex-col md:flex-row gap-3 items-center">
+                        <input type="date" id="historyDateInput"
+                            class="bg-gray-700 text-white p-2 rounded border border-gray-600 w-full md:w-auto">
+                        <button id="btnSearchSingle" onclick="loadHistoryData()"
+                            class="bg-blue-600 hover:bg-blue-500 text-white px-6 py-2 rounded font-bold shadow w-full md:w-auto">
+                            🔍 Cari Rekod
+                        </button>
+                    </div>
+                    <div id="historyModeRange" style="display:none" class="flex-col md:flex-row gap-3 items-center flex-wrap">
+                        <div class="flex items-center gap-2">
+                            <label class="text-gray-400 text-sm font-bold whitespace-nowrap">Dari:</label>
+                            <input type="date" id="historyDateFrom"
+                                class="bg-gray-700 text-white p-2 rounded border border-gray-600">
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <label class="text-gray-400 text-sm font-bold whitespace-nowrap">Hingga:</label>
+                            <input type="date" id="historyDateTo"
+                                class="bg-gray-700 text-white p-2 rounded border border-gray-600">
+                        </div>
+                        <button id="btnSearchRange" onclick="loadHistoryRange()"
+                            class="bg-blue-600 hover:bg-blue-500 text-white px-6 py-2 rounded font-bold shadow w-full md:w-auto">
+                            🔍 Cari Rekod
+                        </button>
+                        <p class="text-gray-500 text-xs w-full md:w-auto">*Maksimum 14 hari</p>
                     </div>
                 </div>
+                <div id="historyResult" class="hidden space-y-4"></div>
             </div>
 
             <!-- ===== PAGE: LEAVE CALENDAR ===== -->
@@ -762,6 +773,9 @@
                                         placeholder="Cth: 1saXvtuXv7Ei...">
                                     <p class="text-[10px] text-gray-500 mt-1">*Salin ID folder dari URL Google Drive
                                         anda.</p>
+                                    <button onclick="openDriveFolder()" class="mt-3 w-full flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-500 text-white text-sm font-semibold py-2 px-4 rounded-lg transition">
+                                        📂 Buka Google Drive Folder
+                                    </button>
                                 </div>
                             </div>
 
@@ -859,6 +873,70 @@
                             </div>
                         </div>
 
+                        <!-- Row 4: Hari Bekerja + Cuti Umum -->
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+
+                            <!-- Hari Bekerja -->
+                            <div class="cfg-card">
+                                <h3 class="text-base font-bold text-yellow-500 mb-1 flex items-center gap-2">
+                                    📅 Hari Bekerja
+                                </h3>
+                                <p class="text-gray-500 text-xs mb-4">Tandakan hari-hari yang dikira sebagai hari bekerja. Hari lain akan ditunjukkan sebagai <strong class="text-gray-400">REHAT</strong> dalam rekod kehadiran.</p>
+                                <div class="grid grid-cols-2 gap-2">
+                                    <label class="wfh-day-label">
+                                        <input type="checkbox" id="wd_ahad" value="Ahad" class="w-4 h-4 accent-yellow-500">
+                                        <span class="text-sm">Ahad</span>
+                                    </label>
+                                    <label class="wfh-day-label">
+                                        <input type="checkbox" id="wd_isnin" value="Isnin" class="w-4 h-4 accent-yellow-500" checked>
+                                        <span class="text-sm">Isnin</span>
+                                    </label>
+                                    <label class="wfh-day-label">
+                                        <input type="checkbox" id="wd_selasa" value="Selasa" class="w-4 h-4 accent-yellow-500" checked>
+                                        <span class="text-sm">Selasa</span>
+                                    </label>
+                                    <label class="wfh-day-label">
+                                        <input type="checkbox" id="wd_rabu" value="Rabu" class="w-4 h-4 accent-yellow-500" checked>
+                                        <span class="text-sm">Rabu</span>
+                                    </label>
+                                    <label class="wfh-day-label">
+                                        <input type="checkbox" id="wd_khamis" value="Khamis" class="w-4 h-4 accent-yellow-500" checked>
+                                        <span class="text-sm">Khamis</span>
+                                    </label>
+                                    <label class="wfh-day-label">
+                                        <input type="checkbox" id="wd_jumaat" value="Jumaat" class="w-4 h-4 accent-yellow-500" checked>
+                                        <span class="text-sm">Jumaat</span>
+                                    </label>
+                                    <label class="wfh-day-label col-span-2">
+                                        <input type="checkbox" id="wd_sabtu" value="Sabtu" class="w-4 h-4 accent-yellow-500">
+                                        <span class="text-sm">Sabtu</span>
+                                    </label>
+                                </div>
+                            </div>
+
+                            <!-- Cuti Umum / Public Holidays -->
+                            <div class="cfg-card">
+                                <h3 class="text-base font-bold text-yellow-500 mb-1 flex items-center gap-2">
+                                    🎌 Cuti Umum
+                                </h3>
+                                <p class="text-gray-500 text-xs mb-4">Tambah hari cuti umum syarikat. Hari ini akan ditunjukkan sebagai <strong class="text-purple-400">CUTI UMUM</strong> dalam rekod kehadiran.</p>
+                                <div class="space-y-3">
+                                    <div class="flex gap-2">
+                                        <input type="date" id="phDateInput" class="cfg-input flex-1">
+                                        <input type="text" id="phNameInput" placeholder="Nama cuti..." class="cfg-input flex-1">
+                                        <button onclick="addPublicHoliday()" class="bg-yellow-600 hover:bg-yellow-500 text-gray-900 px-3 rounded-lg font-bold transition flex-shrink-0">+</button>
+                                    </div>
+                                    <div>
+                                        <p class="text-[10px] text-gray-500 font-bold uppercase mb-2">Senarai Cuti Umum:</p>
+                                        <div id="publicHolidaysList" class="flex flex-col gap-1.5 max-h-48 overflow-y-auto">
+                                            <span class="text-gray-600 text-xs italic">Tiada cuti umum.</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+
                     </div><!-- /configContent -->
                 </div>
             </div><!-- /page-config -->
@@ -904,7 +982,57 @@
                         <option value="Berhenti">Berhenti</option>
                     </select>
                 </div>
-                <div class="flex gap-3 mt-6 pt-4 border-t border-gray-700">
+                <!-- Had Cuti Tahunan -->
+                <div class="border-t border-gray-700 pt-4">
+                    <p class="text-yellow-500 text-xs font-bold uppercase mb-1">Had Cuti Tahunan</p>
+                    <p class="text-gray-500 text-[10px] mb-3">Set 0 = Tidak Berkenaan (langkau). AL termasuk HAL. EL termasuk HEL.</p>
+
+                    <!-- Baki Semasa — hanya papar bila edit staf sedia ada -->
+                    <div id="sfBalanceDisplay" class="hidden mb-3 p-2 bg-gray-900 rounded-lg border border-gray-700">
+                        <p class="text-[10px] text-gray-400 font-bold uppercase mb-2">Baki Semasa (Tahun Ini)</p>
+                        <div id="sfBalanceContent" class="text-xs text-gray-500 italic">Memuatkan...</div>
+                    </div>
+
+                    <div class="grid grid-cols-4 gap-2">
+                        <div>
+                            <label class="block text-gray-400 text-[10px] font-bold mb-1">AL (+ HAL)</label>
+                            <input type="number" id="sf_alLimit" min="0" value="0"
+                                class="w-full p-2 bg-gray-900 border border-gray-600 text-white rounded-lg focus:outline-none focus:border-yellow-500 text-sm">
+                        </div>
+                        <div>
+                            <label class="block text-gray-400 text-[10px] font-bold mb-1">MC</label>
+                            <input type="number" id="sf_mcLimit" min="0" value="0"
+                                class="w-full p-2 bg-gray-900 border border-gray-600 text-white rounded-lg focus:outline-none focus:border-yellow-500 text-sm">
+                        </div>
+                        <div>
+                            <label class="block text-gray-400 text-[10px] font-bold mb-1">EL (+ HEL)</label>
+                            <input type="number" id="sf_elLimit" min="0" value="0"
+                                class="w-full p-2 bg-gray-900 border border-gray-600 text-white rounded-lg focus:outline-none focus:border-yellow-500 text-sm">
+                        </div>
+                        <div>
+                            <label class="block text-gray-400 text-[10px] font-bold mb-1">BL</label>
+                            <input type="number" id="sf_blLimit" min="0" value="0"
+                                class="w-full p-2 bg-gray-900 border border-gray-600 text-white rounded-lg focus:outline-none focus:border-yellow-500 text-sm">
+                        </div>
+                        <div>
+                            <label class="block text-gray-400 text-[10px] font-bold mb-1">HL</label>
+                            <input type="number" id="sf_hlLimit" min="0" value="0"
+                                class="w-full p-2 bg-gray-900 border border-gray-600 text-white rounded-lg focus:outline-none focus:border-yellow-500 text-sm">
+                        </div>
+                        <div>
+                            <label class="block text-gray-400 text-[10px] font-bold mb-1">ML</label>
+                            <input type="number" id="sf_mlLimit" min="0" value="0"
+                                class="w-full p-2 bg-gray-900 border border-gray-600 text-white rounded-lg focus:outline-none focus:border-yellow-500 text-sm">
+                        </div>
+                        <div>
+                            <label class="block text-gray-400 text-[10px] font-bold mb-1">PL</label>
+                            <input type="number" id="sf_plLimit" min="0" value="0"
+                                class="w-full p-2 bg-gray-900 border border-gray-600 text-white rounded-lg focus:outline-none focus:border-yellow-500 text-sm">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="flex gap-3 pt-4 border-t border-gray-700">
                     <button onclick="closeStaffModal()"
                         class="flex-1 bg-gray-700 hover:bg-gray-600 text-white font-bold py-2 rounded-lg transition">Batal</button>
                     <button onclick="submitStaffForm()" id="btnSaveStaff"
@@ -957,6 +1085,36 @@
                         class="flex-1 bg-gray-700 hover:bg-gray-600 text-white font-bold py-2 rounded-lg transition">Batal</button>
                     <button onclick="submitOutstationForm()" id="btnSaveOutstation"
                         class="flex-1 bg-blue-600 hover:bg-blue-500 text-white font-bold py-2 rounded-lg transition shadow-lg">Simpan</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== STAFF DETAIL MODAL ===== -->
+    <div id="staffDetailModal" class="fixed inset-0 bg-black/80 z-[1000] hidden items-center justify-center p-4">
+        <div class="bg-gray-800 rounded-2xl w-full max-w-2xl max-h-[85vh] flex flex-col border border-gray-700 shadow-2xl">
+            <div class="p-5 border-b border-gray-700 flex justify-between items-start flex-shrink-0">
+                <div>
+                    <h2 id="staffDetailName" class="text-xl font-bold text-yellow-400">-</h2>
+                    <p id="staffDetailRange" class="text-gray-400 text-xs mt-1">-</p>
+                </div>
+                <button onclick="closeStaffDetailModal()" class="text-gray-400 hover:text-white text-2xl font-bold leading-none ml-4 flex-shrink-0">×</button>
+            </div>
+            <div class="p-5 overflow-y-auto flex-1 space-y-4">
+                <div id="staffDetailSummary" class="grid grid-cols-4 gap-3"></div>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-sm">
+                        <thead class="bg-gray-900 text-gray-400 text-xs uppercase">
+                            <tr>
+                                <th class="p-3 text-left">Tarikh</th>
+                                <th class="p-3 text-left">Status</th>
+                                <th class="p-3 text-left">Masuk</th>
+                                <th class="p-3 text-left">Keluar</th>
+                                <th class="p-3 text-left">Lokasi</th>
+                            </tr>
+                        </thead>
+                        <tbody id="staffDetailTable" class="divide-y divide-gray-700"></tbody>
+                    </table>
                 </div>
             </div>
         </div>
@@ -1038,6 +1196,7 @@
             }, 50);
             switchPage('dashboard');
             updateMonthPickerInput();
+            loadWorkConfig();
         }
 
         function logoutAdmin() {
@@ -1055,6 +1214,8 @@
         var globalLeaveEvents = [];
         var globalAllLeaveLog = [];
         var globalStaffList = [];
+        var globalHistoryData = [];
+        var currentHistoryMode = 'single';
         var allPages = ['dashboard', 'history', 'leave', 'allLeaveLog', 'staff', 'outstation', 'config'];
 
         function switchPage(page) {
@@ -1107,21 +1268,244 @@
             document.getElementById('loaderLive').classList.add('hidden');
         }
 
+        function setHistoryMode(mode) {
+            currentHistoryMode = mode;
+            document.getElementById('historyModeSingle').style.display = mode === 'single' ? 'flex' : 'none';
+            document.getElementById('historyModeRange').style.display = mode === 'range' ? 'flex' : 'none';
+            document.getElementById('btnModeSingle').className = mode === 'single'
+                ? 'px-4 py-2 rounded-lg text-sm font-bold transition bg-blue-600 text-white'
+                : 'px-4 py-2 rounded-lg text-sm font-bold transition bg-gray-700 text-gray-400 hover:bg-gray-600';
+            document.getElementById('btnModeRange').className = mode === 'range'
+                ? 'px-4 py-2 rounded-lg text-sm font-bold transition bg-blue-600 text-white'
+                : 'px-4 py-2 rounded-lg text-sm font-bold transition bg-gray-700 text-gray-400 hover:bg-gray-600';
+            document.getElementById('historyResult').classList.add('hidden');
+            globalHistoryData = [];
+        }
+
         function loadHistoryData() {
             var dateVal = document.getElementById('historyDateInput').value;
             if (!dateVal) { alert("Sila pilih tarikh dulu!"); return; }
-
-            var btn = event.target;
+            var btn = document.getElementById('btnSearchSingle');
             btn.innerText = "Mencari...";
             btn.disabled = true;
-
-            callGAS("getAdminDashboardData", { targetDateRaw: dateVal }, function (data) {
-                document.getElementById('historyResult').classList.remove('hidden');
-                document.getElementById('historyTitle').innerText = "Rekod: " + data.stats.date;
-                renderTable('tableHistory', data.attendance, "Tiada rekod pada tarikh ini.", data.stats.date, data.calendarEvents);
+            globalHistoryData = [];
+            callGAS("getAdminDashboardData", { targetDateRaw: dateVal }, function(data) {
+                globalHistoryData = [{ date: data.stats.date, dateRaw: dateVal, attendance: data.attendance, calendarEvents: data.calendarEvents }];
+                renderHistoryPage();
                 btn.innerText = "🔍 Cari Rekod";
                 btn.disabled = false;
+            }, function() {
+                btn.innerText = "🔍 Cari Rekod";
+                btn.disabled = false;
+                alert("Gagal memuatkan data.");
             });
+        }
+
+        function loadHistoryRange() {
+            var fromVal = document.getElementById('historyDateFrom').value;
+            var toVal = document.getElementById('historyDateTo').value;
+            if (!fromVal || !toVal) { alert("Sila isi kedua-dua tarikh!"); return; }
+            if (fromVal > toVal) { alert("Tarikh 'Dari' mesti lebih awal dari 'Hingga'!"); return; }
+            var diffDays = Math.round((new Date(toVal + 'T00:00:00') - new Date(fromVal + 'T00:00:00')) / 86400000) + 1;
+            if (diffDays > 14) { alert("Maksimum julat ialah 14 hari sahaja."); return; }
+
+            var btn = document.getElementById('btnSearchRange');
+            btn.innerText = "Mencari...";
+            btn.disabled = true;
+            globalHistoryData = [];
+
+            var dates = [];
+            var cur = new Date(fromVal + 'T00:00:00');
+            var end = new Date(toVal + 'T00:00:00');
+            while (cur <= end) {
+                dates.push(cur.getFullYear() + '-' + String(cur.getMonth()+1).padStart(2,'0') + '-' + String(cur.getDate()).padStart(2,'0'));
+                cur.setDate(cur.getDate() + 1);
+            }
+
+            var results = [];
+            for (var x = 0; x < dates.length; x++) results.push(null);
+            var loaded = 0;
+
+            function checkDone() {
+                loaded++;
+                if (loaded < dates.length) return;
+                globalHistoryData = results.filter(Boolean);
+                renderHistoryPage();
+                btn.innerText = "🔍 Cari Rekod";
+                btn.disabled = false;
+            }
+
+            dates.forEach(function(dateRaw, i) {
+                callGAS("getAdminDashboardData", { targetDateRaw: dateRaw }, function(data) {
+                    results[i] = { date: data.stats.date, dateRaw: dateRaw, attendance: data.attendance, calendarEvents: data.calendarEvents };
+                    checkDone();
+                }, function() { checkDone(); });
+            });
+        }
+
+        function renderHistoryPage() {
+            var container = document.getElementById('historyResult');
+            container.innerHTML = '';
+            container.classList.remove('hidden');
+            if (globalHistoryData.length === 0) {
+                container.innerHTML = '<div class="text-gray-500 text-center py-8 bg-gray-800 rounded-xl border border-gray-700">Tiada data dijumpai.</div>';
+                return;
+            }
+            globalHistoryData.forEach(function(dayData) {
+                var div = document.createElement('div');
+                div.className = 'bg-gray-800 rounded-xl border border-gray-700 overflow-hidden shadow-xl';
+                div.innerHTML =
+                    '<div class="p-4 border-b border-gray-700 font-bold text-white flex items-center justify-between">' +
+                    '<span>📅 Rekod: ' + dayData.date + '</span>' +
+                    '<span class="text-xs text-gray-400 font-normal">' + dayData.attendance.length + ' staf</span>' +
+                    '</div>' +
+                    '<div class="overflow-x-auto"><table class="w-full text-left text-sm">' +
+                    '<thead class="bg-gray-900 text-gray-400 text-xs uppercase"><tr>' +
+                    '<th class="p-4">Nama</th><th class="p-4">Status</th><th class="p-4">Masuk</th><th class="p-4">Keluar</th><th class="p-4">Lokasi</th>' +
+                    '</tr></thead>' +
+                    '<tbody id="htbl_' + dayData.dateRaw + '" class="divide-y divide-gray-700"></tbody>' +
+                    '</table></div>';
+                container.appendChild(div);
+                renderHistoryRows('htbl_' + dayData.dateRaw, dayData.attendance, dayData.date, dayData.calendarEvents);
+            });
+        }
+
+        function renderHistoryRows(tbodyId, list, dateStr, leaveEvents) {
+            var tbody = document.getElementById(tbodyId);
+            if (!tbody) return;
+            tbody.innerHTML = '';
+            if (!list || list.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="5" class="p-6 text-center text-gray-500">Tiada rekod.</td></tr>';
+                return;
+            }
+            var targetYMD = '';
+            if (dateStr) {
+                var p = dateStr.split('/');
+                if (p.length === 3) targetYMD = p[2] + '-' + p[1] + '-' + p[0];
+            }
+            list.forEach(function(s) {
+                var cutiEvent = (targetYMD && leaveEvents) ? leaveEvents.find(function(e) { return e.start === targetYMD && e.title === s.nama; }) : null;
+                var badge = buildHistoryStatusBadge(s.status, cutiEvent, targetYMD);
+                var loc = s.alamatIn ? '<div class="text-[10px] text-gray-400 max-w-[160px] truncate" title="' + s.alamatIn + '">📍 ' + s.alamatIn + '</div>' : '';
+                var safeName = s.nama.replace(/'/g, "\\'");
+                tbody.innerHTML +=
+                    '<tr class="hover:bg-gray-700/50 transition border-b border-gray-700/50">' +
+                    '<td class="p-3"><button onclick="openStaffDetailModal(\'' + safeName + '\')" class="font-semibold text-sm hover:text-yellow-400 text-white transition text-left">' + s.nama + '</button></td>' +
+                    '<td class="p-3">' + badge + '</td>' +
+                    '<td class="p-3 text-xs font-mono text-green-400">' + s.masaMasuk + '</td>' +
+                    '<td class="p-3 text-xs font-mono text-yellow-400">' + s.masaKeluar + '</td>' +
+                    '<td class="p-3">' + loc + '</td>' +
+                    '</tr>';
+            });
+        }
+
+        function buildHistoryStatusBadge(status, cutiEvent, dateRaw) {
+            if (status === 'HADIR') return '<span class="bg-green-900 text-green-300 px-2 py-0.5 rounded text-[10px] border border-green-700">HADIR</span>';
+            if (status === 'LEWAT' || status === 'LEWAT (MANUAL)') return '<span class="bg-red-900 text-red-300 px-2 py-0.5 rounded text-[10px] border border-red-700">LEWAT</span>';
+            if (String(status).includes('CUTI') || cutiEvent) {
+                var jenis = cutiEvent ? cutiEvent.type : status.replace('CUTI - ', '');
+                return '<span class="bg-yellow-900 text-yellow-300 px-2 py-0.5 rounded text-[10px] border border-yellow-700 uppercase">CUTI - ' + jenis + '</span>';
+            }
+            // TIDAK HADIR — semak cuti umum & hari rehat
+            if (dateRaw) {
+                var holiday = globalWorkConfig.publicHolidays.find(function(h) { return h.date === dateRaw; });
+                if (holiday) return '<span class="bg-purple-900/60 text-purple-300 px-2 py-0.5 rounded text-[10px] border border-purple-700/60 uppercase">PH - ' + holiday.name + '</span>';
+                if (globalWorkConfig.workDays.length > 0) {
+                    var d = new Date(dateRaw + 'T00:00:00');
+                    var dayNames = ['Ahad','Isnin','Selasa','Rabu','Khamis','Jumaat','Sabtu'];
+                    var dayName = dayNames[d.getDay()];
+                    if (!globalWorkConfig.workDays.some(function(wd) { return wd.toLowerCase() === dayName.toLowerCase(); })) {
+                        return '<span class="bg-gray-800 text-gray-500 px-2 py-0.5 rounded text-[10px] border border-gray-700">REHAT</span>';
+                    }
+                }
+            }
+            return '<span class="bg-gray-700 text-gray-400 px-2 py-0.5 rounded text-[10px] border border-gray-600">ABSENT</span>';
+        }
+
+        function openStaffDetailModal(nama) {
+            document.getElementById('staffDetailName').innerText = nama;
+            var rangeEl = document.getElementById('staffDetailRange');
+            var summaryEl = document.getElementById('staffDetailSummary');
+            var tbody = document.getElementById('staffDetailTable');
+
+            if (!globalHistoryData || globalHistoryData.length === 0) {
+                rangeEl.innerText = 'Tiada data dimuatkan.';
+                summaryEl.innerHTML = '';
+                tbody.innerHTML = '<tr><td colspan="5" class="p-6 text-center text-gray-500">Sila cari rekod dahulu.</td></tr>';
+            } else {
+                var first = globalHistoryData[0].date;
+                var last = globalHistoryData[globalHistoryData.length - 1].date;
+                rangeEl.innerText = 'Julat: ' + (globalHistoryData.length === 1 ? first : first + ' — ' + last);
+
+                var records = [];
+                globalHistoryData.forEach(function(day) {
+                    var rec = day.attendance.find(function(s) { return s.nama === nama; });
+                    if (rec) records.push({ date: day.date, staff: rec, calendarEvents: day.calendarEvents });
+                });
+
+                var counts = { hadir: 0, lewat: 0, cuti: 0, absent: 0 };
+                records.forEach(function(r) {
+                    var st = r.staff.status;
+                    var p2 = r.date.split('/');
+                    var dateRaw = p2.length === 3 ? p2[2] + '-' + p2[1] + '-' + p2[0] : '';
+                    if (st === 'HADIR') counts.hadir++;
+                    else if (st === 'LEWAT' || st === 'LEWAT (MANUAL)') counts.lewat++;
+                    else if (String(st).includes('CUTI')) counts.cuti++;
+                    else {
+                        var isOffDay = false;
+                        if (dateRaw) {
+                            if (globalWorkConfig.publicHolidays.find(function(h) { return h.date === dateRaw; })) {
+                                isOffDay = true;
+                            } else if (globalWorkConfig.workDays.length > 0) {
+                                var d2 = new Date(dateRaw + 'T00:00:00');
+                                var dayNames2 = ['Ahad','Isnin','Selasa','Rabu','Khamis','Jumaat','Sabtu'];
+                                var dayName2 = dayNames2[d2.getDay()];
+                                if (!globalWorkConfig.workDays.some(function(wd) { return wd.toLowerCase() === dayName2.toLowerCase(); })) {
+                                    isOffDay = true;
+                                }
+                            }
+                        }
+                        if (!isOffDay) counts.absent++;
+                    }
+                });
+
+                summaryEl.innerHTML =
+                    '<div class="bg-green-900/30 border border-green-700/50 rounded-lg p-3 text-center"><div class="text-2xl font-bold text-green-400">' + counts.hadir + '</div><div class="text-[10px] text-gray-400 uppercase mt-1">Hadir</div></div>' +
+                    '<div class="bg-red-900/30 border border-red-700/50 rounded-lg p-3 text-center"><div class="text-2xl font-bold text-red-400">' + counts.lewat + '</div><div class="text-[10px] text-gray-400 uppercase mt-1">Lewat</div></div>' +
+                    '<div class="bg-yellow-900/30 border border-yellow-700/50 rounded-lg p-3 text-center"><div class="text-2xl font-bold text-yellow-400">' + counts.cuti + '</div><div class="text-[10px] text-gray-400 uppercase mt-1">Cuti</div></div>' +
+                    '<div class="bg-gray-700/30 border border-gray-600/50 rounded-lg p-3 text-center"><div class="text-2xl font-bold text-gray-400">' + counts.absent + '</div><div class="text-[10px] text-gray-400 uppercase mt-1">Absent</div></div>';
+
+                tbody.innerHTML = '';
+                if (records.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="5" class="p-6 text-center text-gray-500">Tiada rekod untuk staf ini dalam tempoh ini.</td></tr>';
+                } else {
+                    records.forEach(function(r) {
+                        var p2 = r.date.split('/');
+                        var targetYMD = p2.length === 3 ? p2[2] + '-' + p2[1] + '-' + p2[0] : '';
+                        var cutiEvent = r.calendarEvents ? r.calendarEvents.find(function(e) { return e.start === targetYMD && e.title === nama; }) : null;
+                        var badge = buildHistoryStatusBadge(r.staff.status, cutiEvent, targetYMD);
+                        var loc = r.staff.alamatIn ? '<div class="text-[10px] text-gray-400 max-w-[140px] truncate" title="' + r.staff.alamatIn + '">📍 ' + r.staff.alamatIn + '</div>' : '-';
+                        tbody.innerHTML +=
+                            '<tr class="hover:bg-gray-700/30 transition border-b border-gray-700/50">' +
+                            '<td class="p-3 text-sm text-gray-200">' + r.date + '</td>' +
+                            '<td class="p-3">' + badge + '</td>' +
+                            '<td class="p-3 text-xs font-mono text-green-400">' + r.staff.masaMasuk + '</td>' +
+                            '<td class="p-3 text-xs font-mono text-yellow-400">' + r.staff.masaKeluar + '</td>' +
+                            '<td class="p-3">' + loc + '</td>' +
+                            '</tr>';
+                    });
+                }
+            }
+
+            var modal = document.getElementById('staffDetailModal');
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+        }
+
+        function closeStaffDetailModal() {
+            var modal = document.getElementById('staffDetailModal');
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
         }
 
         var trackerExpanded = false;
@@ -1276,15 +1660,30 @@
             list.forEach(function (l) {
                 var attachHtml = "";
                 if (l.attachment && l.attachment !== "Tiada" && l.attachment !== "") {
-                    attachHtml = '<a href="' + l.attachment + '" target="_blank" class="mt-3 inline-block bg-gray-800 border border-gray-600 text-blue-400 text-[10px] px-3 py-1 rounded-lg hover:bg-gray-700 transition">🔗 Buka Lampiran</a>';
+                    attachHtml = '<a href="' + l.attachment + '" target="_blank" class="mt-1 inline-block bg-gray-800 border border-gray-600 text-blue-400 text-[10px] px-2 py-0.5 rounded hover:bg-gray-700 transition">🔗 Lampiran</a>';
                 }
-                div.innerHTML += '<div class="bg-gray-900 p-3 rounded border border-gray-600 flex justify-between items-center" id="card-' + l.rowIndex + '">' +
-                    '<div><div class="text-sm font-bold text-white">' + l.nama + '</div>' +
+
+                var balHtml = "";
+                if (l.pool && l.balanceInfo && l.balanceInfo.balance !== null) {
+                    var b = l.balanceInfo;
+                    var bColor = b.balance <= 0 ? '#f87171' : b.balance <= 2 ? '#eab308' : '#4ade80';
+                    var bText = b.balance <= 0 ? 'HABIS' : b.balance + ' / ' + b.limit + ' hari';
+                    balHtml = '<div style="margin-top:4px;"><span style="font-size:10px;color:#6b7280;">Baki ' + l.pool + ': </span>' +
+                              '<span style="font-size:10px;font-weight:700;color:' + bColor + ';">' + bText + '</span></div>';
+                } else if (l.pool) {
+                    balHtml = '<div style="margin-top:4px;"><span style="font-size:10px;color:#6b7280;">Baki ' + l.pool + ': </span><span style="font-size:10px;color:#6b7280;">Tiada Had</span></div>';
+                }
+
+                div.innerHTML += '<div class="bg-gray-900 p-3 rounded border border-gray-600 flex justify-between items-start gap-3" id="card-' + l.rowIndex + '">' +
+                    '<div class="flex-1 min-w-0">' +
+                    '<div class="text-sm font-bold text-white">' + l.nama + '</div>' +
                     '<div class="text-xs text-yellow-500 font-bold">' + l.jenis + ' <span class="text-gray-400 font-normal">(' + l.tarikh + ')</span></div>' +
-                    '<div class="text-xs text-gray-500 italic mt-1">"' + l.sebab + '"</div>' + attachHtml + '</div>' +
-                    '<div class="flex gap-2 ml-4">' +
-                    '<button onclick="processLeave(' + l.rowIndex + ', \'DITOLAK\')" class="bg-red-900 hover:bg-red-800 text-red-200 px-3 py-2 rounded text-xs font-bold transition">TOLAK</button>' +
-                    '<button onclick="processLeave(' + l.rowIndex + ', \'DILULUSKAN\')" class="bg-green-700 hover:bg-green-600 text-white px-3 py-2 rounded text-xs font-bold transition">LULUS</button>' +
+                    balHtml +
+                    '<div class="text-xs text-gray-500 italic mt-1">"' + l.sebab + '"</div>' + attachHtml +
+                    '</div>' +
+                    '<div class="flex flex-col gap-1.5 flex-shrink-0">' +
+                    '<button onclick="processLeave(' + l.rowIndex + ', \'DILULUSKAN\')" class="bg-green-700 hover:bg-green-600 text-white px-3 py-1.5 rounded text-xs font-bold transition">LULUS</button>' +
+                    '<button onclick="processLeave(' + l.rowIndex + ', \'DITOLAK\')" class="bg-red-900 hover:bg-red-800 text-red-200 px-3 py-1.5 rounded text-xs font-bold transition">TOLAK</button>' +
                     '</div></div>';
             });
         }
@@ -1445,6 +1844,13 @@
             document.getElementById('sf_username').value = "";
             document.getElementById('sf_password').value = "";
             document.getElementById('sf_status').value = "Aktif";
+            document.getElementById('sf_alLimit').value = 0;
+            document.getElementById('sf_mcLimit').value = 0;
+            document.getElementById('sf_elLimit').value = 0;
+            document.getElementById('sf_blLimit').value = 0;
+            document.getElementById('sf_hlLimit').value = 0;
+            document.getElementById('sf_mlLimit').value = 0;
+            document.getElementById('sf_plLimit').value = 0;
 
             if (rowIndex !== undefined && rowIndex !== null) {
                 var staf = globalStaffList.find(function (s) { return s.rowIndex === rowIndex; });
@@ -1456,9 +1862,48 @@
                     document.getElementById('sf_username').value = staf.username;
                     document.getElementById('sf_password').value = staf.password;
                     document.getElementById('sf_status').value = staf.status;
+                    document.getElementById('sf_alLimit').value = staf.alLimit || 0;
+                    document.getElementById('sf_mcLimit').value = staf.mcLimit || 0;
+                    document.getElementById('sf_elLimit').value = staf.elLimit || 0;
+                    document.getElementById('sf_blLimit').value = staf.blLimit || 0;
+                    document.getElementById('sf_hlLimit').value = staf.hlLimit || 0;
+                    document.getElementById('sf_mlLimit').value = staf.mlLimit || 0;
+                    document.getElementById('sf_plLimit').value = staf.plLimit || 0;
+
+                    // Fetch dan papar baki semasa
+                    var balDisplay = document.getElementById('sfBalanceDisplay');
+                    var balContent = document.getElementById('sfBalanceContent');
+                    balDisplay.classList.remove('hidden');
+                    balContent.innerHTML = '<span class="loading-pulse text-yellow-600">Memuatkan baki...</span>';
+                    callGAS("getLeaveBalance", { staffName: staf.nama }, function(res) {
+                        if (res.status !== "SUCCESS") { balContent.innerHTML = '<span class="text-red-400">Gagal muatkan baki.</span>'; return; }
+                        var bal = res.data;
+                        var tKeys = [
+                            { key: 'AL', label: 'AL' }, { key: 'MC', label: 'MC' }, { key: 'EL', label: 'EL' },
+                            { key: 'HL', label: 'HL' }, { key: 'ML', label: 'ML' }, { key: 'PL', label: 'PL' }, { key: 'BL', label: 'BL' }
+                        ];
+                        var bHtml = '<div style="display:grid;grid-template-columns:repeat(7,1fr);gap:4px;">';
+                        tKeys.forEach(function(t) {
+                            var b = bal[t.key];
+                            if (!b || b.limit === 0) {
+                                bHtml += '<div style="text-align:center;padding:4px;background:#111827;border-radius:6px;border:1px solid #374151;">' +
+                                    '<div style="font-size:9px;font-weight:700;color:#6b7280;">' + t.key + '</div>' +
+                                    '<div style="font-size:10px;color:#4b5563;">∞</div></div>';
+                            } else {
+                                var bColor = b.balance <= 0 ? '#f87171' : b.balance <= Math.ceil(b.limit * 0.2) ? '#eab308' : '#4ade80';
+                                bHtml += '<div style="text-align:center;padding:4px;background:#111827;border-radius:6px;border:1px solid #374151;">' +
+                                    '<div style="font-size:9px;font-weight:700;color:#6b7280;">' + t.key + '</div>' +
+                                    '<div style="font-size:11px;font-weight:700;color:' + bColor + ';">' + b.balance + '</div>' +
+                                    '<div style="font-size:8px;color:#4b5563;">/ ' + b.limit + '</div></div>';
+                            }
+                        });
+                        bHtml += '</div>';
+                        balContent.innerHTML = bHtml;
+                    });
                 }
             } else {
                 document.getElementById('staffModalTitle').innerText = "Tambah Staf Baru";
+                document.getElementById('sfBalanceDisplay').classList.add('hidden');
             }
             modal.classList.remove('hidden');
             modal.classList.add('flex');
@@ -1482,7 +1927,14 @@
                 jawatan: document.getElementById('sf_jawatan').value,
                 username: document.getElementById('sf_username').value,
                 password: document.getElementById('sf_password').value,
-                status: document.getElementById('sf_status').value
+                status: document.getElementById('sf_status').value,
+                alLimit: parseInt(document.getElementById('sf_alLimit').value) || 0,
+                mcLimit: parseInt(document.getElementById('sf_mcLimit').value) || 0,
+                elLimit: parseInt(document.getElementById('sf_elLimit').value) || 0,
+                blLimit: parseInt(document.getElementById('sf_blLimit').value) || 0,
+                hlLimit: parseInt(document.getElementById('sf_hlLimit').value) || 0,
+                mlLimit: parseInt(document.getElementById('sf_mlLimit').value) || 0,
+                plLimit: parseInt(document.getElementById('sf_plLimit').value) || 0
             };
 
             callGAS("saveStaffData", { payload: payload }, function (res) {
@@ -1500,7 +1952,9 @@
         // ==========================================
         // TETAPAN SISTEM (CONFIG) — BAHAGIAN BARU
         // ==========================================
-        var wfhDatesArray = []; // simpan tarikh override dalam memory
+        var wfhDatesArray = [];
+        var publicHolidaysArray = [];
+        var globalWorkConfig = { workDays: [], publicHolidays: [] };
 
         function loadSystemConfig() {
             document.getElementById('configLoader').classList.remove('hidden');
@@ -1550,6 +2004,18 @@
             // WFH Tarikh Override
             wfhDatesArray = Array.isArray(data.wfhDates) ? data.wfhDates.slice() : [];
             renderWfhDates();
+
+            // Hari Bekerja
+            var wdMap = { 'ahad': 'wd_ahad', 'isnin': 'wd_isnin', 'selasa': 'wd_selasa', 'rabu': 'wd_rabu', 'khamis': 'wd_khamis', 'jumaat': 'wd_jumaat', 'sabtu': 'wd_sabtu' };
+            var loadedWorkDays = Array.isArray(data.workDays) && data.workDays.length > 0 ? data.workDays : ['Isnin','Selasa','Rabu','Khamis','Jumaat'];
+            Object.keys(wdMap).forEach(function(day) {
+                var el = document.getElementById(wdMap[day]);
+                if (el) el.checked = loadedWorkDays.some(function(d) { return d.toLowerCase() === day; });
+            });
+
+            // Cuti Umum
+            publicHolidaysArray = Array.isArray(data.publicHolidays) ? data.publicHolidays.slice() : [];
+            renderPublicHolidaysList();
         }
 
         function addWfhDate() {
@@ -1583,6 +2049,67 @@
             }).join('');
         }
 
+        function loadWorkConfig() {
+            callGAS("getSystemConfig", {}, function(res) {
+                if (res.status === 'SUCCESS' && res.data) {
+                    var wd = Array.isArray(res.data.workDays) && res.data.workDays.length > 0
+                        ? res.data.workDays
+                        : ['Isnin','Selasa','Rabu','Khamis','Jumaat'];
+                    globalWorkConfig = {
+                        workDays: wd,
+                        publicHolidays: Array.isArray(res.data.publicHolidays) ? res.data.publicHolidays : []
+                    };
+                }
+            });
+        }
+
+        function addPublicHoliday() {
+            var dateVal = document.getElementById('phDateInput').value.trim();
+            var nameVal = document.getElementById('phNameInput').value.trim();
+            if (!dateVal) { alert("Sila pilih tarikh cuti umum."); return; }
+            if (!nameVal) { alert("Sila isi nama cuti umum."); return; }
+            if (publicHolidaysArray.find(function(h) { return h.date === dateVal; })) {
+                alert("Tarikh ini sudah ada dalam senarai."); return;
+            }
+            publicHolidaysArray.push({ date: dateVal, name: nameVal });
+            publicHolidaysArray.sort(function(a, b) { return a.date.localeCompare(b.date); });
+            renderPublicHolidaysList();
+            document.getElementById('phDateInput').value = "";
+            document.getElementById('phNameInput').value = "";
+        }
+
+        function removePublicHoliday(dateStr) {
+            publicHolidaysArray = publicHolidaysArray.filter(function(h) { return h.date !== dateStr; });
+            renderPublicHolidaysList();
+        }
+
+        function renderPublicHolidaysList() {
+            var container = document.getElementById('publicHolidaysList');
+            if (!container) return;
+            if (publicHolidaysArray.length === 0) {
+                container.innerHTML = '<span class="text-gray-600 text-xs italic">Tiada cuti umum.</span>';
+                return;
+            }
+            container.innerHTML = publicHolidaysArray.map(function(h) {
+                var p = h.date.split('-');
+                var display = p.length === 3 ? p[2] + '/' + p[1] + '/' + p[0] : h.date;
+                return '<div class="flex items-center justify-between bg-purple-900/20 border border-purple-700/40 px-3 py-1.5 rounded-lg">' +
+                    '<div><span class="text-purple-300 text-xs font-mono">' + display + '</span>' +
+                    '<span class="text-gray-400 text-xs ml-2">— ' + h.name + '</span></div>' +
+                    '<button onclick="removePublicHoliday(\'' + h.date + '\')" class="text-gray-500 hover:text-red-400 font-bold text-sm leading-none ml-2">×</button>' +
+                    '</div>';
+            }).join('');
+        }
+
+        function openDriveFolder() {
+            var folderId = document.getElementById('cfg_linkFolder').value.trim();
+            if (!folderId) {
+                alert('Sila masukkan Folder ID Google Drive dahulu.');
+                return;
+            }
+            window.open('https://drive.google.com/drive/folders/' + folderId, '_blank');
+        }
+
         function saveConfigSettings() {
             var btn = document.getElementById('btnSaveConfig');
             var notif = document.getElementById('configNotif');
@@ -1608,7 +2135,16 @@
                 officeLng: document.getElementById('cfg_officeLng').value.trim(),
                 officeRadius: parseInt(document.getElementById('cfg_officeRadius').value) || 0,
                 wfhDays: selectedDays,
-                wfhDates: wfhDatesArray.slice()
+                wfhDates: wfhDatesArray.slice(),
+                workDays: (function() {
+                    var days = [];
+                    ['wd_ahad','wd_isnin','wd_selasa','wd_rabu','wd_khamis','wd_jumaat','wd_sabtu'].forEach(function(id) {
+                        var el = document.getElementById(id);
+                        if (el && el.checked) days.push(el.value);
+                    });
+                    return days;
+                })(),
+                publicHolidays: publicHolidaysArray.slice()
             };
 
             callGAS("saveSystemConfig", { payload: payload }, function (res) {
@@ -1618,8 +2154,9 @@
                 if (res.status === 'SUCCESS') {
                     notif.className = "rounded-lg px-4 py-3 text-sm font-bold border bg-green-900/40 border-green-700 text-green-300";
                     notif.innerText = "✅ " + res.message;
-                    // Kosongkan field password selepas save berjaya
                     document.getElementById('cfg_adminPass').value = "";
+                    // Kemaskini globalWorkConfig supaya rekod history terus guna nilai baru
+                    globalWorkConfig = { workDays: payload.workDays, publicHolidays: payload.publicHolidays };
                 } else {
                     notif.className = "rounded-lg px-4 py-3 text-sm font-bold border bg-red-900/40 border-red-700 text-red-300";
                     notif.innerText = "❌ " + res.message;

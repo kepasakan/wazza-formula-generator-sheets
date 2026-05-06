@@ -31,6 +31,8 @@ function doGet(e) {
       else if (action === "getStaffAttendanceByDateRange") result = getStaffAttendanceByDateRange(body.username, body.dateStart, body.dateEnd);
       else if (action === "getAllLeaveLog")                 result = getAllLeaveLog();
       else if (action === "getLeaveTypes")                 result = getLeaveTypes();
+      else if (action === "getLeaveValidationConfig")      result = getLeaveValidationConfig();
+      else if (action === "getLeaveBalance")               result = getLeaveBalance(body.staffName);
       else if (action === "processLeaveStatus")            result = processLeaveStatus(body.rowIndex, body.status);
       else if (action === "setStaffLate")                  result = setStaffLate(body.nama);
       else if (action === "getSystemConfig")               result = getSystemConfig();
@@ -80,6 +82,8 @@ function doPost(e) {
     else if (action === "getStaffAttendanceByDateRange") result = getStaffAttendanceByDateRange(body.username, body.dateStart, body.dateEnd);
     else if (action === "getAllLeaveLog")                 result = getAllLeaveLog();
     else if (action === "getLeaveTypes")                 result = getLeaveTypes();
+    else if (action === "getLeaveValidationConfig")      result = getLeaveValidationConfig();
+    else if (action === "getLeaveBalance")               result = getLeaveBalance(body.staffName);
     else if (action === "processCuti")                   result = processCuti(body.formData);
     else if (action === "processLeaveStatus")            result = processLeaveStatus(body.rowIndex, body.status);
     else if (action === "setStaffLate")                  result = setStaffLate(body.nama);
@@ -335,8 +339,33 @@ function processScan(payload) {
     notaSebab
   ]);
 
+  _markOutstationDoneIfExists(payload.nama);
+
   const msgOut = isLate ? 'Lewat: ' + payload.nama : 'Hadir: ' + payload.nama;
   return { status: 'SUCCESS', isLate: isLate, message: msgOut, time: new Date().toLocaleTimeString() };
+}
+
+function _markOutstationDoneIfExists(nama) {
+  try {
+    const sheet = SS.getSheetByName("Log_Outstation");
+    if (!sheet) return;
+    const lastRow = sheet.getLastRow();
+    if (lastRow <= 1) return;
+    const today = new Date();
+    const todayStr = Utilities.formatDate(today, "Asia/Kuala_Lumpur", "yyyy-MM-dd");
+    const data = sheet.getRange(2, 1, lastRow - 1, 7).getValues();
+    for (let i = 0; i < data.length; i++) {
+      let staffNama = String(data[i][1]).trim();
+      let tarikhRaw = data[i][2];
+      let tarikhStr = tarikhRaw instanceof Date
+        ? Utilities.formatDate(tarikhRaw, "Asia/Kuala_Lumpur", "yyyy-MM-dd")
+        : String(tarikhRaw).trim();
+      let status = String(data[i][6] || "PENDING");
+      if (staffNama === nama && tarikhStr === todayStr && status !== "DONE") {
+        sheet.getRange(i + 2, 7).setValue("DONE");
+      }
+    }
+  } catch(e) {}
 }
 
 //  (Clock-Out)
@@ -522,6 +551,35 @@ function processCuti(form) {
      }
   }
 
+  // --- SEMAK BAKI CUTI ---
+  if (!isLambat) {
+    var jenisUpper = String(form.jenis).trim().toUpperCase();
+    var leavePool = null;
+    var isHalfDay = false;
+    if      (jenisUpper === "AL")  { leavePool = "AL"; }
+    else if (jenisUpper === "HAL") { leavePool = "AL"; isHalfDay = true; }
+    else if (jenisUpper === "MC")  { leavePool = "MC"; }
+    else if (jenisUpper === "HL")  { leavePool = "HL"; }
+    else if (jenisUpper === "ML")  { leavePool = "ML"; }
+    else if (jenisUpper === "PL")  { leavePool = "PL"; }
+    else if (jenisUpper === "EL")  { leavePool = "EL"; }
+    else if (jenisUpper === "HEL") { leavePool = "EL"; isHalfDay = true; }
+    else if (jenisUpper === "BL")  { leavePool = "BL"; }
+
+    if (leavePool) {
+      var balResult = getLeaveBalance(form.nama);
+      if (balResult.status === "SUCCESS") {
+        var poolData = balResult.data[leavePool];
+        if (poolData && poolData.balance !== null) {
+          var daysRequested = isHalfDay ? 0.5 : (Math.round((endDate - startDate) / (1000 * 3600 * 24)) + 1);
+          if (poolData.balance < daysRequested) {
+            return { status: 'ERROR', message: 'BAKI CUTI ' + leavePool + ' TIDAK MENCUKUPI. Baki: ' + poolData.balance + ' hari. Dimohon: ' + daysRequested + ' hari.' };
+          }
+        }
+      }
+    }
+  }
+
   let koordinat = "";
   let alamatMaps = "Tiada Lokasi / GPS Ditutup";
   if (form.lat && form.lng) {
@@ -590,7 +648,81 @@ function processLeaveStatus(rowIndex, status) {
   return "SUCCESS";
 }
 
-const DATAPREP_SHEET = SS.getSheetByName("dataprep"); 
+function getLeaveValidationConfig() {
+  try {
+    const configData = CONFIG_SHEET.getDataRange().getValues();
+    let rules = { al_advance: 0, al_streak_doc_req: 0, mc_streak_doc_req: 0 };
+    for (let i = 0; i < configData.length; i++) {
+      let key = String(configData[i][0]).trim().toLowerCase();
+      let val = configData[i][1];
+      if (key === "al_advance")        rules.al_advance        = parseInt(val) || 0;
+      if (key === "al_streak_doc_req") rules.al_streak_doc_req = parseInt(val) || 0;
+      if (key === "mc_streak_doc_req") rules.mc_streak_doc_req = parseInt(val) || 0;
+    }
+    return rules;
+  } catch(e) {
+    return { al_advance: 0, al_streak_doc_req: 0, mc_streak_doc_req: 0 };
+  }
+}
+
+function getLeaveBalance(staffName) {
+  try {
+    const masterSheet = SS.getSheetByName("Master_Staff");
+    const masterData = masterSheet.getDataRange().getValues();
+    let limits = { AL: 0, MC: 0, HL: 0, ML: 0, PL: 0, EL: 0, BL: 0 };
+    for (let i = 1; i < masterData.length; i++) {
+      if (String(masterData[i][1]).trim() === String(staffName).trim()) {
+        limits.AL = parseInt(masterData[i][6])  || 0;
+        limits.MC = parseInt(masterData[i][7])  || 0;
+        limits.HL = parseInt(masterData[i][8])  || 0;
+        limits.ML = parseInt(masterData[i][9])  || 0;
+        limits.PL = parseInt(masterData[i][10]) || 0;
+        limits.EL = parseInt(masterData[i][11]) || 0;
+        limits.BL = parseInt(masterData[i][12]) || 0;
+        break;
+      }
+    }
+
+    const cutiSheet = SS.getSheetByName("Log_Cuti_Lewat");
+    const lastRow = cutiSheet.getLastRow();
+    const currentYear = new Date().getFullYear();
+    let used = { AL: 0, MC: 0, HL: 0, ML: 0, PL: 0, EL: 0, BL: 0 };
+
+    if (lastRow > 1) {
+      const cutiData = cutiSheet.getRange(2, 1, lastRow - 1, 7).getValues();
+      for (let i = 0; i < cutiData.length; i++) {
+        if (String(cutiData[i][1]).trim() !== String(staffName).trim()) continue;
+        if (String(cutiData[i][6]).trim() !== "DILULUSKAN") continue;
+        let tDate = new Date(cutiData[i][3]);
+        if (tDate.getFullYear() !== currentYear) continue;
+        let jenis = String(cutiData[i][2]).trim().toUpperCase();
+        if      (jenis === "AL")  used.AL += 1;
+        else if (jenis === "HAL") used.AL += 0.5;
+        else if (jenis === "MC")  used.MC += 1;
+        else if (jenis === "HL")  used.HL += 1;
+        else if (jenis === "ML")  used.ML += 1;
+        else if (jenis === "PL")  used.PL += 1;
+        else if (jenis === "EL")  used.EL += 1;
+        else if (jenis === "HEL") used.EL += 0.5;
+        else if (jenis === "BL")  used.BL += 1;
+      }
+    }
+
+    let balance = {};
+    ["AL","MC","HL","ML","PL","EL","BL"].forEach(function(t) {
+      balance[t] = {
+        limit:   limits[t],
+        used:    used[t],
+        balance: limits[t] === 0 ? null : Math.max(0, limits[t] - used[t])
+      };
+    });
+    return { status: "SUCCESS", data: balance };
+  } catch(e) {
+    return { status: "ERROR", message: e.toString() };
+  }
+}
+
+const DATAPREP_SHEET = SS.getSheetByName("dataprep");
 function getLeaveTypes() {
   const data = DATAPREP_SHEET.getDataRange().getValues();
   let leaveList = ["Datang Lambat 🐢"]; 
@@ -699,7 +831,9 @@ function getStaffDashboardData(username) {
          }
       }
     }
-    return { status: 'SUCCESS', profile: profile, attendance: myLogs, leave: myLeave, todayLog: todayLog, monthlyStats: monthlyStats, latestLeave: latestLeave };
+    var balResult = getLeaveBalance(username);
+    var leaveBalance = balResult.status === "SUCCESS" ? balResult.data : null;
+    return { status: 'SUCCESS', profile: profile, attendance: myLogs, leave: myLeave, todayLog: todayLog, monthlyStats: monthlyStats, latestLeave: latestLeave, leaveBalance: leaveBalance };
   
   } catch(error) {
     return { status: 'ERROR', message: "Ralat Pelayan: " + error.toString() };
@@ -819,19 +953,25 @@ function getAdminDashboardData(targetDateRaw) {
 
   let pendingLeaves = [];
   if(!isHistoryMode) {
-     for (let i = 0; i < cutiData.length; i++) {
-        let tarikhCutiRaw = new Date(cutiData[i][3]); let statusLulus = cutiData[i][6]; let jenisLaporan = cutiData[i][2]; let linkFail = cutiData[i][9]; 
-        let todayReal = new Date(); todayReal.setHours(0,0,0,0);
-        let isLambat = String(jenisLaporan).toLowerCase().includes("lambat");
+    var balCache = {};
+    var poolMapGAS = { AL:'AL', HAL:'AL', MC:'MC', HL:'HL', ML:'ML', PL:'PL', EL:'EL', HEL:'EL', BL:'BL' };
+    for (let i = 0; i < cutiData.length; i++) {
+      let tarikhCutiRaw = new Date(cutiData[i][3]); let statusLulus = cutiData[i][6]; let jenisLaporan = cutiData[i][2]; let linkFail = cutiData[i][9];
+      let todayReal = new Date(); todayReal.setHours(0,0,0,0);
+      let isLambat = String(jenisLaporan).toLowerCase().includes("lambat");
 
-        if (statusLulus !== "DILULUSKAN" && statusLulus !== "DITOLAK" && !isLambat) {
-           let tStr = Utilities.formatDate(tarikhCutiRaw, "Asia/Kuala_Lumpur", "dd/MM/yyyy");
-           // Pastikan cuti yang di-pending hanya untuk staf aktif
-           if (combinedStaffList.has(cutiData[i][1])) {
-               pendingLeaves.push({ rowIndex: i + 2, nama: cutiData[i][1], jenis: cutiData[i][2], tarikh: tStr, sebab: cutiData[i][4], attachment: linkFail });
-           }
+      if (statusLulus !== "DILULUSKAN" && statusLulus !== "DITOLAK" && !isLambat) {
+        let tStr = Utilities.formatDate(tarikhCutiRaw, "Asia/Kuala_Lumpur", "dd/MM/yyyy");
+        if (combinedStaffList.has(cutiData[i][1])) {
+          var staffNm = cutiData[i][1];
+          if (!balCache[staffNm]) balCache[staffNm] = getLeaveBalance(staffNm);
+          var jenisUp = String(jenisLaporan).trim().toUpperCase();
+          var pool = poolMapGAS[jenisUp] || null;
+          var balInfo = (balCache[staffNm].status === "SUCCESS" && pool) ? balCache[staffNm].data[pool] : null;
+          pendingLeaves.push({ rowIndex: i + 2, nama: staffNm, jenis: cutiData[i][2], tarikh: tStr, sebab: cutiData[i][4], attachment: linkFail, pool: pool, balanceInfo: balInfo });
         }
-     }
+      }
+    }
   }
 
   return { stats: { totalStaff: combinedStaffList.size, present: presentCount, late: lateCount, cuti: cutiTodayCount, date: dateStr }, attendance: finalAttendanceList, calendarEvents: approvedLeaves, pendingLeaves: pendingLeaves };
@@ -940,13 +1080,20 @@ function getStaffManagementData() {
       if (!nama || String(nama).trim() === "") continue; 
 
       staffList.push({
-        rowIndex: i + 1, 
+        rowIndex: i + 1,
         id: ms[i][0] || "-",
         nama: nama,
         jawatan: ms[i][2] || "",
         username: ms[i][4] || "",
         status: ms[i][5] ? String(ms[i][5]).charAt(0).toUpperCase() + String(ms[i][5]).slice(1).toLowerCase() : "Aktif",
-        password: (us[i] && us[i][1]) ? us[i][1] : ""
+        password: (us[i] && us[i][1]) ? us[i][1] : "",
+        alLimit: parseInt(ms[i][6])  || 0,
+        mcLimit: parseInt(ms[i][7])  || 0,
+        hlLimit: parseInt(ms[i][8])  || 0,
+        mlLimit: parseInt(ms[i][9])  || 0,
+        plLimit: parseInt(ms[i][10]) || 0,
+        elLimit: parseInt(ms[i][11]) || 0,
+        blLimit: parseInt(ms[i][12]) || 0
       });
     }
     return { status: 'SUCCESS', data: staffList };
@@ -963,12 +1110,18 @@ function saveStaffData(payload) {
     if (payload.rowIndex) {
        // KEMASKINI STAF SEDIA ADA
        let r = payload.rowIndex;
-       ms.getRange(r, 2).setValue(payload.nama);     // Col B (Nama)
-       ms.getRange(r, 3).setValue(payload.jawatan);  // Col C (Jawatan)
-       ms.getRange(r, 5).setValue(payload.username); // Col E (Username)
-       ms.getRange(r, 6).setValue(payload.status);   // Col F (Status Aktif/Berhenti)
-
-       us.getRange(r, 2).setValue(payload.password); // Col B di Tab Users (Password/IC)
+       ms.getRange(r, 2).setValue(payload.nama);
+       ms.getRange(r, 3).setValue(payload.jawatan);
+       ms.getRange(r, 5).setValue(payload.username);
+       ms.getRange(r, 6).setValue(payload.status);
+       ms.getRange(r, 7).setValue(parseInt(payload.alLimit) || 0);
+       ms.getRange(r, 8).setValue(parseInt(payload.mcLimit) || 0);
+       ms.getRange(r, 9).setValue(parseInt(payload.hlLimit) || 0);
+       ms.getRange(r, 10).setValue(parseInt(payload.mlLimit) || 0);
+       ms.getRange(r, 11).setValue(parseInt(payload.plLimit) || 0);
+       ms.getRange(r, 12).setValue(parseInt(payload.elLimit) || 0);
+       ms.getRange(r, 13).setValue(parseInt(payload.blLimit) || 0);
+       us.getRange(r, 2).setValue(payload.password);
     } else {
        // TAMBAH STAF BARU (Cari baris kosong di Kolum B)
        let msData = ms.getRange("B1:B").getValues();
@@ -985,7 +1138,13 @@ function saveStaffData(payload) {
        ms.getRange(emptyRow, 3).setValue(payload.jawatan);
        ms.getRange(emptyRow, 5).setValue(payload.username);
        ms.getRange(emptyRow, 6).setValue(payload.status);
-
+       ms.getRange(emptyRow, 7).setValue(parseInt(payload.alLimit) || 0);
+       ms.getRange(emptyRow, 8).setValue(parseInt(payload.mcLimit) || 0);
+       ms.getRange(emptyRow, 9).setValue(parseInt(payload.hlLimit) || 0);
+       ms.getRange(emptyRow, 10).setValue(parseInt(payload.mlLimit) || 0);
+       ms.getRange(emptyRow, 11).setValue(parseInt(payload.plLimit) || 0);
+       ms.getRange(emptyRow, 12).setValue(parseInt(payload.elLimit) || 0);
+       ms.getRange(emptyRow, 13).setValue(parseInt(payload.blLimit) || 0);
        us.getRange(emptyRow, 2).setValue(payload.password);
     }
     return { status: "SUCCESS", message: "Data staf berjaya disimpan!" };
@@ -1014,7 +1173,9 @@ function getSystemConfig() {
       officeLng: "",
       officeRadius: 0,
       wfhDays: [],
-      wfhDates: []
+      wfhDates: [],
+      workDays: [],
+      publicHolidays: []
     };
 
     let seenKeys = {};
@@ -1053,6 +1214,19 @@ function getSystemConfig() {
       if (key === "wfh_dates") {
         let raw = String(val).trim();
         conf.wfhDates = raw !== "" ? raw.split(",").map(d => d.trim()).filter(d => d !== "") : [];
+      }
+      if (key === "work_days") {
+        let raw = String(val).trim();
+        conf.workDays = raw !== "" ? raw.split(",").map(d => d.trim()).filter(d => d !== "") : [];
+      }
+      if (key === "public_holidays") {
+        let raw = String(val).trim();
+        if (raw !== "") {
+          conf.publicHolidays = raw.split(",").map(entry => {
+            let parts = entry.trim().split(":");
+            return { date: parts[0] ? parts[0].trim() : "", name: parts.slice(1).join(":").trim() };
+          }).filter(h => h.date !== "");
+        }
       }
     }
 
@@ -1131,6 +1305,15 @@ function saveSystemConfig(payload) {
         lsCell.setNumberFormat("@");
         lsCell.setValue(payload.lateStart || "");
       }
+    }
+
+    // work_days — hari bekerja (e.g. "Isnin,Selasa,Rabu,Khamis,Jumaat")
+    _saveConfigByKey("work_days", Array.isArray(payload.workDays) ? payload.workDays.join(",") : "");
+
+    // public_holidays — cuti umum dalam format "YYYY-MM-DD:Nama,..."
+    if (Array.isArray(payload.publicHolidays)) {
+      let phStr = payload.publicHolidays.map(h => h.date + ":" + h.name).join(",");
+      _saveConfigByKey("public_holidays", phStr);
     }
 
     lock.releaseLock();

@@ -87,7 +87,7 @@
             border: 1px solid #374151;
             border-top: 4px solid #eab308;
             border-radius: 16px;
-            padding: 40px 36px;
+            padding: 28px 32px 24px;
             width: 100%; max-width: 400px;
             animation: fadeUp 0.4s ease both;
         }
@@ -96,13 +96,13 @@
             to   { opacity: 1; transform: translateY(0); }
         }
         .login-logo {
-            width: 48px; height: 48px;
+            width: 40px; height: 40px;
             background: var(--accent-dim);
             border: 1px solid rgba(245,166,35,0.3);
-            border-radius: 12px;
+            border-radius: 10px;
             display: flex; align-items: center; justify-content: center;
-            font-size: 22px;
-            margin: 0 auto 24px;
+            font-size: 20px;
+            margin: 0 auto 14px;
         }
 
         /* ── Form elements ── */
@@ -571,9 +571,8 @@
 <!-- ══════════ LOGIN OVERLAY ══════════ -->
 <div id="loginOverlay">
     <div class="login-card">
-        <div class="login-logo">🏢</div>
-        <h2 style="text-align:center; font-size:20px; font-weight:800; margin-bottom:4px;">Log Masuk</h2>
-        <p style="text-align:center; font-size:12px; color:#6b7280; margin-bottom:28px;">Sila log masuk untuk akses Portal Staf</p>
+        <h2 style="text-align:center; font-size:18px; font-weight:800; margin-bottom:4px;">Log Masuk</h2>
+        <p style="text-align:center; font-size:12px; color:#6b7280; margin-bottom:20px;">Sila log masuk untuk akses Portal Staf</p>
 
         <form onsubmit="handlePortalLogin(this); return false;" style="display:flex; flex-direction:column; gap:16px;">
             <div>
@@ -596,6 +595,11 @@
             <p id="loginError" style="text-align:center; font-size:12px; color:#f87171; min-height:16px;"></p>
             <p style="text-align:center; font-size:11px; color:#6b7280;">Terlupa password? Hubungi <span style="color:#eab308; font-weight:600;">Admin</span>.</p>
         </form>
+        <div style="margin-top:14px; padding-top:12px; border-top:1px solid #374151; text-align:center;">
+            <a href="admin.html" style="display:inline-flex; align-items:center; gap:6px; font-size:12px; font-weight:600; color:#6b7280; text-decoration:none; transition:color 0.15s;" onmouseover="this.style.color='#eab308'" onmouseout="this.style.color='#6b7280'">
+                ⚙️ Pergi ke Admin Panel
+            </a>
+        </div>
     </div>
 </div>
 
@@ -720,6 +724,16 @@
                             </div>
                         </div>
 
+                        <!-- Leave Balance Widget -->
+                        <div>
+                            <p class="section-title">Baki Cuti Saya</p>
+                            <div id="leaveBalanceWidget" class="card" style="padding:16px;">
+                                <div style="display:flex;align-items:center;justify-content:center;min-height:50px;">
+                                    <div class="loader-ring" style="width:22px;height:22px;border-width:2px;"></div>
+                                </div>
+                            </div>
+                        </div>
+
                         <!-- Quick action -->
                         <button onclick="switchTab('apply')" style="width:100%; background:var(--accent-dim); border:1px dashed rgba(245,166,35,0.35); color:#eab308; font-size:13px; font-weight:600; padding:14px; border-radius:10px; cursor:pointer; transition:background 0.15s;" onmouseover="this.style.background='rgba(245,166,35,0.15)'" onmouseout="this.style.background='var(--accent-dim)'">
                             + Mohon Cuti Baru
@@ -770,10 +784,28 @@
                             <input type="text" name="nama" id="formNama" readonly class="form-input">
                         </div>
                         <div>
-                            <label class="form-label">Jenis Laporan</label>
+                            <label class="form-label">Jenis Cuti</label>
                             <select name="jenis" id="formJenis" required class="form-input" onchange="checkJenisLaporan()">
                                 <option value="" disabled selected>Memuatkan jenis...</option>
                             </select>
+                            <!-- Legend -->
+                            <div style="margin-top:8px; background:#111827; border:1px solid #374151; border-radius:8px; padding:10px 12px;">
+                                <p style="font-size:9px; font-weight:700; color:#4b5563; text-transform:uppercase; letter-spacing:0.07em; margin-bottom:6px;">Panduan Jenis Cuti</p>
+                                <div style="display:grid; grid-template-columns:1fr 1fr; gap:3px 12px;">
+                                    <span style="font-size:11px; color:#6b7280;"><strong style="color:#eab308;">AL</strong> — Cuti Tahunan</span>
+                                    <span style="font-size:11px; color:#6b7280;"><strong style="color:#eab308;">HAL</strong> — ½ Hari AL</span>
+                                    <span style="font-size:11px; color:#6b7280;"><strong style="color:#eab308;">MC</strong> — Cuti Sakit</span>
+                                    <span style="font-size:11px; color:#6b7280;"><strong style="color:#eab308;">EL</strong> — Cuti Kecemasan</span>
+                                    <span style="font-size:11px; color:#6b7280;"><strong style="color:#eab308;">HEL</strong> — ½ Hari EL</span>
+                                    <span style="font-size:11px; color:#6b7280;"><strong style="color:#eab308;">HL</strong> — Hospitalisasi</span>
+                                    <span style="font-size:11px; color:#6b7280;"><strong style="color:#eab308;">ML</strong> — Cuti Bersalin</span>
+                                    <span style="font-size:11px; color:#6b7280;"><strong style="color:#eab308;">PL</strong> — Cuti Isteri Bersalin</span>
+                                    <span style="font-size:11px; color:#6b7280;"><strong style="color:#eab308;">BL</strong> — Cuti Ihsan</span>
+                                    <span style="font-size:11px; color:#6b7280;"><strong style="color:#eab308;">UL</strong> — Tanpa Gaji</span>
+                                    <span style="font-size:11px; color:#6b7280;"><strong style="color:#eab308;">HUL</strong> — ½ Hari UL</span>
+                                    <span style="font-size:11px; color:#6b7280;"><strong style="color:#eab308;">RL</strong> — Cuti Ganti</span>
+                                </div>
+                            </div>
                         </div>
 
                         <p id="warningLambat" style="display:none; font-size:11px; color:#eab308; font-style:italic;">*Datang lambat hanya sah untuk tarikh hari ini sahaja.</p>
@@ -877,6 +909,29 @@
 
     let currentUser = localStorage.getItem("wazza_nama");
     let leaveRules = { al_advance: 0, al_streak_doc_req: 0, mc_streak_doc_req: 0 };
+    let leaveBalance = null;
+    let allLeaveTypes = [];
+
+    // Pool map — jenis cuti yang tied kepada limit column
+    var leavePoolMap = { AL:'AL', HAL:'AL', MC:'MC', HL:'HL', ML:'ML', PL:'PL', EL:'EL', HEL:'EL', BL:'BL' };
+
+    function populateLeaveDropdown() {
+        var select = document.getElementById('formJenis');
+        if (!select || allLeaveTypes.length === 0) return;
+        var current = select.value;
+        select.innerHTML = '<option value="" disabled selected>-- Pilih Jenis --</option>';
+        allLeaveTypes.forEach(function(type) {
+            var typeUpper = type.trim().toUpperCase();
+            var pool = leavePoolMap[typeUpper] || null;
+            // Sembunyikan jenis cuti yang limit = 0 (tidak berkenaan untuk staff ini)
+            if (pool && leaveBalance && leaveBalance[pool] && leaveBalance[pool].limit === 0) return;
+            var option = document.createElement("option");
+            option.text = type; option.value = type;
+            select.add(option);
+        });
+        // Restore selected value kalau masih wujud dalam list
+        if (current) select.value = current;
+    }
 
     window.onload = function () {
         if (currentUser) {
@@ -975,13 +1030,8 @@
             .catch(e => { document.getElementById('formIp').value = "Unknown"; });
 
         callGAS("getLeaveTypes", {}, function (types) {
-            const select = document.getElementById('formJenis');
-            select.innerHTML = '<option value="" disabled selected>-- Pilih Jenis --</option>';
-            types.forEach(type => {
-                let option = document.createElement("option");
-                option.text = type; option.value = type;
-                select.add(option);
-            });
+            allLeaveTypes = types;
+            populateLeaveDropdown();
         });
 
         if (navigator.geolocation) {
@@ -1022,9 +1072,10 @@
         let advanceDiff = tm.getTime() - todayObj.getTime();
         let advanceDays = Math.ceil(advanceDiff / (1000 * 3600 * 24));
 
-        let isMC = jenis.toUpperCase().includes("MC") || jenis.toUpperCase().includes("MEDICAL") || jenis.toUpperCase().includes("SAKIT");
-        let isAL = jenis.toUpperCase().includes("AL") || jenis.toUpperCase().includes("ANNUAL") || jenis.toUpperCase().includes("TAHUNAN");
-        let isEL = jenis.toUpperCase().includes("EL") || jenis.toUpperCase().includes("EMERGENCY") || jenis.toUpperCase().includes("KECEMASAN");
+        let jenisUpper = jenis.trim().toUpperCase();
+        let isMC = jenisUpper === "MC";
+        let isAL = jenisUpper === "AL" || jenisUpper === "HAL";
+        let isEL = jenisUpper === "EL" || jenisUpper === "HEL";
 
         let errors = []; let needsDoc = false;
         if (isMC && leaveRules.mc_streak_doc_req > 0 && dayStreak >= leaveRules.mc_streak_doc_req) { needsDoc = true; }
@@ -1032,6 +1083,23 @@
         if (isAL && leaveRules.al_advance > 0 && advanceDays < leaveRules.al_advance) {
             errors.push(`⚠️ AL wajib dimohon sekurang-kurangnya ${leaveRules.al_advance} hari lebih awal. Sila tukar kepada EL jika ini kes kecemasan.`);
         }
+
+        // Semak baki cuti
+        if (leaveBalance) {
+            var poolMap = { AL: 'AL', HAL: 'AL', MC: 'MC', HL: 'HL', ML: 'ML', PL: 'PL', EL: 'EL', HEL: 'EL', BL: 'BL' };
+            var halfDayTypes = ['HAL', 'HEL', 'HUL'];
+            var pool = poolMap[jenisUpper];
+            if (pool && leaveBalance[pool] && leaveBalance[pool].balance !== null) {
+                var b = leaveBalance[pool];
+                var daysRequested = halfDayTypes.includes(jenisUpper) ? 0.5 : dayStreak;
+                if (b.balance <= 0) {
+                    errors.push(`⛔ Baki cuti <strong>${pool}</strong> telah habis (0 hari berbaki). Sila hubungi admin.`);
+                } else if (b.balance < daysRequested) {
+                    errors.push(`⛔ Baki cuti <strong>${pool}</strong> tidak mencukupi. Baki: <strong>${b.balance} hari</strong>, dimohon: <strong>${daysRequested} hari</strong>.`);
+                }
+            }
+        }
+
         if (needsDoc) {
             fileInput.required = true;
             labelLampiran.innerHTML = `Bukti Lampiran <span style="color:#f87171; font-weight:700;">* (WAJIB MUAT NAIK)</span>`;
@@ -1314,6 +1382,50 @@
                 <div style="background:#111827; border:1px solid #374151; border-radius:6px; padding:10px 12px; font-size:12px; color:#9ca3af; font-style:italic;">"${cuti.reason}"${attachHtml}</div>
             </div>`;
         });
+
+        // Leave balance widget
+        leaveBalance = data.leaveBalance;
+        renderLeaveBalanceWidget(leaveBalance);
+        populateLeaveDropdown();
+    }
+
+    function renderLeaveBalanceWidget(bal) {
+        var widget = document.getElementById('leaveBalanceWidget');
+        if (!widget) return;
+        if (!bal) {
+            widget.innerHTML = '<p style="font-size:12px;color:#6b7280;text-align:center;padding:12px 0;">Tiada data baki cuti.</p>';
+            return;
+        }
+        var types = [
+            { key: 'AL', label: 'AL — Cuti Tahunan' },
+            { key: 'MC', label: 'MC — Cuti Sakit' },
+            { key: 'EL', label: 'EL — Cuti Kecemasan' },
+            { key: 'HL', label: 'HL — Hospitalisasi' },
+            { key: 'ML', label: 'ML — Cuti Bersalin' },
+            { key: 'PL', label: 'PL — Cuti Isteri Bersalin' },
+            { key: 'BL', label: 'BL — Cuti Ihsan' }
+        ];
+        var html = '';
+        var hasAny = false;
+        types.forEach(function(t) {
+            var b = bal[t.key];
+            if (!b || b.limit === 0) return;
+            hasAny = true;
+            var pct = Math.min(100, Math.round((b.used / b.limit) * 100));
+            var color = b.balance === 0 ? '#f87171' : b.balance <= Math.ceil(b.limit * 0.2) ? '#eab308' : '#4ade80';
+            var balLabel = b.balance === 0
+                ? '<span style="color:#f87171;font-weight:700;">HABIS</span>'
+                : '<span style="color:' + color + ';font-weight:700;">' + b.balance + ' / ' + b.limit + ' hari</span>';
+            html += '<div style="margin-bottom:10px;">' +
+                '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:3px;">' +
+                '<span style="font-size:11px;font-weight:600;color:#9ca3af;">' + t.label + '</span>' +
+                balLabel +
+                '</div>' +
+                '<div style="height:5px;background:#374151;border-radius:4px;overflow:hidden;">' +
+                '<div style="height:100%;width:' + pct + '%;background:' + color + ';border-radius:4px;"></div>' +
+                '</div></div>';
+        });
+        widget.innerHTML = hasAny ? html : '<p style="font-size:12px;color:#6b7280;text-align:center;padding:8px 0;">Tiada had cuti ditetapkan untuk anda.</p>';
     }
 
     // Tab switching — sync sidebar nav + bottom nav + topbar title

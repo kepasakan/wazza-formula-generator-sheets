@@ -713,7 +713,8 @@ function getLeaveBalance(staffName) {
       balance[t] = {
         limit:   limits[t],
         used:    used[t],
-        balance: limits[t] === 0 ? null : Math.max(0, limits[t] - used[t])
+        balance: (limits[t] === 0 || limits[t] === -1) ? null : Math.max(0, limits[t] - used[t]),
+        unlimited: limits[t] === -1
       };
     });
     return { status: "SUCCESS", data: balance };

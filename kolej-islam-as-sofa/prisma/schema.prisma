@@ -1,0 +1,236 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+}
+
+model User {
+  id        String   @id @default(cuid())
+  name      String
+  email     String   @unique
+  password  String
+  role      Role     @default(STUDENT)
+  matricNo  String?  @unique
+  staffId   String?  @unique
+  phone     String?
+  createdAt DateTime @default(now())
+
+  taughtCourses Course[]              @relation("LecturerCourses")
+  enrollments   Enrollment[]
+  submissions   AssignmentSubmission[]
+  quizAttempts  QuizAttempt[]
+  attendance    AttendanceRecord[]
+}
+
+enum Role {
+  ADMIN
+  LECTURER
+  STUDENT
+}
+
+model Course {
+  id          String   @id @default(cuid())
+  title       String
+  code        String   @unique
+  description String?
+  semester    String
+  year        String
+  lecturerId  String
+  lecturer    User     @relation("LecturerCourses", fields: [lecturerId], references: [id])
+  isPublished Boolean  @default(true)
+  createdAt   DateTime @default(now())
+
+  enrollments        Enrollment[]
+  modules            Module[]
+  assignments        Assignment[]
+  quizzes            Quiz[]
+  attendanceSessions AttendanceSession[]
+}
+
+model Enrollment {
+  id         String   @id @default(cuid())
+  studentId  String
+  courseId   String
+  student    User     @relation(fields: [studentId], references: [id])
+  course     Course   @relation(fields: [courseId], references: [id])
+  enrolledAt DateTime @default(now())
+
+  @@unique([studentId, courseId])
+}
+
+model Module {
+  id          String   @id @default(cuid())
+  courseId    String
+  course      Course   @relation(fields: [courseId], references: [id])
+  title       String
+  description String?
+  orderIndex  Int      @default(0)
+  isPublished Boolean  @default(true)
+  createdAt   DateTime @default(now())
+
+  contents ModuleContent[]
+}
+
+model ModuleContent {
+  id          String      @id @default(cuid())
+  moduleId    String
+  module      Module      @relation(fields: [moduleId], references: [id])
+  type        ContentType
+  title       String
+  contentUrl  String?
+  youtubeId   String?
+  textContent String?
+  orderIndex  Int         @default(0)
+  createdAt   DateTime    @default(now())
+}
+
+enum ContentType {
+  VIDEO
+  PDF
+  TEXT
+  LINK
+}
+
+model Assignment {
+  id          String   @id @default(cuid())
+  courseId    String
+  course      Course   @relation(fields: [courseId], references: [id])
+  title       String
+  description String?
+  dueDate     DateTime
+  maxScore    Int      @default(100)
+  createdAt   DateTime @default(now())
+
+  submissions AssignmentSubmission[]
+}
+
+model AssignmentSubmission {
+  id           String           @id @default(cuid())
+  assignmentId String
+  studentId    String
+  assignment   Assignment       @relation(fields: [assignmentId], references: [id])
+  student      User             @relation(fields: [studentId], references: [id])
+  fileUrl      String?
+  notes        String?
+  submittedAt  DateTime         @default(now())
+  score        Int?
+  feedback     String?
+  status       SubmissionStatus @default(SUBMITTED)
+
+  @@unique([assignmentId, studentId])
+}
+
+enum SubmissionStatus {
+  SUBMITTED
+  GRADED
+  LATE
+}
+
+model Quiz {
+  id          String    @id @default(cuid())
+  courseId    String
+  course      Course    @relation(fields: [courseId], references: [id])
+  title       String
+  description String?
+  duration    Int       @default(30)
+  isPublished Boolean   @default(false)
+  startTime   DateTime?
+  endTime     DateTime?
+  createdAt   DateTime  @default(now())
+
+  questions QuizQuestion[]
+  attempts  QuizAttempt[]
+}
+
+model QuizQuestion {
+  id           String       @id @default(cuid())
+  quizId       String
+  quiz         Quiz         @relation(fields: [quizId], references: [id])
+  questionText String
+  type         QuestionType @default(MCQ)
+  marks        Int          @default(1)
+  orderIndex   Int          @default(0)
+
+  options QuizOption[]
+  answers QuizAnswer[]
+}
+
+enum QuestionType {
+  MCQ
+  TRUE_FALSE
+}
+
+model QuizOption {
+  id         String       @id @default(cuid())
+  questionId String
+  question   QuizQuestion @relation(fields: [questionId], references: [id])
+  optionText String
+  isCorrect  Boolean      @default(false)
+  orderIndex Int          @default(0)
+
+  answers QuizAnswer[]
+}
+
+model QuizAttempt {
+  id          String        @id @default(cuid())
+  quizId      String
+  studentId   String
+  quiz        Quiz          @relation(fields: [quizId], references: [id])
+  student     User          @relation(fields: [studentId], references: [id])
+  startedAt   DateTime      @default(now())
+  submittedAt DateTime?
+  score       Int?
+  status      AttemptStatus @default(IN_PROGRESS)
+
+  answers QuizAnswer[]
+}
+
+enum AttemptStatus {
+  IN_PROGRESS
+  SUBMITTED
+}
+
+model QuizAnswer {
+  id               String       @id @default(cuid())
+  attemptId        String
+  questionId       String
+  selectedOptionId String?
+  attempt          QuizAttempt  @relation(fields: [attemptId], references: [id])
+  question         QuizQuestion @relation(fields: [questionId], references: [id])
+  selectedOption   QuizOption?  @relation(fields: [selectedOptionId], references: [id])
+  isCorrect        Boolean?
+}
+
+model AttendanceSession {
+  id        String    @id @default(cuid())
+  courseId  String
+  course    Course    @relation(fields: [courseId], references: [id])
+  title     String
+  date      DateTime  @default(now())
+  code      String    @unique
+  isOpen    Boolean   @default(false)
+  expiresAt DateTime?
+
+  records AttendanceRecord[]
+}
+
+model AttendanceRecord {
+  id        String            @id @default(cuid())
+  sessionId String
+  studentId String
+  session   AttendanceSession @relation(fields: [sessionId], references: [id])
+  student   User              @relation(fields: [studentId], references: [id])
+  status    AttendanceStatus  @default(PRESENT)
+  markedAt  DateTime          @default(now())
+
+  @@unique([sessionId, studentId])
+}
+
+enum AttendanceStatus {
+  PRESENT
+  ABSENT
+  LATE
+  EXCUSED
+}

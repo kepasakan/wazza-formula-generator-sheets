@@ -984,8 +984,15 @@
                 </div>
                 <!-- Had Cuti Tahunan -->
                 <div class="border-t border-gray-700 pt-4">
-                    <p class="text-yellow-500 text-xs font-bold uppercase mb-1">Had Cuti Tahunan</p>
-                    <p class="text-gray-500 text-[10px] mb-3">Set 0 = Tidak Berkenaan (langkau). AL termasuk HAL. EL termasuk HEL.</p>
+                    <p class="text-yellow-500 text-xs font-bold uppercase mb-2">Had Cuti Tahunan</p>
+
+                    <!-- Legend -->
+                    <div class="bg-gray-900 border border-gray-700 rounded-lg p-2 mb-3 space-y-1">
+                        <p class="text-[9px] font-bold text-gray-500 uppercase mb-1">Panduan</p>
+                        <div class="flex items-center gap-1.5"><input type="checkbox" checked disabled class="w-3 h-3 accent-yellow-500"><span class="text-[10px] text-gray-300"><strong class="text-yellow-400">Tiada Had</strong> — Staff boleh mohon tanpa had (∞ unlimited)</span></div>
+                        <div class="flex items-center gap-1.5"><span class="text-yellow-400 font-bold text-[10px] w-3 text-center">0</span><span class="text-[10px] text-gray-300"><strong class="text-yellow-400">0</strong> — Tidak berkenaan, cuti ini disembunyi untuk staff ini</span></div>
+                        <div class="flex items-center gap-1.5"><span class="text-yellow-400 font-bold text-[10px] w-3 text-center">n</span><span class="text-[10px] text-gray-300"><strong class="text-yellow-400">&gt; 0</strong> — Bilangan hari yang dibenarkan setahun</span></div>
+                    </div>
 
                     <!-- Baki Semasa — hanya papar bila edit staf sedia ada -->
                     <div id="sfBalanceDisplay" class="hidden mb-3 p-2 bg-gray-900 rounded-lg border border-gray-700">
@@ -996,36 +1003,64 @@
                     <div class="grid grid-cols-4 gap-2">
                         <div>
                             <label class="block text-gray-400 text-[10px] font-bold mb-1">AL (+ HAL)</label>
+                            <label class="flex items-center gap-1 mb-1 cursor-pointer">
+                                <input type="checkbox" id="sf_al_unlimited" onchange="toggleLimitUnlimited('al')" class="w-3 h-3 accent-yellow-500">
+                                <span class="text-[9px] text-gray-500">Tiada Had</span>
+                            </label>
                             <input type="number" id="sf_alLimit" min="0" value="0"
                                 class="w-full p-2 bg-gray-900 border border-gray-600 text-white rounded-lg focus:outline-none focus:border-yellow-500 text-sm">
                         </div>
                         <div>
                             <label class="block text-gray-400 text-[10px] font-bold mb-1">MC</label>
+                            <label class="flex items-center gap-1 mb-1 cursor-pointer">
+                                <input type="checkbox" id="sf_mc_unlimited" onchange="toggleLimitUnlimited('mc')" class="w-3 h-3 accent-yellow-500">
+                                <span class="text-[9px] text-gray-500">Tiada Had</span>
+                            </label>
                             <input type="number" id="sf_mcLimit" min="0" value="0"
                                 class="w-full p-2 bg-gray-900 border border-gray-600 text-white rounded-lg focus:outline-none focus:border-yellow-500 text-sm">
                         </div>
                         <div>
                             <label class="block text-gray-400 text-[10px] font-bold mb-1">EL (+ HEL)</label>
+                            <label class="flex items-center gap-1 mb-1 cursor-pointer">
+                                <input type="checkbox" id="sf_el_unlimited" onchange="toggleLimitUnlimited('el')" class="w-3 h-3 accent-yellow-500">
+                                <span class="text-[9px] text-gray-500">Tiada Had</span>
+                            </label>
                             <input type="number" id="sf_elLimit" min="0" value="0"
                                 class="w-full p-2 bg-gray-900 border border-gray-600 text-white rounded-lg focus:outline-none focus:border-yellow-500 text-sm">
                         </div>
                         <div>
                             <label class="block text-gray-400 text-[10px] font-bold mb-1">BL</label>
+                            <label class="flex items-center gap-1 mb-1 cursor-pointer">
+                                <input type="checkbox" id="sf_bl_unlimited" onchange="toggleLimitUnlimited('bl')" class="w-3 h-3 accent-yellow-500">
+                                <span class="text-[9px] text-gray-500">Tiada Had</span>
+                            </label>
                             <input type="number" id="sf_blLimit" min="0" value="0"
                                 class="w-full p-2 bg-gray-900 border border-gray-600 text-white rounded-lg focus:outline-none focus:border-yellow-500 text-sm">
                         </div>
                         <div>
                             <label class="block text-gray-400 text-[10px] font-bold mb-1">HL</label>
+                            <label class="flex items-center gap-1 mb-1 cursor-pointer">
+                                <input type="checkbox" id="sf_hl_unlimited" onchange="toggleLimitUnlimited('hl')" class="w-3 h-3 accent-yellow-500">
+                                <span class="text-[9px] text-gray-500">Tiada Had</span>
+                            </label>
                             <input type="number" id="sf_hlLimit" min="0" value="0"
                                 class="w-full p-2 bg-gray-900 border border-gray-600 text-white rounded-lg focus:outline-none focus:border-yellow-500 text-sm">
                         </div>
                         <div>
                             <label class="block text-gray-400 text-[10px] font-bold mb-1">ML</label>
+                            <label class="flex items-center gap-1 mb-1 cursor-pointer">
+                                <input type="checkbox" id="sf_ml_unlimited" onchange="toggleLimitUnlimited('ml')" class="w-3 h-3 accent-yellow-500">
+                                <span class="text-[9px] text-gray-500">Tiada Had</span>
+                            </label>
                             <input type="number" id="sf_mlLimit" min="0" value="0"
                                 class="w-full p-2 bg-gray-900 border border-gray-600 text-white rounded-lg focus:outline-none focus:border-yellow-500 text-sm">
                         </div>
                         <div>
                             <label class="block text-gray-400 text-[10px] font-bold mb-1">PL</label>
+                            <label class="flex items-center gap-1 mb-1 cursor-pointer">
+                                <input type="checkbox" id="sf_pl_unlimited" onchange="toggleLimitUnlimited('pl')" class="w-3 h-3 accent-yellow-500">
+                                <span class="text-[9px] text-gray-500">Tiada Had</span>
+                            </label>
                             <input type="number" id="sf_plLimit" min="0" value="0"
                                 class="w-full p-2 bg-gray-900 border border-gray-600 text-white rounded-lg focus:outline-none focus:border-yellow-500 text-sm">
                         </div>
@@ -1836,6 +1871,46 @@
             });
         }
 
+        function toggleLimitUnlimited(type) {
+            var chk = document.getElementById('sf_' + type + '_unlimited');
+            var inp = document.getElementById('sf_' + type + 'Limit');
+            if (chk.checked) {
+                inp.disabled = true;
+                inp.value = '';
+                inp.placeholder = '∞';
+                inp.classList.add('opacity-40');
+            } else {
+                inp.disabled = false;
+                inp.value = 0;
+                inp.placeholder = '0';
+                inp.classList.remove('opacity-40');
+            }
+        }
+
+        function setLimitField(type, value) {
+            var chk = document.getElementById('sf_' + type + '_unlimited');
+            var inp = document.getElementById('sf_' + type + 'Limit');
+            if (value === -1) {
+                chk.checked = true;
+                inp.disabled = true;
+                inp.value = '';
+                inp.placeholder = '∞';
+                inp.classList.add('opacity-40');
+            } else {
+                chk.checked = false;
+                inp.disabled = false;
+                inp.value = value || 0;
+                inp.placeholder = '0';
+                inp.classList.remove('opacity-40');
+            }
+        }
+
+        function getLimitValue(type) {
+            var chk = document.getElementById('sf_' + type + '_unlimited');
+            if (chk && chk.checked) return -1;
+            return parseInt(document.getElementById('sf_' + type + 'Limit').value) || 0;
+        }
+
         function openStaffModal(rowIndex) {
             var modal = document.getElementById('staffModal');
             document.getElementById('sf_rowIndex').value = "";
@@ -1844,13 +1919,7 @@
             document.getElementById('sf_username').value = "";
             document.getElementById('sf_password').value = "";
             document.getElementById('sf_status').value = "Aktif";
-            document.getElementById('sf_alLimit').value = 0;
-            document.getElementById('sf_mcLimit').value = 0;
-            document.getElementById('sf_elLimit').value = 0;
-            document.getElementById('sf_blLimit').value = 0;
-            document.getElementById('sf_hlLimit').value = 0;
-            document.getElementById('sf_mlLimit').value = 0;
-            document.getElementById('sf_plLimit').value = 0;
+            ['al','mc','el','bl','hl','ml','pl'].forEach(function(t) { setLimitField(t, 0); });
 
             if (rowIndex !== undefined && rowIndex !== null) {
                 var staf = globalStaffList.find(function (s) { return s.rowIndex === rowIndex; });
@@ -1862,13 +1931,10 @@
                     document.getElementById('sf_username').value = staf.username;
                     document.getElementById('sf_password').value = staf.password;
                     document.getElementById('sf_status').value = staf.status;
-                    document.getElementById('sf_alLimit').value = staf.alLimit || 0;
-                    document.getElementById('sf_mcLimit').value = staf.mcLimit || 0;
-                    document.getElementById('sf_elLimit').value = staf.elLimit || 0;
-                    document.getElementById('sf_blLimit').value = staf.blLimit || 0;
-                    document.getElementById('sf_hlLimit').value = staf.hlLimit || 0;
-                    document.getElementById('sf_mlLimit').value = staf.mlLimit || 0;
-                    document.getElementById('sf_plLimit').value = staf.plLimit || 0;
+                    setLimitField('al', staf.alLimit); setLimitField('mc', staf.mcLimit);
+                    setLimitField('el', staf.elLimit); setLimitField('bl', staf.blLimit);
+                    setLimitField('hl', staf.hlLimit); setLimitField('ml', staf.mlLimit);
+                    setLimitField('pl', staf.plLimit);
 
                     // Fetch dan papar baki semasa
                     var balDisplay = document.getElementById('sfBalanceDisplay');
@@ -1888,7 +1954,11 @@
                             if (!b || b.limit === 0) {
                                 bHtml += '<div style="text-align:center;padding:4px;background:#111827;border-radius:6px;border:1px solid #374151;">' +
                                     '<div style="font-size:9px;font-weight:700;color:#6b7280;">' + t.key + '</div>' +
-                                    '<div style="font-size:10px;color:#4b5563;">∞</div></div>';
+                                    '<div style="font-size:10px;color:#4b5563;">—</div></div>';
+                            } else if (b.limit === -1) {
+                                bHtml += '<div style="text-align:center;padding:4px;background:#111827;border-radius:6px;border:1px solid #374151;">' +
+                                    '<div style="font-size:9px;font-weight:700;color:#6b7280;">' + t.key + '</div>' +
+                                    '<div style="font-size:11px;font-weight:700;color:#eab308;">∞</div></div>';
                             } else {
                                 var bColor = b.balance <= 0 ? '#f87171' : b.balance <= Math.ceil(b.limit * 0.2) ? '#eab308' : '#4ade80';
                                 bHtml += '<div style="text-align:center;padding:4px;background:#111827;border-radius:6px;border:1px solid #374151;">' +
@@ -1928,13 +1998,13 @@
                 username: document.getElementById('sf_username').value,
                 password: document.getElementById('sf_password').value,
                 status: document.getElementById('sf_status').value,
-                alLimit: parseInt(document.getElementById('sf_alLimit').value) || 0,
-                mcLimit: parseInt(document.getElementById('sf_mcLimit').value) || 0,
-                elLimit: parseInt(document.getElementById('sf_elLimit').value) || 0,
-                blLimit: parseInt(document.getElementById('sf_blLimit').value) || 0,
-                hlLimit: parseInt(document.getElementById('sf_hlLimit').value) || 0,
-                mlLimit: parseInt(document.getElementById('sf_mlLimit').value) || 0,
-                plLimit: parseInt(document.getElementById('sf_plLimit').value) || 0
+                alLimit: getLimitValue('al'),
+                mcLimit: getLimitValue('mc'),
+                elLimit: getLimitValue('el'),
+                blLimit: getLimitValue('bl'),
+                hlLimit: getLimitValue('hl'),
+                mlLimit: getLimitValue('ml'),
+                plLimit: getLimitValue('pl')
             };
 
             callGAS("saveStaffData", { payload: payload }, function (res) {

@@ -923,7 +923,8 @@
         allLeaveTypes.forEach(function(type) {
             var typeUpper = type.trim().toUpperCase();
             var pool = leavePoolMap[typeUpper] || null;
-            // Sembunyikan jenis cuti yang limit = 0 (tidak berkenaan untuk staff ini)
+            // Sembunyikan jenis cuti yang limit = 0 (tidak berkenaan)
+            // limit = -1 (unlimited) → tunjuk
             if (pool && leaveBalance && leaveBalance[pool] && leaveBalance[pool].limit === 0) return;
             var option = document.createElement("option");
             option.text = type; option.value = type;
@@ -1409,21 +1410,30 @@
         var hasAny = false;
         types.forEach(function(t) {
             var b = bal[t.key];
-            if (!b || b.limit === 0) return;
+            if (!b || b.limit === 0) return; // skip tidak berkenaan
             hasAny = true;
-            var pct = Math.min(100, Math.round((b.used / b.limit) * 100));
-            var color = b.balance === 0 ? '#f87171' : b.balance <= Math.ceil(b.limit * 0.2) ? '#eab308' : '#4ade80';
-            var balLabel = b.balance === 0
-                ? '<span style="color:#f87171;font-weight:700;">HABIS</span>'
-                : '<span style="color:' + color + ';font-weight:700;">' + b.balance + ' / ' + b.limit + ' hari</span>';
-            html += '<div style="margin-bottom:10px;">' +
-                '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:3px;">' +
-                '<span style="font-size:11px;font-weight:600;color:#9ca3af;">' + t.label + '</span>' +
-                balLabel +
-                '</div>' +
-                '<div style="height:5px;background:#374151;border-radius:4px;overflow:hidden;">' +
-                '<div style="height:100%;width:' + pct + '%;background:' + color + ';border-radius:4px;"></div>' +
-                '</div></div>';
+            if (b.unlimited || b.limit === -1) {
+                // Unlimited — tunjuk ∞ tanpa progress bar
+                html += '<div style="margin-bottom:10px;">' +
+                    '<div style="display:flex;justify-content:space-between;align-items:center;">' +
+                    '<span style="font-size:11px;font-weight:600;color:#9ca3af;">' + t.label + '</span>' +
+                    '<span style="font-size:11px;font-weight:700;color:#eab308;">∞ Tiada Had</span>' +
+                    '</div></div>';
+            } else {
+                var pct = Math.min(100, Math.round((b.used / b.limit) * 100));
+                var color = b.balance === 0 ? '#f87171' : b.balance <= Math.ceil(b.limit * 0.2) ? '#eab308' : '#4ade80';
+                var balLabel = b.balance === 0
+                    ? '<span style="color:#f87171;font-weight:700;">HABIS</span>'
+                    : '<span style="color:' + color + ';font-weight:700;">' + b.balance + ' / ' + b.limit + ' hari</span>';
+                html += '<div style="margin-bottom:10px;">' +
+                    '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:3px;">' +
+                    '<span style="font-size:11px;font-weight:600;color:#9ca3af;">' + t.label + '</span>' +
+                    balLabel +
+                    '</div>' +
+                    '<div style="height:5px;background:#374151;border-radius:4px;overflow:hidden;">' +
+                    '<div style="height:100%;width:' + pct + '%;background:' + color + ';border-radius:4px;"></div>' +
+                    '</div></div>';
+            }
         });
         widget.innerHTML = hasAny ? html : '<p style="font-size:12px;color:#6b7280;text-align:center;padding:8px 0;">Tiada had cuti ditetapkan untuk anda.</p>';
     }

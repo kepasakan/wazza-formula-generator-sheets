@@ -18,11 +18,15 @@ import {
 import AssignmentSection from './AssignmentSection'
 import AttendanceSection from './AttendanceSection'
 
-export default async function StudentCoursePage(props: PageProps<'/dashboard/student/courses/[courseId]'>) {
+export default async function StudentCoursePage({
+  params,
+}: {
+  params: Promise<{ courseId: string }>
+}) {
   const session = await getSession()
   if (!session || session.role !== 'STUDENT') redirect('/dashboard')
 
-  const { courseId } = await props.params
+  const { courseId } = await params
 
   const enrollment = await prisma.enrollment.findUnique({
     where: { studentId_courseId: { studentId: session.userId, courseId } },

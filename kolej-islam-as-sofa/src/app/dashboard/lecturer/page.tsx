@@ -33,6 +33,8 @@ async function getLecturerData(lecturerId: string) {
       a.submissions.filter((s) => s.status === 'SUBMITTED').map((s) => ({
         assignmentTitle: a.title,
         courseCode: c.code,
+        courseId: c.id,
+        assignmentId: a.id,
         submittedAt: s.submittedAt,
       }))
     )
@@ -125,10 +127,13 @@ export default async function LecturerDashboard() {
                   >
                     Urus Kursus
                   </Link>
-                  <button className="px-4 py-2 border border-gray-200 rounded-lg text-sm text-gray-600 hover:bg-gray-50 transition flex items-center gap-2">
+                  <Link
+                    href={`/dashboard/lecturer/courses/${course.id}#attendance`}
+                    className="px-4 py-2 border border-gray-200 rounded-lg text-sm text-gray-600 hover:bg-gray-50 transition flex items-center gap-2"
+                  >
                     <CalendarCheck className="w-4 h-4" />
-                    Buka Kehadiran
-                  </button>
+                    Kehadiran
+                  </Link>
                 </div>
               </div>
             ))
@@ -152,7 +157,7 @@ export default async function LecturerDashboard() {
                 </div>
               ) : (
                 pendingGrading.slice(0, 4).map((item, i) => (
-                  <div key={i} className="px-5 py-3.5">
+                  <Link key={i} href={`/dashboard/lecturer/courses/${item.courseId}/assignments/${item.assignmentId}`} className="px-5 py-3.5 block hover:bg-gray-50 transition-colors">
                     <p className="text-sm font-medium text-gray-800">{item.assignmentTitle}</p>
                     <div className="flex items-center justify-between mt-1">
                       <span className="text-xs text-green-700 font-medium">{item.courseCode}</span>
@@ -161,7 +166,7 @@ export default async function LecturerDashboard() {
                         {new Date(item.submittedAt).toLocaleDateString('ms-MY')}
                       </span>
                     </div>
-                  </div>
+                  </Link>
                 ))
               )}
             </div>
@@ -174,17 +179,18 @@ export default async function LecturerDashboard() {
             </div>
             <div className="p-3 space-y-2">
               {[
-                { label: 'Cipta Tugasan Baru', icon: <FileText className="w-4 h-4" />, color: 'hover:bg-blue-50 hover:text-blue-700 hover:border-blue-200' },
-                { label: 'Tambah Kuiz', icon: <ClipboardList className="w-4 h-4" />, color: 'hover:bg-purple-50 hover:text-purple-700 hover:border-purple-200' },
-                { label: 'Buka Sesi Kehadiran', icon: <CalendarCheck className="w-4 h-4" />, color: 'hover:bg-green-50 hover:text-green-700 hover:border-green-200' },
+                { label: 'Semua Tugasan', icon: <FileText className="w-4 h-4" />, href: '/dashboard/lecturer/assignments', color: 'hover:bg-blue-50 hover:text-blue-700 hover:border-blue-200' },
+                { label: 'Semua Kuiz', icon: <ClipboardList className="w-4 h-4" />, href: '/dashboard/lecturer/quizzes', color: 'hover:bg-purple-50 hover:text-purple-700 hover:border-purple-200' },
+                { label: 'Rekod Kehadiran', icon: <CalendarCheck className="w-4 h-4" />, href: '/dashboard/lecturer/attendance', color: 'hover:bg-green-50 hover:text-green-700 hover:border-green-200' },
               ].map((a) => (
-                <button
+                <Link
                   key={a.label}
+                  href={a.href}
                   className={`w-full flex items-center gap-3 px-4 py-2.5 rounded-lg border border-gray-100 text-sm text-gray-600 transition-all ${a.color}`}
                 >
                   {a.icon}
                   {a.label}
-                </button>
+                </Link>
               ))}
             </div>
           </div>

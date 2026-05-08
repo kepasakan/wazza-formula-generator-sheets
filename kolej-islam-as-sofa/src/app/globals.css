@@ -10,10 +10,20 @@
   --color-foreground: var(--foreground);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
-  --color-primary: #15803d;
-  --color-primary-dark: #166534;
-  --color-primary-light: #dcfce7;
-  --color-sidebar: #14532d;
+
+  /* KIS Brand Colors */
+  --color-primary: #0d9488;
+  --color-primary-dark: #0f766e;
+  --color-primary-light: #ccfbf1;
+  --color-sidebar: #172540;
+
+  /* Remap Tailwind green-500..900 → KIS teal (buttons, badges, focus rings) */
+  --color-green-500: #14b8a6;
+  --color-green-600: #0d9488;
+  --color-green-700: #0f766e;
+  --color-green-800: #115e59;
+  --color-green-900: #134e4a;
+  --color-green-950: #042f2e;
 }
 
 body {
@@ -25,6 +35,28 @@ body {
   box-sizing: border-box;
 }
 
+.input {
+  @apply w-full border border-gray-200 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-green-500;
+}
+
+/* Rich text content renderer (Tiptap output) */
+.rich-content h2 { font-size: 1.125rem; font-weight: 700; color: #111827; margin-bottom: 0.5rem; margin-top: 1.25rem; }
+.rich-content h3 { font-size: 1rem; font-weight: 600; color: #1f2937; margin-bottom: 0.375rem; margin-top: 1rem; }
+.rich-content p { margin-bottom: 0.75rem; }
+.rich-content p:last-child { margin-bottom: 0; }
+.rich-content ul { list-style-type: disc; padding-left: 1.25rem; margin-bottom: 0.75rem; }
+.rich-content ol { list-style-type: decimal; padding-left: 1.25rem; margin-bottom: 0.75rem; }
+.rich-content li { margin-bottom: 0.25rem; }
+.rich-content blockquote { border-left: 3px solid #16a34a; padding-left: 1rem; color: #6b7280; font-style: italic; margin: 1rem 0; }
+.rich-content strong { font-weight: 700; }
+.rich-content em { font-style: italic; }
+.rich-content u { text-decoration: underline; }
+.rich-content s { text-decoration: line-through; }
+
+/* Tiptap editor area (in modal) */
+.ProseMirror { outline: none; }
+.ProseMirror p.is-editor-empty:first-child::before { color: #9ca3af; content: attr(data-placeholder); float: left; height: 0; pointer-events: none; }
+
 .scrollbar-thin::-webkit-scrollbar {
   width: 4px;
 }
@@ -32,6 +64,6 @@ body {
   background: transparent;
 }
 .scrollbar-thin::-webkit-scrollbar-thumb {
-  background: #16a34a40;
+  background: #0d948840;
   border-radius: 2px;
 }

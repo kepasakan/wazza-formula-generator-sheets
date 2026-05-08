@@ -50,7 +50,7 @@ export default function LoginPage() {
   return (
     <div className="min-h-screen flex">
       {/* Left panel */}
-      <div className="hidden lg:flex lg:w-1/2 bg-gradient-to-br from-green-900 via-green-800 to-emerald-700 flex-col items-center justify-center p-12 relative overflow-hidden">
+      <div className="hidden lg:flex lg:w-1/2 flex-col items-center justify-center p-12 relative overflow-hidden" style={{ background: 'linear-gradient(135deg, #172540 0%, #1e3a6e 50%, #0d9488 100%)' }}>
         {/* Geometric pattern */}
         <div className="absolute inset-0 opacity-10">
           {Array.from({ length: 8 }).map((_, i) =>
@@ -69,8 +69,8 @@ export default function LoginPage() {
             <BookOpen className="w-12 h-12 text-white" />
           </div>
           <h1 className="text-4xl font-bold text-white mb-3">LMS As-Sofa</h1>
-          <p className="text-green-200 text-xl font-medium mb-2">Kolej Islam As-Sofa</p>
-          <p className="text-green-300 text-sm max-w-xs leading-relaxed">
+          <p className="text-teal-200 text-xl font-medium mb-2">Kolej Islam As-Sofa</p>
+          <p className="text-blue-200/80 text-sm max-w-xs leading-relaxed">
             Sistem Pengurusan Pembelajaran yang komprehensif untuk memudahkan proses pengajaran dan pembelajaran.
           </p>
 
@@ -82,7 +82,7 @@ export default function LoginPage() {
             ].map((stat) => (
               <div key={stat.label} className="bg-white/10 rounded-xl p-3 backdrop-blur-sm">
                 <div className="text-2xl font-bold text-white">{stat.value}</div>
-                <div className="text-green-300 text-xs mt-1">{stat.label}</div>
+                <div className="text-teal-200 text-xs mt-1">{stat.label}</div>
               </div>
             ))}
           </div>
@@ -94,7 +94,7 @@ export default function LoginPage() {
         <div className="w-full max-w-md">
           {/* Mobile header */}
           <div className="lg:hidden text-center mb-8">
-            <div className="w-16 h-16 bg-green-700 rounded-xl flex items-center justify-center mx-auto mb-3">
+            <div className="w-16 h-16 rounded-xl flex items-center justify-center mx-auto mb-3" style={{ backgroundColor: '#0d9488' }}>
               <BookOpen className="w-8 h-8 text-white" />
             </div>
             <h1 className="text-2xl font-bold text-gray-900">LMS As-Sofa</h1>

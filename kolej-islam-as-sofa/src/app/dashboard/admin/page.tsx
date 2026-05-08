@@ -1,4 +1,5 @@
 import { prisma } from '@/lib/db'
+import Link from 'next/link'
 import { Users, BookMarked, GraduationCap, CalendarCheck, TrendingUp, UserCheck } from 'lucide-react'
 
 async function getAdminStats() {
@@ -125,18 +126,19 @@ export default async function AdminDashboard() {
           </div>
           <div className="p-4 space-y-2">
             {[
-              { label: 'Tambah Pengguna Baru', icon: <Users className="w-4 h-4" />, color: 'hover:bg-green-50 hover:text-green-700 hover:border-green-200' },
-              { label: 'Cipta Kursus Baru', icon: <BookMarked className="w-4 h-4" />, color: 'hover:bg-blue-50 hover:text-blue-700 hover:border-blue-200' },
-              { label: 'Lihat Laporan Kehadiran', icon: <CalendarCheck className="w-4 h-4" />, color: 'hover:bg-orange-50 hover:text-orange-700 hover:border-orange-200' },
-              { label: 'Jana Laporan Semester', icon: <TrendingUp className="w-4 h-4" />, color: 'hover:bg-purple-50 hover:text-purple-700 hover:border-purple-200' },
+              { label: 'Tambah Pengguna Baru', icon: <Users className="w-4 h-4" />, href: '/dashboard/admin/users', color: 'hover:bg-green-50 hover:text-green-700 hover:border-green-200' },
+              { label: 'Semua Kursus', icon: <BookMarked className="w-4 h-4" />, href: '/dashboard/admin/courses', color: 'hover:bg-blue-50 hover:text-blue-700 hover:border-blue-200' },
+              { label: 'Lihat Laporan', icon: <CalendarCheck className="w-4 h-4" />, href: '/dashboard/admin/reports', color: 'hover:bg-orange-50 hover:text-orange-700 hover:border-orange-200' },
+              { label: 'Statistik Sistem', icon: <TrendingUp className="w-4 h-4" />, href: '/dashboard/admin/reports', color: 'hover:bg-purple-50 hover:text-purple-700 hover:border-purple-200' },
             ].map((action) => (
-              <button
+              <Link
                 key={action.label}
+                href={action.href}
                 className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg border border-gray-100 text-sm text-gray-600 transition-all ${action.color}`}
               >
                 {action.icon}
                 {action.label}
-              </button>
+              </Link>
             ))}
           </div>
         </div>

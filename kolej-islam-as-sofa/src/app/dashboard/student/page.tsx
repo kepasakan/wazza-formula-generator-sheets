@@ -56,6 +56,7 @@ async function getStudentData(studentId: string) {
           title: a.title,
           courseCode: e.course.code,
           courseTitle: e.course.title,
+          courseId: e.course.id,
           dueDate: a.dueDate,
           id: a.id,
         }))
@@ -200,7 +201,7 @@ export default async function StudentDashboard() {
                     (new Date(a.dueDate).getTime() - Date.now()) / (1000 * 60 * 60 * 24)
                   )
                   return (
-                    <div key={a.id} className="px-5 py-3.5">
+                    <Link key={a.id} href={`/dashboard/student/courses/${a.courseId}`} className="px-5 py-3.5 block hover:bg-gray-50 transition-colors">
                       <p className="text-sm font-medium text-gray-800">{a.title}</p>
                       <div className="flex items-center justify-between mt-1">
                         <span className="text-xs text-green-700 font-medium">{a.courseCode}</span>
@@ -208,7 +209,7 @@ export default async function StudentDashboard() {
                           {daysLeft} hari lagi
                         </span>
                       </div>
-                    </div>
+                    </Link>
                   )
                 })
               )}
@@ -225,7 +226,7 @@ export default async function StudentDashboard() {
             </div>
             <div className="divide-y divide-gray-50">
               {recentAttendance.slice(0, 4).map((a, i) => (
-                <div key={i} className="px-5 py-3.5">
+                <Link key={i} href="/dashboard/student/attendance" className="px-5 py-3.5 block hover:bg-gray-50 transition-colors">
                   <p className="text-sm font-medium text-gray-800 truncate">{a.sessionTitle}</p>
                   <div className="flex items-center justify-between mt-1">
                     <span className="text-xs text-gray-500">{a.courseCode}</span>
@@ -243,7 +244,7 @@ export default async function StudentDashboard() {
                       </span>
                     )}
                   </div>
-                </div>
+                </Link>
               ))}
             </div>
           </div>

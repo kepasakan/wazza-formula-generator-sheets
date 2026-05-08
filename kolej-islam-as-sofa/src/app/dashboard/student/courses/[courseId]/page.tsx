@@ -7,30 +7,16 @@ import {
   FileText,
   ClipboardList,
   CalendarCheck,
-  PlayCircle,
-  FileTextIcon,
-  LinkIcon,
-  AlignLeft,
   ChevronLeft,
+  ChevronRight,
   Users,
   Clock,
+  Play,
+  AlignLeft,
+  Link2,
 } from 'lucide-react'
-
-const contentTypeIcon = {
-  VIDEO: <PlayCircle className="w-4 h-4 text-red-500" />,
-  PDF: <FileTextIcon className="w-4 h-4 text-orange-500" />,
-  TEXT: <AlignLeft className="w-4 h-4 text-blue-500" />,
-  LINK: <LinkIcon className="w-4 h-4 text-purple-500" />,
-}
-
-const contentTypeBadge = {
-  VIDEO: 'bg-red-50 text-red-700',
-  PDF: 'bg-orange-50 text-orange-700',
-  TEXT: 'bg-blue-50 text-blue-700',
-  LINK: 'bg-purple-50 text-purple-700',
-}
-
-const contentTypeLabel = { VIDEO: 'Video', PDF: 'PDF', TEXT: 'Nota', LINK: 'Pautan' }
+import AssignmentSection from './AssignmentSection'
+import AttendanceSection from './AttendanceSection'
 
 export default async function StudentCoursePage(props: PageProps<'/dashboard/student/courses/[courseId]'>) {
   const session = await getSession()
@@ -59,6 +45,12 @@ export default async function StudentCoursePage(props: PageProps<'/dashboard/stu
             include: { attempts: { where: { studentId: session.userId } } },
           },
           enrollments: true,
+          attendanceSessions: {
+            orderBy: { date: 'desc' },
+            include: {
+              records: { where: { studentId: session.userId }, select: { status: true } },
+            },
+          },
         },
       },
     },
@@ -67,6 +59,27 @@ export default async function StudentCoursePage(props: PageProps<'/dashboard/stu
   if (!enrollment) notFound()
 
   const { course } = enrollment
+
+  // Check for active attendance session
+  const activeAttendanceSession = await prisma.attendanceSession.findFirst({
+    where: {
+      courseId,
+      isOpen: true,
+      OR: [{ expiresAt: null }, { expiresAt: { gt: new Date() } }],
+    },
+    select: { id: true, title: true, expiresAt: true },
+  })
+
+  const alreadyMarked = activeAttendanceSession
+    ? !!(await prisma.attendanceRecord.findUnique({
+        where: {
+          sessionId_studentId: {
+            sessionId: activeAttendanceSession.id,
+            studentId: session.userId,
+          },
+        },
+      }))
+    : false
 
   return (
     <div className="space-y-6">
@@ -125,147 +138,80 @@ export default async function StudentCoursePage(props: PageProps<'/dashboard/stu
       {/* Modules */}
       <div>
         <h3 className="font-semibold text-gray-900 text-lg mb-4">Kandungan Kursus</h3>
-        <div className="space-y-3">
-          {course.modules.map((module, idx) => (
-            <div key={module.id} className="bg-white rounded-xl border border-gray-200 overflow-hidden">
-              <div className="px-5 py-4 flex items-center justify-between bg-gray-50">
-                <div className="flex items-center gap-3">
-                  <div className="w-8 h-8 bg-green-700 rounded-lg flex items-center justify-center text-white text-sm font-bold flex-shrink-0">
+        {course.modules.length === 0 ? (
+          <div className="bg-white rounded-xl border border-gray-200 p-10 text-center text-gray-400 text-sm">
+            Kandungan belum tersedia
+          </div>
+        ) : (
+          <div className="space-y-3">
+            {course.modules.map((module, idx) => {
+              const contentSummary = [
+                module.contents.filter((c) => c.type === 'VIDEO').length > 0 && { icon: <Play className="w-3 h-3" />, label: `${module.contents.filter((c) => c.type === 'VIDEO').length} Video`, color: 'bg-red-50 text-red-600' },
+                module.contents.filter((c) => c.type === 'PDF').length > 0 && { icon: <FileText className="w-3 h-3" />, label: `${module.contents.filter((c) => c.type === 'PDF').length} PDF`, color: 'bg-blue-50 text-blue-600' },
+                module.contents.filter((c) => c.type === 'TEXT').length > 0 && { icon: <AlignLeft className="w-3 h-3" />, label: `${module.contents.filter((c) => c.type === 'TEXT').length} Nota`, color: 'bg-amber-50 text-amber-600' },
+                module.contents.filter((c) => c.type === 'LINK').length > 0 && { icon: <Link2 className="w-3 h-3" />, label: `${module.contents.filter((c) => c.type === 'LINK').length} Pautan`, color: 'bg-purple-50 text-purple-600' },
+              ].filter(Boolean) as { icon: React.ReactNode; label: string; color: string }[]
+
+              return (
+                <Link
+                  key={module.id}
+                  href={`/dashboard/student/courses/${courseId}/modules/${module.id}`}
+                  className="flex items-center gap-4 bg-white rounded-xl border border-gray-200 px-5 py-4 hover:border-green-300 hover:shadow-sm transition-all group"
+                >
+                  <div className="w-9 h-9 bg-green-700 rounded-xl flex items-center justify-center text-white text-sm font-bold flex-shrink-0">
                     {idx + 1}
                   </div>
-                  <div>
-                    <h4 className="font-semibold text-gray-900">{module.title}</h4>
+                  <div className="flex-1 min-w-0">
+                    <h4 className="font-semibold text-gray-900 group-hover:text-green-800 transition-colors">
+                      {module.title}
+                    </h4>
                     {module.description && (
-                      <p className="text-xs text-gray-500 mt-0.5">{module.description}</p>
+                      <p className="text-xs text-gray-400 mt-0.5 truncate">{module.description}</p>
+                    )}
+                    {contentSummary.length > 0 && (
+                      <div className="flex items-center gap-2 mt-2 flex-wrap">
+                        {contentSummary.map((s, i) => (
+                          <span key={i} className={`flex items-center gap-1 text-xs font-medium px-2 py-0.5 rounded-full ${s.color}`}>
+                            {s.icon}
+                            {s.label}
+                          </span>
+                        ))}
+                      </div>
                     )}
                   </div>
-                </div>
-                <span className="text-xs text-gray-400">{module.contents.length} kandungan</span>
-              </div>
-
-              {module.contents.length > 0 && (
-                <div className="divide-y divide-gray-50">
-                  {module.contents.map((content) => (
-                    <div key={content.id} className="px-5 py-3.5">
-                      {content.type === 'VIDEO' && content.youtubeId ? (
-                        <div>
-                          <div className="flex items-center gap-2 mb-3">
-                            {contentTypeIcon[content.type]}
-                            <span className="text-sm font-medium text-gray-800">{content.title}</span>
-                            <span className={`text-xs px-2 py-0.5 rounded-full ${contentTypeBadge[content.type]}`}>
-                              {contentTypeLabel[content.type]}
-                            </span>
-                          </div>
-                          <div className="aspect-video w-full max-w-2xl rounded-xl overflow-hidden bg-black">
-                            <iframe
-                              src={`https://www.youtube.com/embed/${content.youtubeId}`}
-                              title={content.title}
-                              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                              allowFullScreen
-                              className="w-full h-full"
-                            />
-                          </div>
-                        </div>
-                      ) : content.type === 'TEXT' && content.textContent ? (
-                        <div>
-                          <div className="flex items-center gap-2 mb-3">
-                            {contentTypeIcon[content.type]}
-                            <span className="text-sm font-medium text-gray-800">{content.title}</span>
-                            <span className={`text-xs px-2 py-0.5 rounded-full ${contentTypeBadge[content.type]}`}>
-                              {contentTypeLabel[content.type]}
-                            </span>
-                          </div>
-                          <div className="bg-gray-50 rounded-xl p-4 text-sm text-gray-700 leading-relaxed prose prose-sm max-w-none whitespace-pre-line">
-                            {content.textContent}
-                          </div>
-                        </div>
-                      ) : (
-                        <div className="flex items-center gap-3">
-                          {contentTypeIcon[content.type]}
-                          <span className="text-sm font-medium text-gray-800 flex-1">{content.title}</span>
-                          <span className={`text-xs px-2 py-0.5 rounded-full ${contentTypeBadge[content.type as keyof typeof contentTypeBadge]}`}>
-                            {contentTypeLabel[content.type as keyof typeof contentTypeLabel]}
-                          </span>
-                          {content.contentUrl && (
-                            <a
-                              href={content.contentUrl}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              className="text-xs bg-green-700 text-white px-3 py-1.5 rounded-lg hover:bg-green-800 transition"
-                            >
-                              Buka
-                            </a>
-                          )}
-                        </div>
-                      )}
-                    </div>
-                  ))}
-                </div>
-              )}
-            </div>
-          ))}
-        </div>
+                  <div className="flex items-center gap-2 flex-shrink-0">
+                    {module.contents.length === 0 && (
+                      <span className="text-xs text-gray-400">Tiada kandungan</span>
+                    )}
+                    <ChevronRight className="w-4 h-4 text-gray-300 group-hover:text-green-600 transition-colors" />
+                  </div>
+                </Link>
+              )
+            })}
+          </div>
+        )}
       </div>
 
       {/* Assignments */}
       {course.assignments.length > 0 && (
-        <div>
-          <h3 className="font-semibold text-gray-900 text-lg mb-4 flex items-center gap-2">
-            <FileText className="w-5 h-5 text-gray-500" />
-            Tugasan
-          </h3>
-          <div className="space-y-3">
-            {course.assignments.map((assignment) => {
-              const submitted = assignment.submissions.length > 0
-              const submission = assignment.submissions[0]
-              const isOverdue = new Date(assignment.dueDate) < new Date() && !submitted
-              const daysLeft = Math.ceil((new Date(assignment.dueDate).getTime() - Date.now()) / (1000 * 60 * 60 * 24))
-
-              return (
-                <div key={assignment.id} className="bg-white rounded-xl border border-gray-200 p-5">
-                  <div className="flex items-start justify-between gap-4">
-                    <div className="flex-1">
-                      <div className="flex items-center gap-2 mb-1">
-                        <h4 className="font-semibold text-gray-900">{assignment.title}</h4>
-                        {submitted ? (
-                          <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${
-                            submission?.status === 'GRADED' ? 'bg-green-100 text-green-700' : 'bg-blue-100 text-blue-700'
-                          }`}>
-                            {submission?.status === 'GRADED' ? `✓ Dinilai: ${submission.score}/${assignment.maxScore}` : '✓ Dihantar'}
-                          </span>
-                        ) : isOverdue ? (
-                          <span className="text-xs bg-red-100 text-red-700 px-2 py-0.5 rounded-full font-medium">Tamat Tempoh</span>
-                        ) : (
-                          <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${daysLeft <= 3 ? 'bg-orange-100 text-orange-700' : 'bg-gray-100 text-gray-600'}`}>
-                            {daysLeft > 0 ? `${daysLeft} hari lagi` : 'Hari ini'}
-                          </span>
-                        )}
-                      </div>
-                      <p className="text-sm text-gray-500">{assignment.description}</p>
-                      <div className="flex items-center gap-3 mt-2 text-xs text-gray-400">
-                        <span className="flex items-center gap-1">
-                          <Clock className="w-3 h-3" />
-                          {new Date(assignment.dueDate).toLocaleDateString('ms-MY', { dateStyle: 'medium' })}
-                        </span>
-                        <span>Markah penuh: {assignment.maxScore}</span>
-                      </div>
-                      {submission?.feedback && (
-                        <div className="mt-2 bg-green-50 border border-green-100 rounded-lg px-3 py-2 text-sm text-green-800">
-                          <span className="font-medium">Maklum balas:</span> {submission.feedback}
-                        </div>
-                      )}
-                    </div>
-                    {!submitted && !isOverdue && (
-                      <button className="flex-shrink-0 text-sm bg-green-700 text-white px-4 py-2 rounded-lg hover:bg-green-800 transition font-medium">
-                        Hantar
-                      </button>
-                    )}
-                  </div>
-                </div>
-              )
-            })}
-          </div>
-        </div>
+        <AssignmentSection
+          assignments={course.assignments.map((a) => ({
+            id: a.id,
+            title: a.title,
+            description: a.description ?? null,
+            dueDate: a.dueDate.toISOString(),
+            maxScore: a.maxScore,
+            submissions: a.submissions.map((s) => ({
+              id: s.id,
+              status: s.status as 'SUBMITTED' | 'GRADED' | 'LATE',
+              score: s.score ?? null,
+              feedback: s.feedback ?? null,
+              submittedAt: s.submittedAt.toISOString(),
+              fileUrl: s.fileUrl ?? null,
+              notes: s.notes ?? null,
+            })),
+          }))}
+        />
       )}
 
       {/* Quizzes */}
@@ -289,21 +235,39 @@ export default async function StudentCoursePage(props: PageProps<'/dashboard/stu
                     <div>
                       <h4 className="font-semibold text-gray-900">{quiz.title}</h4>
                       <p className="text-sm text-gray-500 mt-0.5">{quiz.description}</p>
-                      <div className="flex items-center gap-3 mt-2 text-xs text-gray-400">
+                      <div className="flex flex-wrap items-center gap-3 mt-2 text-xs text-gray-400">
                         <span className="flex items-center gap-1">
                           <Clock className="w-3 h-3" />
                           {quiz.duration} minit
                         </span>
+                        {quiz.startTime && (
+                          <span>
+                            Mula: {new Date(quiz.startTime).toLocaleDateString('ms-MY', { dateStyle: 'short' })}
+                            {' '}{new Date(quiz.startTime).toLocaleTimeString('ms-MY', { hour: '2-digit', minute: '2-digit' })}
+                          </span>
+                        )}
+                        {quiz.endTime && (
+                          <span>
+                            Tamat: {new Date(quiz.endTime).toLocaleDateString('ms-MY', { dateStyle: 'short' })}
+                            {' '}{new Date(quiz.endTime).toLocaleTimeString('ms-MY', { hour: '2-digit', minute: '2-digit' })}
+                          </span>
+                        )}
                       </div>
                     </div>
                     {isCompleted ? (
-                      <span className="text-xs bg-green-100 text-green-700 px-2 py-1 rounded-full font-medium flex-shrink-0">
-                        Selesai: {attempt.score} markah
-                      </span>
+                      <Link
+                        href={`/dashboard/student/courses/${courseId}/quiz/${quiz.id}`}
+                        className="text-xs bg-green-100 text-green-700 px-3 py-1.5 rounded-full font-medium flex-shrink-0 hover:bg-green-200 transition"
+                      >
+                        ✓ {attempt.score} markah — Semak
+                      </Link>
                     ) : isAvailable ? (
-                      <button className="flex-shrink-0 text-sm bg-purple-700 text-white px-4 py-2 rounded-lg hover:bg-purple-800 transition font-medium">
+                      <Link
+                        href={`/dashboard/student/courses/${courseId}/quiz/${quiz.id}`}
+                        className="flex-shrink-0 text-sm bg-purple-700 text-white px-4 py-2 rounded-lg hover:bg-purple-800 transition font-medium"
+                      >
                         Mula Kuiz
-                      </button>
+                      </Link>
                     ) : (
                       <span className="text-xs bg-gray-100 text-gray-500 px-2 py-1 rounded-full flex-shrink-0">Belum dibuka</span>
                     )}
@@ -314,6 +278,27 @@ export default async function StudentCoursePage(props: PageProps<'/dashboard/stu
           </div>
         </div>
       )}
+
+      {/* Attendance */}
+      <AttendanceSection
+        courseId={courseId}
+        initialActive={
+          activeAttendanceSession
+            ? {
+                id: activeAttendanceSession.id,
+                title: activeAttendanceSession.title,
+                expiresAt: activeAttendanceSession.expiresAt?.toISOString() ?? null,
+                alreadyMarked,
+              }
+            : null
+        }
+        initialHistory={course.attendanceSessions.map((s) => ({
+          id: s.id,
+          title: s.title,
+          date: s.date.toISOString(),
+          status: (s.records[0]?.status ?? null) as 'PRESENT' | 'ABSENT' | 'LATE' | 'EXCUSED' | null,
+        }))}
+      />
     </div>
   )
 }

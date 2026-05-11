@@ -47,6 +47,7 @@ function doGet(e) {
       else if (action === "setupOutstationTrigger")        result = setupOutstationTrigger(body.triggerTime);
       else if (action === "saveOutstationTriggerTime_web") result = saveOutstationTriggerTime_web(body.triggerTime);
       else if (action === "getOutstationTriggerTime")      result = getOutstationTriggerTime();
+      else if (action === "changeLeaveType")               result = changeLeaveType(body.rowIndex, body.newLeaveType, body.staffName);
       else result = { status: "ERROR", message: "Unknown action: " + action };
     } catch (err) {
       result = { status: "ERROR", message: "Router error: " + err.toString() };
@@ -99,6 +100,7 @@ function doPost(e) {
     else if (action === "setupOutstationTrigger")        result = setupOutstationTrigger(body.triggerTime);
     else if (action === "saveOutstationTriggerTime_web") result = saveOutstationTriggerTime_web(body.triggerTime);
     else if (action === "getOutstationTriggerTime")      result = getOutstationTriggerTime();
+    else if (action === "changeLeaveType")               result = changeLeaveType(body.rowIndex, body.newLeaveType, body.staffName);
     else result = { status: "ERROR", message: "Unknown action: " + action };
   } catch (err) {
     result = { status: "ERROR", message: "Router error: " + err.toString() };
@@ -686,7 +688,7 @@ function getLeaveBalance(staffName) {
     const cutiSheet = SS.getSheetByName("Log_Cuti_Lewat");
     const lastRow = cutiSheet.getLastRow();
     const currentYear = new Date().getFullYear();
-    let used = { AL: 0, MC: 0, HL: 0, ML: 0, PL: 0, EL: 0, BL: 0 };
+    let used = { AL: 0, MC: 0, HL: 0, ML: 0, PL: 0, EL: 0, BL: 0, UL: 0 };
 
     if (lastRow > 1) {
       const cutiData = cutiSheet.getRange(2, 1, lastRow - 1, 7).getValues();
@@ -705,6 +707,8 @@ function getLeaveBalance(staffName) {
         else if (jenis === "EL")  used.EL += 1;
         else if (jenis === "HEL") used.EL += 0.5;
         else if (jenis === "BL")  used.BL += 1;
+        else if (jenis === "UL")  used.UL += 1;
+        else if (jenis === "HUL") used.UL += 0.5;
       }
     }
 
@@ -717,6 +721,7 @@ function getLeaveBalance(staffName) {
         unlimited: limits[t] === -1
       };
     });
+    balance["UL"] = { limit: null, used: used.UL, balance: null, unlimited: true };
     return { status: "SUCCESS", data: balance };
   } catch(e) {
     return { status: "ERROR", message: e.toString() };
@@ -1032,20 +1037,46 @@ function getAllLeaveLog() {
     let sortValue = rawTarikhCuti instanceof Date ? rawTarikhCuti.getTime() : 0;
     
     leaveLog.push({
+      rowIndex: i + 2,
       timestamp: timestamp,
       nama: data[i][1],
       jenis: jenis,
       tarikhCuti: tarikhCutiStr,
       sebab: data[i][4],
-      status: data[i][6] || "PROSES", 
-      lampiran: data[i][9] || "",     
-      sortTime: sortValue             
+      status: data[i][6] || "PROSES",
+      lampiran: data[i][9] || "",
+      sortTime: sortValue
     });
   }
   
   leaveLog.sort((a, b) => b.sortTime - a.sortTime);
 
   return leaveLog;
+}
+
+function changeLeaveType(rowIndex, newLeaveType, staffName) {
+  try {
+    const sheet = SS.getSheetByName("Log_Cuti_Lewat");
+    if (!sheet) return { status: "ERROR", message: "Sheet Log_Cuti_Lewat tidak wujud." };
+
+    const row = sheet.getRange(rowIndex, 1, 1, 7).getValues()[0];
+    const currentStatus = String(row[6] || "");
+
+    if (currentStatus === "DITOLAK") {
+      return { status: "ERROR", message: "Cuti yang ditolak tidak boleh ditukar jenis." };
+    }
+
+    sheet.getRange(rowIndex, 3).setValue(newLeaveType);
+
+    var updatedBalance = getLeaveBalance(staffName);
+    return {
+      status: "SUCCESS",
+      message: "Jenis cuti berjaya ditukar kepada " + newLeaveType,
+      updatedBalance: updatedBalance.status === "SUCCESS" ? updatedBalance.data : null
+    };
+  } catch(e) {
+    return { status: "ERROR", message: e.toString() };
+  }
 }
 
 // ==========================================

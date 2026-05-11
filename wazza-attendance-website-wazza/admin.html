@@ -1728,6 +1728,7 @@
                     '<div class="flex flex-col gap-1.5 flex-shrink-0">' +
                     '<button onclick="processLeave(' + l.rowIndex + ', \'DILULUSKAN\')" class="bg-green-700 hover:bg-green-600 text-white px-3 py-1.5 rounded text-xs font-bold transition">LULUS</button>' +
                     '<button onclick="processLeave(' + l.rowIndex + ', \'DITOLAK\')" class="bg-red-900 hover:bg-red-800 text-red-200 px-3 py-1.5 rounded text-xs font-bold transition">TOLAK</button>' +
+                    '<button onclick="openChangeLeaveModal(' + l.rowIndex + ', \'' + l.nama.replace(/'/g, "\\'") + '\', \'' + l.jenis + '\', \'' + l.tarikh + '\')" class="bg-blue-900 hover:bg-blue-800 text-blue-200 px-3 py-1.5 rounded text-xs font-bold transition">TUKAR</button>' +
                     '</div></div>';
             });
         }
@@ -1798,7 +1799,10 @@
                     '<td class="p-4"><div class="font-bold text-white text-sm">' + log.nama + '</div><div class="text-xs text-yellow-500 font-bold mt-1 uppercase">' + log.jenis + '</div></td>' +
                     '<td class="p-4"><div class="text-[11px] text-gray-500 uppercase">Tarikh Cuti:</div><div class="text-sm font-mono text-gray-200 mb-1">' + log.tarikhCuti + '</div><div class="text-[10px] text-gray-600">Mohon: ' + log.timestamp + '</div></td>' +
                     '<td class="p-4"><div class="text-xs text-gray-400 italic bg-gray-900 p-2 rounded border border-gray-700">"' + log.sebab + '"</div>' + attachHtml + '</td>' +
-                    '<td class="p-4 text-center">' + statusBadge + '</td></tr>';
+                    '<td class="p-4"><div style="display:flex; flex-direction:column; align-items:center; gap:6px;">' +
+                    statusBadge +
+                    (log.status !== 'DITOLAK' ? '<button onclick="openChangeLeaveModal(' + log.rowIndex + ', \'' + log.nama.replace(/'/g, "\\'") + '\', \'' + log.jenis + '\', \'' + log.tarikhCuti + '\')" class="bg-blue-900 hover:bg-blue-800 text-blue-300 px-3 py-1 rounded-lg text-xs font-bold border border-blue-700 transition cursor-pointer">TUKAR JENIS</button>' : '') +
+                    '</div></td></tr>';
             });
         }
 
@@ -2548,7 +2552,149 @@
             });
         }
 
+        // ==========================================
+        // CHANGE LEAVE TYPE
+        // ==========================================
+        var clm_rowIndex = null;
+        var clm_staffName = "";
+        var clm_staffBalance = null;
+        var clm_poolMap = { AL:'AL', HAL:'AL', MC:'MC', HL:'HL', ML:'ML', PL:'PL', EL:'EL', HEL:'EL', BL:'BL' };
+
+        function openChangeLeaveModal(rowIndex, staffName, currentType, tarikh) {
+            clm_rowIndex = rowIndex;
+            clm_staffName = staffName;
+            document.getElementById('clm_staffName').innerText = staffName;
+            document.getElementById('clm_currentType').innerText = currentType.toUpperCase();
+            document.getElementById('clm_date').innerText = tarikh;
+            document.getElementById('clm_newType').value = "";
+            document.getElementById('clm_warning').style.display = 'none';
+            document.getElementById('clm_balance').innerHTML = '<div style="grid-column:1/-1; text-align:center; padding:8px; color:#6b7280; font-size:12px;">Memuatkan baki cuti...</div>';
+            document.getElementById('changeLeaveModal').style.display = 'flex';
+
+            callGAS("getLeaveBalance", { staffName: staffName }, function(res) {
+                if (res.status === "SUCCESS") {
+                    clm_staffBalance = res.data;
+                    renderModalBalance(res.data);
+                } else {
+                    document.getElementById('clm_balance').innerHTML = '<div style="color:#f87171; font-size:12px; grid-column:1/-1;">Gagal muat baki cuti.</div>';
+                }
+            });
+        }
+
+        function renderModalBalance(bal) {
+            var div = document.getElementById('clm_balance');
+            var types = [
+                { key: 'AL', label: 'AL' }, { key: 'MC', label: 'MC' }, { key: 'EL', label: 'EL' },
+                { key: 'HL', label: 'HL' }, { key: 'ML', label: 'ML' }, { key: 'PL', label: 'PL' }, { key: 'BL', label: 'BL' }
+            ];
+            var html = '';
+            types.forEach(function(t) {
+                var b = bal[t.key];
+                if (!b || b.limit === 0) return;
+                var balText, color;
+                if (b.unlimited || b.limit === -1) { balText = '∞'; color = '#9ca3af'; }
+                else {
+                    color = b.balance === 0 ? '#f87171' : b.balance <= 2 ? '#eab308' : '#4ade80';
+                    balText = b.balance + '/' + b.limit;
+                }
+                html += '<div style="background:#111827; border:1px solid #374151; border-radius:6px; padding:8px 10px; display:flex; justify-content:space-between; align-items:center;">' +
+                    '<span style="font-size:11px; font-weight:700; color:#9ca3af;">' + t.label + '</span>' +
+                    '<span style="font-size:12px; font-weight:700; color:' + color + ';">' + balText + '</span></div>';
+            });
+            if (bal['UL']) {
+                var ulUsed = bal['UL'].used || 0;
+                html += '<div style="background:#111827; border:1px solid #374151; border-radius:6px; padding:8px 10px; display:flex; justify-content:space-between; align-items:center;">' +
+                    '<span style="font-size:11px; font-weight:700; color:#9ca3af;">UL</span>' +
+                    '<span style="font-size:12px; font-weight:700; color:' + (ulUsed > 0 ? '#f87171' : '#6b7280') + ';">' + ulUsed + ' hari</span></div>';
+            }
+            div.innerHTML = html || '<div style="grid-column:1/-1; text-align:center; font-size:12px; color:#6b7280; padding:8px;">Tiada had cuti ditetapkan.</div>';
+        }
+
+        function checkNewTypeBalance() {
+            var newType = document.getElementById('clm_newType').value;
+            var warningDiv = document.getElementById('clm_warning');
+            warningDiv.style.display = 'none';
+            if (!newType || !clm_staffBalance) return;
+            var pool = clm_poolMap[newType.toUpperCase()] || null;
+            if (!pool) return;
+            var b = clm_staffBalance[pool];
+            if (!b || b.balance === null) return;
+            var isHalf = (newType.toUpperCase() === 'HAL' || newType.toUpperCase() === 'HEL');
+            var needed = isHalf ? 0.5 : 1;
+            if (b.balance < needed) {
+                warningDiv.innerHTML = '⚠️ Baki cuti <strong>' + pool + '</strong> tidak mencukupi (' + b.balance + ' hari berbaki). Admin boleh tetap teruskan jika perlu.';
+                warningDiv.style.display = 'block';
+            }
+        }
+
+        function submitChangeLeaveType() {
+            var newType = document.getElementById('clm_newType').value;
+            if (!newType) { alert("Sila pilih jenis cuti baru."); return; }
+            if (!clm_rowIndex) { alert("Ralat: Tiada rekod dipilih."); return; }
+            var btn = document.getElementById('clm_submitBtn');
+            btn.innerText = "Menyimpan..."; btn.disabled = true;
+            callGAS("changeLeaveType", { rowIndex: clm_rowIndex, newLeaveType: newType, staffName: clm_staffName }, function(res) {
+                btn.innerText = "Simpan Perubahan"; btn.disabled = false;
+                if (res.status === "SUCCESS") {
+                    closeChangeLeaveModal();
+                    loadLiveDashboard();
+                    if (typeof globalAllLeaveLog !== 'undefined' && globalAllLeaveLog.length > 0) loadAllLeaveLog();
+                } else {
+                    alert("Gagal: " + res.message);
+                }
+            });
+        }
+
+        function closeChangeLeaveModal() {
+            document.getElementById('changeLeaveModal').style.display = 'none';
+            clm_rowIndex = null;
+            clm_staffBalance = null;
+        }
+
     </script>
+
+<!-- ══════════ CHANGE LEAVE TYPE MODAL ══════════ -->
+<div id="changeLeaveModal" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.75); z-index:999; align-items:center; justify-content:center; padding:16px;">
+    <div style="background:#1f2937; border:1px solid #374151; border-top:3px solid #3b82f6; border-radius:16px; width:100%; max-width:440px; padding:24px; max-height:90vh; overflow-y:auto;">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
+            <h3 style="font-size:15px; font-weight:700; color:#f9fafb;">Tukar Jenis Cuti</h3>
+            <button onclick="closeChangeLeaveModal()" style="color:#6b7280; font-size:20px; background:none; border:none; cursor:pointer; line-height:1;">✕</button>
+        </div>
+        <div style="background:#111827; border:1px solid #374151; border-radius:8px; padding:12px; margin-bottom:16px;">
+            <div style="font-size:13px; font-weight:700; color:#f9fafb;" id="clm_staffName">-</div>
+            <div style="font-size:11px; color:#eab308; font-weight:600; margin-top:4px;">
+                Jenis Asal: <span id="clm_currentType">-</span>
+                &nbsp;|&nbsp;
+                Tarikh: <span id="clm_date" style="font-family:monospace;">-</span>
+            </div>
+        </div>
+        <p style="font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:0.07em; color:#6b7280; margin-bottom:8px;">Baki Cuti Staff</p>
+        <div id="clm_balance" style="display:grid; grid-template-columns:1fr 1fr; gap:6px; margin-bottom:16px;"></div>
+        <div style="margin-bottom:16px;">
+            <label style="display:block; font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:0.06em; color:#9ca3af; margin-bottom:6px;">Tukar Kepada</label>
+            <select id="clm_newType" onchange="checkNewTypeBalance()" style="width:100%; background:#111827; border:1px solid #374151; border-radius:8px; padding:10px 14px; color:#f9fafb; font-size:14px; outline:none; appearance:none;">
+                <option value="">-- Pilih Jenis Baru --</option>
+                <option value="AL">AL — Cuti Tahunan</option>
+                <option value="HAL">HAL — ½ Hari AL</option>
+                <option value="MC">MC — Cuti Sakit</option>
+                <option value="EL">EL — Cuti Kecemasan</option>
+                <option value="HEL">HEL — ½ Hari EL</option>
+                <option value="HL">HL — Hospitalisasi</option>
+                <option value="ML">ML — Cuti Bersalin</option>
+                <option value="PL">PL — Cuti Isteri Bersalin</option>
+                <option value="BL">BL — Cuti Ihsan</option>
+                <option value="UL">UL — Tanpa Gaji</option>
+                <option value="HUL">HUL — ½ Hari UL</option>
+            </select>
+        </div>
+        <div id="clm_warning" style="display:none; background:rgba(234,179,8,0.08); border:1px solid rgba(234,179,8,0.3); border-radius:8px; padding:10px 12px; font-size:12px; color:#eab308; margin-bottom:16px;"></div>
+        <div style="display:flex; gap:8px;">
+            <button onclick="closeChangeLeaveModal()" style="flex:1; background:#374151; border:1px solid #4b5563; color:#d1d5db; font-size:13px; font-weight:600; padding:10px; border-radius:8px; cursor:pointer;">Batal</button>
+            <button onclick="submitChangeLeaveType()" id="clm_submitBtn" style="flex:2; background:#3b82f6; color:#fff; font-size:13px; font-weight:700; padding:10px; border-radius:8px; cursor:pointer; border:none;">Simpan Perubahan</button>
+        </div>
+    </div>
+</div>
+
 </body>
 
 </html>

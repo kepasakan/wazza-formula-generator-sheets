@@ -1435,6 +1435,15 @@
                     '</div></div>';
             }
         });
+        if (bal['UL']) {
+            var ulUsed = bal['UL'].used || 0;
+            if (hasAny) html += '<div style="height:1px; background:#374151; margin:6px 0;"></div>';
+            html += '<div style="display:flex; justify-content:space-between; align-items:center; padding:2px 0;">' +
+                '<span style="font-size:11px; font-weight:600; color:#9ca3af;">UL — Tanpa Gaji</span>' +
+                '<span style="font-size:11px; font-weight:700; color:' + (ulUsed > 0 ? '#f87171' : '#6b7280') + ';">' + ulUsed + ' hari digunakan</span>' +
+                '</div>';
+            hasAny = true;
+        }
         widget.innerHTML = hasAny ? html : '<p style="font-size:12px;color:#6b7280;text-align:center;padding:8px 0;">Tiada had cuti ditetapkan untuk anda.</p>';
     }
 

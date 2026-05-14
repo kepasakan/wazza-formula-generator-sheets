@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import Link from 'next/link'
-import { Plus, FileText, Loader2, X } from 'lucide-react'
+import { Plus, FileText, Loader2, X, ExternalLink } from 'lucide-react'
 
 type Assignment = {
   id: string
@@ -76,13 +76,13 @@ export default function AssignmentManager({ courseId, totalEnrolled, initialAssi
             {assignments.length} tugasan
           </span>
         </h3>
-        <button
-          onClick={openModal}
+        <Link
+          href={`/dashboard/lecturer/courses/${courseId}/assignments/create`}
           className="flex items-center gap-2 bg-green-700 text-white text-sm px-4 py-2 rounded-lg hover:bg-green-800 transition font-medium"
         >
           <Plus className="w-4 h-4" />
           Tambah Tugasan
-        </button>
+        </Link>
       </div>
 
       {/* List */}
@@ -90,12 +90,12 @@ export default function AssignmentManager({ courseId, totalEnrolled, initialAssi
         <div className="bg-white rounded-xl border-2 border-dashed border-gray-200 p-10 text-center">
           <FileText className="w-8 h-8 text-gray-300 mx-auto mb-2" />
           <p className="text-sm text-gray-400">Belum ada tugasan dicipta</p>
-          <button
-            onClick={openModal}
+          <Link
+            href={`/dashboard/lecturer/courses/${courseId}/assignments/create`}
             className="mt-3 text-sm text-green-700 hover:text-green-800 font-medium"
           >
             + Tambah tugasan pertama
-          </button>
+          </Link>
         </div>
       ) : (
         <div className="space-y-3">

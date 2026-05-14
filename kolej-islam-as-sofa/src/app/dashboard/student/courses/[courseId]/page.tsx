@@ -199,6 +199,7 @@ export default async function StudentCoursePage({
       {/* Assignments */}
       {course.assignments.length > 0 && (
         <AssignmentSection
+          courseId={courseId}
           assignments={course.assignments.map((a) => ({
             id: a.id,
             title: a.title,

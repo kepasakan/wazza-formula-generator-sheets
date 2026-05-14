@@ -11,12 +11,13 @@ import {
 type Props = {
   onChange: (html: string) => void
   placeholder?: string
+  initialContent?: string
 }
 
-export default function RichTextEditor({ onChange, placeholder }: Props) {
+export default function RichTextEditor({ onChange, placeholder, initialContent }: Props) {
   const editor = useEditor({
     extensions: [StarterKit, Underline],
-    content: '',
+    content: initialContent || '',
     immediatelyRender: false,
     onUpdate: ({ editor }) => onChange(editor.getHTML()),
     editorProps: {

@@ -77,14 +77,9 @@ export default function EditAssignmentForm({ courseId, assignment }: Props) {
           Arahan & Penerangan Tugasan
           <span className="font-normal text-gray-400">(pilihan)</span>
         </label>
-        {/* Show existing description as plain text hint */}
-        {assignment.description && (
-          <div className="mb-3 bg-amber-50 border border-amber-200 rounded-xl px-4 py-3 text-xs text-amber-700">
-            Arahan sedia ada akan digantikan apabila anda menaip dalam editor di bawah.
-          </div>
-        )}
         <RichTextEditor
           onChange={setDescription}
+          initialContent={assignment.description ?? ''}
           placeholder="Tulis arahan tugasan secara terperinci..."
         />
       </div>

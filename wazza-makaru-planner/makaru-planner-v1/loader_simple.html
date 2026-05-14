@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <style>
+      body{font-family:Roboto,Arial,sans-serif;margin:0;background:#fff}
+      .wrap{padding:16px}
+      .card{
+        border:none;               /* remove border */
+        border-radius:12px;
+        padding:18px;
+        text-align:center;
+      }
+      .title{font-weight:700;margin:8px 0 6px}
+      .sub{color:#607d8b;font-size:12px;margin-bottom:12px}
+
+      /* From Uiverse.io by nawinasokan */
+      .loader-con{
+        position:relative;
+        width:50%;
+        height:100px;
+        overflow:hidden;
+        margin:0 auto 12px; /* center + space above card */
+      }
+      .pfile{
+        position:absolute;
+        bottom:25px;
+        width:40px;height:50px;
+        background: linear-gradient(90deg,#ffcc50,#ffd877);
+        border-radius:4px;
+        transform-origin:center;
+        animation:flyRight 3s ease-in-out infinite;
+        opacity:0;
+        animation-delay:calc(var(--i)*0.6s);
+      }
+      .pfile::before{
+        content:"";
+        position:absolute;top:6px;left:6px;
+        width:28px;height:4px;background:#fff;border-radius:2px;
+      }
+      .pfile::after{
+        content:"";
+        position:absolute;top:13px;left:6px;
+        width:18px;height:4px;background:#fff;border-radius:2px;
+      }
+      @keyframes flyRight{
+        0%{left:-10%;transform:scale(0);opacity:0;}
+        50%{left:45%;transform:scale(1.2);opacity:1;}
+        100%{left:100%;transform:scale(0);opacity:0;}
+      }
+
+      /* simple loader bar */
+      .bar{height:12px;background:#eee;border-radius:999px;position:relative;overflow:hidden}
+      .bar::after{
+        content:"";position:absolute;left:0;top:0;height:100%;width:35%;
+        border-radius:999px;animation:l 1.2s infinite;
+      }
+      @keyframes l{
+        0%{transform:translateX(0); background:#ffcc50}
+        50%{transform:translateX(190%); background:#ffd877}
+        100%{transform:translateX(0); background:#ffcc50}
+      }
+    </style>
+  </head>
+  <body>
+    <div class="wrap">
+      <!-- Flying files loader ABOVE the card border -->
+      <div class="loader-con">
+        <div style="--i:0" class="pfile"></div>
+        <div style="--i:1" class="pfile"></div>
+        <div style="--i:2" class="pfile"></div>
+        <div style="--i:3" class="pfile"></div>
+        <div style="--i:4" class="pfile"></div>
+        <div style="--i:5" class="pfile"></div>
+      </div>
+
+      <div class="card">
+        <div class="title">Sistem sedang diproses…</div>
+        <div class="sub">Jangan tutup fail ini sehingga selesai.</div>
+        <div class="bar"></div>
+      </div>
+    </div>
+
+    <script>
+      // Mula run selepas UI render
+      setTimeout(function(){
+        google.script.run
+          .withSuccessHandler(function(){
+            // server siap → tutup loader (dialog summary akan dibuka oleh showProgress_)
+            google.script.host.close();
+          })
+          .withFailureHandler(function(){
+            // kalau ada error tak dijangka, tetap tutup loader
+            google.script.host.close();
+          })
+          .processCalendarActions();
+      }, 50);
+    </script>
+  </body>
+</html>

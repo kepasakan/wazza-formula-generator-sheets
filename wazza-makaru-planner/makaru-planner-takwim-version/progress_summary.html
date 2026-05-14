@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <base target="_top">
+  <style>
+    :root{ --font:13.5px; --muted:#6b7280; --edge:#e6e8ec; --bg:#fafbff; --ok:#16a34a;
+           --mono: ui-monospace, Menlo, Consolas, "Courier New", monospace; --type-delay:420ms; --type-speed:18ms; }
+    body{ margin:12px; font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif; color:#1f2328; font-size:var(--font) }
+    h2{ text-align:center; margin:0 0 12px 0; font-size:15px; font-weight:600; letter-spacing:.3px }
+    .log{ font-family:var(--mono); line-height:1.55; white-space:pre-wrap; min-height:160px; padding:12px 14px;
+          border:1px dashed var(--edge); border-radius:10px; background:var(--bg) }
+    .row{ margin:6px 0 }
+    .muted{ color:var(--muted) }
+    .divider{ border-top:1px dashed var(--edge); margin:8px 0 10px 0; opacity:.9 }
+    .success{ color:var(--ok); font-weight:700 }
+    .actions{ margin-top:10px; display:flex; gap:8px; justify-content:center }
+    button{ font-size:12.5px; padding:8px 10px; border-radius:10px; border:1px solid var(--edge); background:#fff; cursor:pointer }
+    button:hover{ background:#f6f7fb }
+  </style>
+</head>
+<body>
+  <h2>Butiran Proses</h2>
+  <div id="log" class="log"></div>
+  <div class="actions">
+    <button onclick="restart()">Restart</button>
+    <button onclick="closeDialog()">Close</button>
+  </div>
+
+  <script>
+    const LINES = <?!= JSON.stringify(lines) ?>;  // injected from server
+    const typeSpeed = 18, lineDelay = 420;
+    const log = document.getElementById('log');
+    const sleep = ms => new Promise(r=>setTimeout(r,ms));
+
+    async function typeLine(text, isFinal){
+      const row = document.createElement('div');
+      row.className = 'row';
+      row.innerHTML = `<span class="${isFinal?'success':'muted'}"></span>`;
+      log.appendChild(row);
+      const el = row.firstChild;
+      for (let i=0;i<text.length;i++){ el.textContent = text.slice(0,i+1); await sleep(typeSpeed); }
+      if (!isFinal){ const d=document.createElement('div'); d.className='divider'; log.appendChild(d); }
+    }
+
+    async function play(){ log.textContent=''; for (let i=0;i<LINES.length;i++){ await typeLine(LINES[i], i===LINES.length-1); await sleep(lineDelay); } }
+    function restart(){ play(); }
+    function closeDialog(){ if (google?.script?.host?.close) google.script.host.close(); else window.close(); }
+    play();
+  </script>
+</body>
+</html>

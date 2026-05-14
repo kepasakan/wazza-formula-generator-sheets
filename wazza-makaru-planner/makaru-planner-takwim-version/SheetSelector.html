@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <base target="_top">
+    <style>
+      /* --- YOUR EXISTING CSS (UNCHANGED) --- */
+      :root { --font: 13.5px; --muted: #6b7280; --edge: #e6e8ec; --bg: #fafbff; --ok: #16a34a; --mono: ui-monospace, Menlo, Consolas, "Courier New", monospace; 
+        --yellow-bg: #facc15; --yellow-hover: #fde047; --yellow-border: #eab308; --yellow-text: #422006; }
+      body { margin: 12px; font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; color: #1f2328; font-size: var(--font); }
+      h3 { text-align: center; margin: 0 0 12px 0; font-size: 15px; font-weight: 600; letter-spacing: .3px; }
+      .panel { padding: 14px; border: 1px dashed var(--edge); border-radius: 10px; background: var(--bg); margin-bottom: 12px; }
+      p { margin: 0 0 10px 0; color: var(--muted); line-height: 1.5; }
+      select { width: 100%; padding: 8px; border: 1px solid #d0d7de; border-radius: 6px; font-family: inherit; font-size: inherit; color: #1f2328; background-color: #fff; outline: none; }
+      select:focus { border-color: var(--muted); }
+      .actions { display: flex; justify-content: center; }
+      button { font-size: 12.5px; padding: 8px 16px; border-radius: 10px; background: var(--yellow-bg); border: 1px solid var(--yellow-border); color: var(--yellow-text); cursor: pointer; font-weight: 600; width: 100%; transition: background 0.2s; }
+      button:hover { background: var(--yellow-hover); border-color: var(--yellow-border); }
+    </style>
+  </head>
+  <body>
+    <h3>Pilih Sektor Sasaran</h3>
+    
+    <div class="panel">
+      <p>Sila pilih sektor (sheet) yang ingin disinkronisasi ke kalendar:</p>
+      
+      <select id="sheetList">
+        <? for (var i = 0; i < sectors.length; i++) { ?>
+          <option value="<?= sectors[i] ?>"><?= sectors[i] ?></option>
+        <? } ?>
+        
+        <? if (sectors.length === 0) { ?>
+           <option>Tiada sheet 'SEKTOR' ditemui</option>
+        <? } ?>
+      </select>
+    </div>
+
+    <div class="actions">
+      <button onclick="saveSelection()">Mula Proses Sync</button>
+    </div>
+
+    <script>
+      // NOTE: window.onload is REMOVED because data is already there!
+
+      function saveSelection() {
+        var selectedSheet = document.getElementById("sheetList").value;
+        google.script.run
+          .withSuccessHandler(function() { google.script.host.close(); }) 
+          .setTargetSheetAndRun(selectedSheet); 
+      }
+    </script>
+  </body>
+</html>

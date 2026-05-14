@@ -1,9 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getSession } from '@/lib/auth'
 import { prisma } from '@/lib/db'
-import { writeFile, mkdir } from 'fs/promises'
-import { join } from 'path'
-import { randomUUID } from 'crypto'
+import { put } from '@vercel/blob'
 
 const ALLOWED_TYPES = [
   'application/pdf',
@@ -53,14 +51,10 @@ export async function POST(
       return NextResponse.json({ error: 'Fail terlalu besar (maks 20MB)' }, { status: 400 })
     }
 
-    const buffer = Buffer.from(await file.arrayBuffer())
-    const safeName = file.name.replace(/[^a-zA-Z0-9._-]/g, '_')
-    const filename = `${randomUUID()}-${safeName}`
-
-    const uploadDir = join(process.cwd(), 'public', 'uploads')
-    await mkdir(uploadDir, { recursive: true })
-    await writeFile(join(uploadDir, filename), buffer)
-    fileUrl = `/uploads/${filename}`
+    const blob = await put(`lms/submissions/${Date.now()}-${file.name}`, file, {
+      access: 'public',
+    })
+    fileUrl = blob.url
   }
 
   const isLate = new Date() > new Date(assignment.dueDate)

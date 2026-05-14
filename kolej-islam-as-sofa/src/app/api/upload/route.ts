@@ -1,8 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getSession } from '@/lib/auth'
-import { writeFile, mkdir } from 'fs/promises'
-import { join } from 'path'
-import { randomUUID } from 'crypto'
+import { put } from '@vercel/blob'
 
 const MAX_SIZE = 10 * 1024 * 1024 // 10MB
 
@@ -27,13 +25,9 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: 'Fail terlalu besar (maks 10MB)' }, { status: 400 })
   }
 
-  const buffer = Buffer.from(await file.arrayBuffer())
-  const safeName = file.name.replace(/[^a-zA-Z0-9._-]/g, '_')
-  const filename = `${randomUUID()}-${safeName}`
+  const blob = await put(`lms/pdf/${Date.now()}-${file.name}`, file, {
+    access: 'public',
+  })
 
-  const uploadDir = join(process.cwd(), 'public', 'uploads')
-  await mkdir(uploadDir, { recursive: true })
-  await writeFile(join(uploadDir, filename), buffer)
-
-  return NextResponse.json({ url: `/uploads/${filename}` }, { status: 201 })
+  return NextResponse.json({ url: blob.url }, { status: 201 })
 }

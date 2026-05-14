@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import Link from 'next/link'
-import { Plus, FileText, Loader2, X, ExternalLink } from 'lucide-react'
+import { Plus, FileText, Loader2, X, ExternalLink, Pencil } from 'lucide-react'
 
 type Assignment = {
   id: string
@@ -132,12 +132,21 @@ export default function AssignmentManager({ courseId, totalEnrolled, initialAssi
                       )}
                     </div>
                   </div>
-                  <Link
-                    href={`/dashboard/lecturer/courses/${courseId}/assignments/${a.id}`}
-                    className="flex-shrink-0 text-sm bg-green-700 text-white px-4 py-2 rounded-xl hover:bg-green-800 transition font-medium"
-                  >
-                    Nilai Tugasan
-                  </Link>
+                  <div className="flex items-center gap-2 flex-shrink-0">
+                    <Link
+                      href={`/dashboard/lecturer/courses/${courseId}/assignments/${a.id}/edit`}
+                      className="flex items-center gap-1.5 text-sm border border-gray-200 text-gray-600 px-3 py-2 rounded-xl hover:bg-gray-50 transition"
+                    >
+                      <Pencil className="w-3.5 h-3.5" />
+                      Edit
+                    </Link>
+                    <Link
+                      href={`/dashboard/lecturer/courses/${courseId}/assignments/${a.id}`}
+                      className="text-sm bg-green-700 text-white px-4 py-2 rounded-xl hover:bg-green-800 transition font-medium"
+                    >
+                      Nilai
+                    </Link>
+                  </div>
                 </div>
               </div>
             )

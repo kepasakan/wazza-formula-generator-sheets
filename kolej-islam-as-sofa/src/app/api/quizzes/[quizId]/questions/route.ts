@@ -22,8 +22,10 @@ export async function POST(
   const { questionText, type, marks, options } = await req.json()
 
   if (!questionText?.trim()) return NextResponse.json({ error: 'Teks soalan diperlukan' }, { status: 400 })
-  if (!options?.length || !options.some((o: { isCorrect: boolean }) => o.isCorrect)) {
-    return NextResponse.json({ error: 'Sekurang-kurangnya satu jawapan betul diperlukan' }, { status: 400 })
+  if (type !== 'ESSAY') {
+    if (!options?.length || !options.some((o: { isCorrect: boolean }) => o.isCorrect)) {
+      return NextResponse.json({ error: 'Sekurang-kurangnya satu jawapan betul diperlukan' }, { status: 400 })
+    }
   }
 
   const question = await prisma.quizQuestion.create({

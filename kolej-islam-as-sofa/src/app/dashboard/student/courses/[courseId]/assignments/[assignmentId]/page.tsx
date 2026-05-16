@@ -28,6 +28,7 @@ export default async function StudentAssignmentPage({
 
   const submission = await prisma.assignmentSubmission.findUnique({
     where: { assignmentId_studentId: { assignmentId, studentId: session.userId } },
+    include: { attachments: { orderBy: { createdAt: 'asc' } } },
   })
 
   const now = new Date()
@@ -121,8 +122,13 @@ export default async function StudentAssignmentPage({
                 score: submission.score ?? null,
                 feedback: submission.feedback ?? null,
                 submittedAt: submission.submittedAt.toISOString(),
-                fileUrl: submission.fileUrl ?? null,
                 notes: submission.notes ?? null,
+                attachments: submission.attachments.map(a => ({
+                  id: a.id,
+                  type: a.type as 'FILE' | 'LINK',
+                  url: a.url,
+                  filename: a.filename ?? null,
+                })),
               }
             : null
         }

@@ -3,8 +3,10 @@
 import { useState } from 'react'
 import {
   CheckCircle, Clock, AlertCircle, FileText,
-  ChevronDown, ChevronRight, Loader2, Save,
+  ChevronDown, ChevronRight, Loader2, Save, ExternalLink,
 } from 'lucide-react'
+
+type Attachment = { id: string; type: 'FILE' | 'LINK'; url: string; filename: string | null }
 
 type Submission = {
   id: string
@@ -12,8 +14,8 @@ type Submission = {
   score: number | null
   feedback: string | null
   submittedAt: string
-  fileUrl: string | null
   notes: string | null
+  attachments: Attachment[]
 }
 
 type StudentRow = {
@@ -129,30 +131,40 @@ export default function GradingTable({ students: initial, maxScore }: Props) {
               <div className="border-t border-gray-100 px-5 py-4 space-y-4">
                 {/* Submission info */}
                 <div className="bg-gray-50 rounded-xl p-4 space-y-2">
-                  <div className="flex items-center justify-between text-xs text-gray-500">
-                    <span>
-                      Dihantar:{' '}
-                      {new Date(sub.submittedAt).toLocaleDateString('ms-MY', {
-                        dateStyle: 'medium',
-                      })}
-                    </span>
-                    {sub.fileUrl && (
-                      <a
-                        href={sub.fileUrl}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="flex items-center gap-1 text-blue-600 hover:underline font-medium"
-                      >
-                        <FileText className="w-3.5 h-3.5" /> Buka Fail Submission
-                      </a>
-                    )}
-                  </div>
+                  <p className="text-xs text-gray-500">
+                    Dihantar:{' '}
+                    {new Date(sub.submittedAt).toLocaleDateString('ms-MY', { dateStyle: 'medium' })}
+                  </p>
+
                   {sub.notes && (
                     <div>
-                      <p className="text-xs text-gray-400 mb-1">Nota pelajar:</p>
-                      <p className="text-sm text-gray-700 bg-white rounded-lg px-3 py-2 border border-gray-200 whitespace-pre-line">
-                        {sub.notes}
-                      </p>
+                      <p className="text-xs text-gray-400 mb-1">Jawapan pelajar:</p>
+                      <div
+                        className="rich-content text-sm text-gray-700 bg-white rounded-lg px-3 py-2 border border-gray-200"
+                        dangerouslySetInnerHTML={{ __html: sub.notes }}
+                      />
+                    </div>
+                  )}
+
+                  {sub.attachments?.length > 0 && (
+                    <div>
+                      <p className="text-xs text-gray-400 mb-1.5">Lampiran:</p>
+                      <div className="space-y-1.5">
+                        {sub.attachments.filter(a => a.type === 'FILE').map(a => (
+                          <a key={a.id} href={a.url} target="_blank" rel="noopener noreferrer"
+                            className="flex items-center gap-1.5 text-xs text-blue-600 hover:underline">
+                            <FileText className="w-3.5 h-3.5 flex-shrink-0" />
+                            {a.filename ?? 'Fail lampiran'}
+                          </a>
+                        ))}
+                        {sub.attachments.filter(a => a.type === 'LINK').map(a => (
+                          <a key={a.id} href={a.url} target="_blank" rel="noopener noreferrer"
+                            className="flex items-center gap-1.5 text-xs text-blue-600 hover:underline break-all">
+                            <ExternalLink className="w-3.5 h-3.5 flex-shrink-0" />
+                            {a.url}
+                          </a>
+                        ))}
+                      </div>
                     </div>
                   )}
                 </div>

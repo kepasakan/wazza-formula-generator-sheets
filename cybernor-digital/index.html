@@ -3,1485 +3,1620 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>5 Formula Google Sheets | CyberNor Digital</title>
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700;800&family=Fira+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <meta name="description" content="CyberNor Digital — Solusi digital untuk education, automasi kerja, dan data. Bantu cikgu, admin, HR & SME automate kerja harian tanpa perlu background IT." />
+  <title>CyberNor Digital — Solusi Digital Untuk Bisnes & Pendidikan</title>
+  <link rel="icon" type="image/png" href="logo2.png" />
+  <link rel="apple-touch-icon" href="logo2.png" />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&family=Fira+Mono:wght@400;500&display=swap" rel="stylesheet" />
   <style>
     :root {
-      --navy: #1B2A4A;
-      --green: #00C896;
-      --green-light: #E8FFF6;
-      --bg: #F8F9FA;
+      --navy: #1B2D52;
+      --navy-dark: #0F1D36;
+      --teal: #4DC9D6;
+      --teal-dark: #1F8B98;
+      --teal-light: #E5F8FA;
+      --silver: #C8CED4;
+      --silver-light: #EEF1F4;
+      --bg: #FAFBFC;
+      --bg-alt: #F4F6F8;
       --text: #2D2D2D;
+      --text-light: #5B6573;
       --white: #FFFFFF;
       --gray: #6B7280;
+      --gray-light: #9CA3AF;
       --border: #E5E7EB;
+      --border-light: #F0F2F5;
+      --shadow-sm: 0 1px 2px rgba(0,0,0,0.04);
+      --shadow: 0 4px 16px rgba(27,42,74,0.06);
+      --shadow-lg: 0 12px 32px rgba(27,42,74,0.08);
+      --shadow-xl: 0 20px 48px rgba(27,42,74,0.12);
     }
 
     * { margin: 0; padding: 0; box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
 
     body {
       font-family: 'Poppins', sans-serif;
-      background: #e5e7eb;
+      background: var(--white);
       color: var(--text);
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
     }
 
-    /* NAV */
+    img { max-width: 100%; display: block; }
+    a { color: inherit; text-decoration: none; }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 24px;
+    }
+
+    /* ===================== NAVIGATION ===================== */
     .nav {
       position: fixed;
       top: 0; left: 0; right: 0;
-      background: var(--navy);
-      z-index: 100;
+      background: rgba(255,255,255,0.95);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border-light);
+      z-index: 1000;
+      transition: all 0.3s ease;
+    }
+    .nav-inner {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: 12px 24px;
-      box-shadow: 0 2px 12px rgba(0,0,0,0.3);
+      padding: 16px 24px;
+      max-width: 1200px;
+      margin: 0 auto;
     }
-    .nav-brand { color: var(--green); font-weight: 700; font-size: 15px; letter-spacing: 1px; }
-    .nav-controls { display: flex; align-items: center; gap: 10px; }
-    .nav-btn {
-      background: var(--green);
-      color: var(--navy);
-      border: none;
-      padding: 6px 16px;
-      border-radius: 20px;
-      font-family: 'Poppins', sans-serif;
-      font-weight: 600;
-      font-size: 13px;
-      cursor: pointer;
-      transition: opacity 0.2s;
-    }
-    .nav-btn:hover { opacity: 0.85; }
-    .nav-btn.outline {
-      background: transparent;
-      border: 1px solid var(--green);
-      color: var(--green);
-    }
-    .page-indicator { color: #9CA3AF; font-size: 13px; }
-
-    /* PAGES WRAPPER */
-    .pages-wrapper {
-      margin-top: 56px;
+    .nav-brand {
       display: flex;
-      flex-direction: column;
       align-items: center;
-      padding: 32px 16px 64px;
-      gap: 24px;
-    }
-
-    /* SINGLE PAGE */
-    .page {
-      width: 100%;
-      max-width: 794px;
-      min-height: 1123px;
-      background: var(--white);
-      border-radius: 4px;
-      box-shadow: 0 4px 24px rgba(0,0,0,0.12);
-      position: relative;
-      overflow: hidden;
-      display: flex;
-      flex-direction: column;
-    }
-
-    .page-num {
-      position: absolute;
-      bottom: 20px;
-      right: 28px;
-      font-size: 11px;
-      color: var(--gray);
-      font-weight: 500;
-    }
-    .page-brand-foot {
-      position: absolute;
-      bottom: 20px;
-      left: 28px;
-      font-size: 11px;
-      color: var(--gray);
-      font-weight: 500;
-    }
-
-    /* ==================== COVER PAGE ==================== */
-    .cover {
-      background: linear-gradient(145deg, #1B2A4A 0%, #0f1d36 100%);
-      flex-direction: column;
-      justify-content: space-between;
-      padding: 0;
-    }
-    .cover-top-bar {
-      background: var(--green);
-      height: 6px;
-      width: 100%;
-    }
-    .cover-badge {
-      position: absolute;
-      top: 28px;
-      right: 28px;
-      background: var(--green);
-      color: var(--navy);
-      font-weight: 800;
-      font-size: 13px;
-      padding: 6px 18px;
-      border-radius: 20px;
-      letter-spacing: 1px;
-    }
-    .cover-content {
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      padding: 60px 64px;
-    }
-    .cover-label {
-      color: var(--green);
-      font-size: 12px;
-      font-weight: 600;
-      letter-spacing: 3px;
-      text-transform: uppercase;
-      margin-bottom: 24px;
-    }
-    .cover-title {
-      font-size: 46px;
-      font-weight: 800;
-      color: var(--white);
-      line-height: 1.15;
-      margin-bottom: 24px;
-    }
-    .cover-title span { color: var(--green); }
-    .cover-subtitle {
-      font-size: 16px;
-      color: rgba(255,255,255,0.65);
-      line-height: 1.6;
-      max-width: 480px;
-      margin-bottom: 48px;
-    }
-    .cover-tags {
-      display: flex;
       gap: 10px;
-      flex-wrap: wrap;
-    }
-    .cover-tag {
-      border: 1px solid rgba(0,200,150,0.4);
-      color: var(--green);
-      font-size: 12px;
-      padding: 4px 14px;
-      border-radius: 20px;
-    }
-    .cover-illustration {
-      position: absolute;
-      right: 48px;
-      top: 50%;
-      transform: translateY(-50%);
-      width: 240px;
-      opacity: 0.15;
-    }
-    .cover-footer {
-      padding: 28px 64px;
-      border-top: 1px solid rgba(255,255,255,0.1);
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-    .cover-author { color: rgba(255,255,255,0.6); font-size: 13px; }
-    .cover-author strong { color: var(--white); display: block; font-size: 15px; }
-    .cover-web { color: var(--green); font-size: 13px; font-weight: 600; }
-
-    /* COVER GRID DECORATION */
-    .cover-grid {
-      position: absolute;
-      right: 0; top: 0; bottom: 0;
-      width: 45%;
-      background-image:
-        linear-gradient(rgba(0,200,150,0.06) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(0,200,150,0.06) 1px, transparent 1px);
-      background-size: 32px 32px;
-    }
-    .cover-spreadsheet {
-      position: absolute;
-      right: 48px;
-      top: 50%;
-      transform: translateY(-50%);
-    }
-    .ss-table {
-      border-collapse: collapse;
-      opacity: 0.18;
-    }
-    .ss-table th, .ss-table td {
-      border: 1px solid rgba(0,200,150,0.5);
-      padding: 8px 16px;
-      font-size: 12px;
-      color: var(--green);
-      text-align: center;
-    }
-    .ss-table th { background: rgba(0,200,150,0.1); font-weight: 700; }
-
-    /* ==================== TOC PAGE ==================== */
-    .toc-page { background: var(--bg); }
-    .sidebar-accent {
-      position: absolute;
-      left: 0; top: 0; bottom: 0;
-      width: 6px;
-      background: var(--navy);
-    }
-    .page-inner { padding: 60px 64px 60px 80px; flex: 1; }
-    .section-label {
-      font-size: 11px;
-      font-weight: 700;
-      letter-spacing: 3px;
-      text-transform: uppercase;
-      color: var(--green);
-      margin-bottom: 8px;
-    }
-    .page-title {
-      font-size: 34px;
       font-weight: 800;
       color: var(--navy);
-      margin-bottom: 8px;
-      border-bottom: 3px solid var(--green);
-      padding-bottom: 16px;
-      margin-bottom: 40px;
-    }
-    .toc-item {
-      display: flex;
-      align-items: center;
-      padding: 16px 0;
-      border-bottom: 1px dashed var(--border);
-      gap: 20px;
-    }
-    .toc-num {
-      font-size: 28px;
-      font-weight: 800;
-      color: var(--green);
-      min-width: 48px;
-      line-height: 1;
-    }
-    .toc-text { flex: 1; }
-    .toc-text strong { display: block; font-size: 16px; color: var(--navy); font-weight: 700; }
-    .toc-text span { font-size: 13px; color: var(--gray); }
-    .toc-icon { font-size: 22px; }
-
-    /* ==================== AUTHOR PAGE ==================== */
-    .author-page { background: var(--white); }
-    .author-quote {
-      background: var(--green-light);
-      border-left: 4px solid var(--green);
-      padding: 20px 24px;
-      border-radius: 0 8px 8px 0;
-      margin: 32px 0;
       font-size: 16px;
-      font-style: italic;
-      color: var(--navy);
-      font-weight: 600;
-      line-height: 1.6;
-    }
-    .author-avatar {
-      width: 80px;
-      height: 80px;
-      border-radius: 50%;
-      background: linear-gradient(135deg, var(--navy), var(--green));
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 32px;
-      margin-bottom: 16px;
-      border: 3px solid var(--green);
-    }
-    .body-text {
-      font-size: 15px;
-      line-height: 1.8;
-      color: var(--text);
-      margin-bottom: 16px;
-    }
-    .author-sig {
-      margin-top: 32px;
-      font-size: 15px;
-      color: var(--navy);
-    }
-    .author-sig strong { color: var(--green); font-size: 17px; display: block; }
-
-    /* ==================== CHAPTER OPENER ==================== */
-    .chapter-opener { background: var(--navy); }
-    .chapter-left-bar {
-      position: absolute;
-      left: 0; top: 0; bottom: 0;
-      width: 8px;
-      background: var(--green);
-    }
-    .chapter-inner {
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      padding: 80px 80px;
-      position: relative;
-    }
-    .chapter-watermark {
-      position: absolute;
-      right: 48px;
-      bottom: 60px;
-      font-size: 200px;
-      font-weight: 900;
-      color: rgba(255,255,255,0.04);
-      line-height: 1;
-      user-select: none;
-    }
-    .chapter-label {
-      font-size: 12px;
-      font-weight: 700;
-      letter-spacing: 4px;
-      text-transform: uppercase;
-      color: var(--green);
-      margin-bottom: 20px;
-    }
-    .chapter-title {
-      font-size: 52px;
-      font-weight: 800;
-      color: var(--white);
-      margin-bottom: 8px;
-      line-height: 1.1;
-    }
-    .chapter-subtitle {
-      font-size: 20px;
-      color: rgba(255,255,255,0.55);
-      margin-bottom: 40px;
-    }
-    .chapter-tagline {
-      background: rgba(0,200,150,0.12);
-      border: 1px solid rgba(0,200,150,0.3);
-      border-radius: 10px;
-      padding: 20px 24px;
-      color: var(--green);
-      font-size: 16px;
-      font-weight: 600;
-      line-height: 1.6;
-      max-width: 520px;
-      margin-bottom: 32px;
-    }
-    .chapter-desc {
-      font-size: 15px;
-      color: rgba(255,255,255,0.6);
-      line-height: 1.8;
-      max-width: 520px;
-    }
-    .chapter-page-num { color: rgba(255,255,255,0.25) !important; }
-    .chapter-brand-foot { color: rgba(255,255,255,0.25) !important; }
-
-    /* ==================== CONTENT PAGE ==================== */
-    .content-page { background: var(--bg); }
-    .content-header {
-      background: var(--navy);
-      padding: 22px 64px 22px 80px;
-      display: flex;
-      align-items: center;
-      gap: 16px;
-    }
-    .content-header-label {
-      font-size: 13px;
-      font-weight: 700;
-      letter-spacing: 2px;
-      text-transform: uppercase;
-      color: var(--green);
-    }
-    .content-header-title {
-      font-size: 20px;
-      font-weight: 800;
-      color: var(--white);
-    }
-    .content-body { padding: 40px 64px 80px 80px; }
-
-    .section-title {
-      font-size: 13px;
-      font-weight: 700;
-      letter-spacing: 2px;
-      text-transform: uppercase;
-      color: var(--gray);
-      margin-bottom: 10px;
-      margin-top: 28px;
-    }
-    .section-title:first-child { margin-top: 0; }
-
-    .code-box {
-      background: var(--green-light);
-      border: 1px solid var(--green);
-      border-left: 4px solid var(--green);
-      border-radius: 0 8px 8px 0;
-      padding: 14px 20px;
-      font-family: 'Fira Mono', monospace;
-      font-size: 15px;
-      color: #0a6b50;
-      margin-bottom: 10px;
-      word-break: break-all;
-    }
-    .code-label {
-      font-size: 12px;
-      font-weight: 600;
-      color: var(--gray);
-      margin-bottom: 4px;
       letter-spacing: 0.5px;
     }
-    .code-group { margin-bottom: 16px; }
-
-    .syntax-box {
-      background: var(--navy);
-      border-radius: 10px;
-      padding: 18px 22px;
-      font-family: 'Fira Mono', monospace;
-      font-size: 16px;
-      color: var(--green);
-      margin-bottom: 28px;
-      letter-spacing: 0.3px;
-    }
-
-    .tips-box {
-      background: #FFF8E1;
-      border: 1px solid #FFC107;
-      border-left: 4px solid #FFC107;
-      border-radius: 0 8px 8px 0;
-      padding: 16px 20px;
-      margin: 24px 0;
-    }
-    .tips-box .tips-title {
-      font-size: 12px;
-      font-weight: 700;
-      letter-spacing: 1px;
-      text-transform: uppercase;
-      color: #B8860B;
-      margin-bottom: 8px;
-    }
-    .tips-box .tips-code {
-      font-family: 'Fira Mono', monospace;
-      font-size: 13px;
-      color: #7a5c00;
-    }
-    .tips-box .tips-desc {
-      font-size: 13px;
-      color: #7a5c00;
-      margin-top: 6px;
-      line-height: 1.5;
-    }
-
-    .breakdown-box {
-      background: var(--white);
-      border: 1px solid var(--border);
-      border-radius: 10px;
-      padding: 18px 22px;
-      margin-bottom: 24px;
-    }
-    .breakdown-item {
+    .nav-brand-mark {
+      width: 40px; height: 40px;
       display: flex;
-      gap: 12px;
-      padding: 8px 0;
-      border-bottom: 1px solid var(--border);
-      font-size: 14px;
-      align-items: flex-start;
-    }
-    .breakdown-item:last-child { border-bottom: none; }
-    .breakdown-key {
-      font-family: 'Fira Mono', monospace;
-      color: var(--green);
-      font-weight: 600;
-      min-width: 160px;
-      font-size: 13px;
-    }
-    .breakdown-val { color: var(--text); line-height: 1.5; }
-
-    .checklist { list-style: none; margin-top: 8px; }
-    .checklist li {
-      display: flex;
-      align-items: flex-start;
-      gap: 10px;
-      font-size: 14px;
-      color: var(--text);
-      padding: 7px 0;
-      border-bottom: 1px solid var(--border);
-      line-height: 1.5;
-    }
-    .checklist li:last-child { border-bottom: none; }
-    .check-icon { color: var(--green); font-size: 16px; flex-shrink: 0; margin-top: 1px; }
-
-    .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
-
-    /* VISUAL PAGE */
-    .visual-page { background: var(--bg); }
-    .visual-body {
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-      padding-bottom: 48px;
-    }
-    .visual-slot {
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-      padding: 20px 64px 16px 80px;
-      min-height: 0;
-    }
-    .visual-slot-label {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      margin-bottom: 12px;
-    }
-    .visual-slot-num {
-      width: 28px; height: 28px;
-      border-radius: 50%;
-      background: var(--navy);
-      color: var(--white);
-      font-size: 13px;
-      font-weight: 800;
-      display: flex; align-items: center; justify-content: center;
-      flex-shrink: 0;
-    }
-    .visual-slot-num.after { background: var(--green); color: var(--navy); }
-    .visual-slot-info { display: flex; flex-direction: column; }
-    .visual-slot-title { font-size: 15px; font-weight: 700; color: var(--navy); }
-    .visual-slot-desc { font-size: 12px; color: var(--gray); }
-    .visual-img-box {
-      flex: 1;
-      border: 2px dashed #D1D5DB;
-      border-radius: 12px;
-      background: var(--white);
-      display: flex;
-      flex-direction: column;
       align-items: center;
       justify-content: center;
-      gap: 10px;
-      position: relative;
-      overflow: hidden;
-      min-height: 300px;
-      transition: border-color 0.2s;
-    }
-    .visual-img-box:hover { border-color: var(--green); }
-    .visual-img-box img {
-      width: 100%;
-      height: 100%;
-      object-fit: contain;
-      position: absolute;
-      inset: 0;
-    }
-    .visual-img-icon { font-size: 52px; opacity: 0.15; }
-    .visual-img-text { font-size: 14px; color: #9CA3AF; font-weight: 600; }
-    .visual-img-hint {
-      font-size: 11px;
-      color: #C4C9D4;
-      background: var(--bg);
-      padding: 4px 14px;
-      border-radius: 20px;
-      font-family: 'Fira Mono', monospace;
-    }
-    .visual-divider {
-      height: 1px;
-      background: var(--border);
-      margin: 0 64px 0 80px;
       flex-shrink: 0;
+      border-radius: 50%;
+      overflow: hidden;
     }
-
-    /* ==================== CTA PAGE ==================== */
-    .cta-page { background: var(--navy); }
-    .cta-inner {
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-      padding: 60px 64px 80px;
+    .nav-brand-mark img {
+      width: 110%;
+      height: 110%;
+      object-fit: cover;
     }
-    .cta-top-label {
-      font-size: 12px;
-      font-weight: 700;
-      letter-spacing: 3px;
-      color: var(--green);
-      text-transform: uppercase;
-      margin-bottom: 10px;
+    .footer-brand .nav-brand-mark {
+      background: var(--white);
+      padding: 2px;
     }
-    .cta-title {
-      font-size: 34px;
-      font-weight: 800;
-      color: var(--white);
-      line-height: 1.2;
-      margin-bottom: 32px;
-    }
-    .cta-recap {
-      display: grid;
-      grid-template-columns: 1fr 1fr 1fr;
-      gap: 12px;
-      margin-bottom: 40px;
-    }
-    .cta-recap-item {
-      background: rgba(0,200,150,0.1);
-      border: 1px solid rgba(0,200,150,0.25);
-      border-radius: 10px;
-      padding: 14px 16px;
+    .nav-links {
       display: flex;
       align-items: center;
-      gap: 10px;
+      gap: 36px;
+      list-style: none;
     }
-    .cta-recap-icon { font-size: 20px; }
-    .cta-recap-text { font-size: 13px; font-weight: 600; color: var(--white); }
-
-    .cta-divider {
-      height: 1px;
-      background: rgba(255,255,255,0.1);
-      margin-bottom: 36px;
+    .nav-links a {
+      color: var(--text-light);
+      font-size: 14px;
+      font-weight: 500;
+      transition: color 0.2s;
     }
-
-    .cta-card {
-      background: var(--green);
-      border-radius: 16px;
-      padding: 32px;
-      margin-bottom: 28px;
+    .nav-links a:hover { color: var(--navy); }
+    .nav-cta {
+      display: flex;
+      align-items: center;
+      gap: 12px;
     }
-    .cta-card-question {
-      font-size: 13px;
-      font-weight: 700;
-      letter-spacing: 1px;
-      text-transform: uppercase;
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 11px 22px;
+      border-radius: 30px;
+      font-family: 'Poppins', sans-serif;
+      font-weight: 600;
+      font-size: 14px;
+      cursor: pointer;
+      transition: all 0.25s ease;
+      border: none;
+      white-space: nowrap;
+    }
+    .btn-primary {
+      background: var(--teal);
       color: var(--navy);
-      margin-bottom: 8px;
     }
-    .cta-card-title {
+    .btn-primary:hover {
+      background: var(--teal-dark);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(77,201,214,0.3);
+    }
+    .btn-outline {
+      background: transparent;
+      color: var(--navy);
+      border: 1.5px solid var(--border);
+    }
+    .btn-outline:hover {
+      border-color: var(--navy);
+    }
+    .btn-dark {
+      background: var(--navy);
+      color: var(--white);
+    }
+    .btn-dark:hover {
+      background: var(--navy-dark);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(27,42,74,0.25);
+    }
+    .btn-lg {
+      padding: 14px 28px;
+      font-size: 15px;
+    }
+    .mobile-menu-btn {
+      display: none;
+      background: transparent;
+      border: none;
+      cursor: pointer;
+      width: 32px; height: 32px;
+      flex-direction: column;
+      justify-content: center;
+      gap: 5px;
+    }
+    .mobile-menu-btn span {
+      display: block;
+      width: 22px; height: 2px;
+      background: var(--navy);
+      border-radius: 2px;
+    }
+
+    /* ===================== HERO ===================== */
+    .hero {
+      padding: 140px 0 80px;
+      position: relative;
+      overflow: hidden;
+      background: linear-gradient(180deg, var(--bg) 0%, var(--white) 100%);
+    }
+    .hero::before {
+      content: '';
+      position: absolute;
+      top: -200px; right: -200px;
+      width: 600px; height: 600px;
+      background: radial-gradient(circle, rgba(77,201,214,0.08) 0%, transparent 70%);
+      border-radius: 50%;
+      pointer-events: none;
+    }
+    .hero-grid {
+      display: grid;
+      grid-template-columns: 1.1fr 1fr;
+      gap: 64px;
+      align-items: center;
+      position: relative;
+    }
+    .hero-eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--teal-light);
+      color: var(--teal-dark);
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      padding: 6px 14px;
+      border-radius: 20px;
+      margin-bottom: 24px;
+    }
+    .hero-eyebrow::before {
+      content: '';
+      width: 6px; height: 6px;
+      background: var(--teal);
+      border-radius: 50%;
+    }
+    .hero-title {
+      font-size: 54px;
+      font-weight: 800;
+      line-height: 1.1;
+      color: var(--navy);
+      margin-bottom: 24px;
+      letter-spacing: -1px;
+    }
+    .hero-title .highlight {
+      color: var(--teal);
+      position: relative;
+      display: inline-block;
+    }
+    .hero-title .highlight::after {
+      content: '';
+      position: absolute;
+      bottom: 4px; left: 0; right: 0;
+      height: 12px;
+      background: rgba(77,201,214,0.15);
+      z-index: -1;
+      border-radius: 2px;
+    }
+    .hero-subtitle {
+      font-size: 18px;
+      color: var(--text-light);
+      line-height: 1.7;
+      margin-bottom: 36px;
+      max-width: 520px;
+    }
+    .hero-cta {
+      display: flex;
+      gap: 14px;
+      flex-wrap: wrap;
+      margin-bottom: 40px;
+    }
+    .hero-trust {
+      display: flex;
+      gap: 32px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+    .hero-trust-item {
+      display: flex;
+      flex-direction: column;
+    }
+    .hero-trust-num {
       font-size: 22px;
       font-weight: 800;
       color: var(--navy);
-      line-height: 1.3;
-      margin-bottom: 16px;
     }
-    .cta-card-features {
-      list-style: none;
-      margin-bottom: 24px;
+    .hero-trust-num span { color: var(--teal); }
+    .hero-trust-label {
+      font-size: 12px;
+      color: var(--gray);
+      letter-spacing: 0.3px;
     }
-    .cta-card-features li {
-      font-size: 13px;
-      color: var(--navy);
-      padding: 4px 0;
-      display: flex;
-      gap: 8px;
+    .hero-trust-divider {
+      width: 1px;
+      height: 32px;
+      background: var(--border);
     }
-    .cta-card-bottom {
+
+    /* Hero Visual - Mock Dashboard */
+    .hero-visual {
+      position: relative;
+      height: 480px;
+    }
+    .hero-card {
+      position: absolute;
+      background: var(--white);
+      border-radius: 16px;
+      box-shadow: var(--shadow-xl);
+      border: 1px solid var(--border-light);
+      overflow: hidden;
+    }
+    .hero-card-main {
+      top: 20px; left: 0; right: 0;
+      padding: 20px;
+    }
+    .hero-card-header {
       display: flex;
       align-items: center;
       justify-content: space-between;
+      margin-bottom: 16px;
+      padding-bottom: 14px;
+      border-bottom: 1px solid var(--border-light);
     }
-    .cta-price { font-size: 28px; font-weight: 800; color: var(--navy); }
-    .cta-price span { font-size: 14px; font-weight: 500; opacity: 0.7; }
-    .cta-btn-fake {
-      background: var(--navy);
-      color: var(--green);
-      font-weight: 700;
+    .hero-card-title-text {
       font-size: 13px;
-      padding: 12px 24px;
-      border-radius: 30px;
+      font-weight: 700;
+      color: var(--navy);
+    }
+    .hero-card-dots { display: flex; gap: 4px; }
+    .hero-card-dots span {
+      width: 8px; height: 8px;
+      border-radius: 50%;
+      background: var(--border);
+    }
+    .hero-card-dots span:first-child { background: #FF5F57; }
+    .hero-card-dots span:nth-child(2) { background: #FFBD2E; }
+    .hero-card-dots span:nth-child(3) { background: #28C840; }
+
+    .mini-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 11px;
+    }
+    .mini-table th {
+      background: var(--bg-alt);
+      color: var(--navy);
+      padding: 8px 10px;
+      text-align: left;
+      font-weight: 700;
+      font-size: 10px;
       letter-spacing: 0.5px;
+      text-transform: uppercase;
+    }
+    .mini-table td {
+      padding: 9px 10px;
+      border-bottom: 1px solid var(--border-light);
+      color: var(--text-light);
+    }
+    .mini-table tr:last-child td { border-bottom: none; }
+    .status-pill {
+      display: inline-block;
+      padding: 3px 9px;
+      border-radius: 10px;
+      font-size: 10px;
+      font-weight: 600;
+    }
+    .status-pill.green { background: var(--teal-light); color: var(--teal-dark); }
+    .status-pill.red { background: #FEF2F2; color: #DC2626; }
+    .status-pill.yellow { background: #FFF8E1; color: #B8860B; }
+
+    .hero-card-formula {
+      bottom: 60px; left: -30px;
+      padding: 14px 18px;
+      width: 240px;
+      background: var(--navy);
+    }
+    .hero-card-formula .label {
+      font-size: 10px;
+      color: var(--teal);
+      font-weight: 700;
+      letter-spacing: 1px;
+      margin-bottom: 6px;
+    }
+    .hero-card-formula .code {
+      font-family: 'Fira Mono', monospace;
+      font-size: 12px;
+      color: var(--white);
+      line-height: 1.5;
+    }
+    .hero-card-formula .code span { color: var(--teal); }
+
+    .hero-card-stat {
+      bottom: 0; right: -20px;
+      padding: 16px 20px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      min-width: 200px;
+    }
+    .stat-icon {
+      width: 38px; height: 38px;
+      background: var(--teal-light);
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+    }
+    .stat-text { display: flex; flex-direction: column; }
+    .stat-num { font-size: 18px; font-weight: 800; color: var(--navy); }
+    .stat-label { font-size: 11px; color: var(--gray); }
+
+    .hero-bg-shape {
+      position: absolute;
+      z-index: -1;
+    }
+    .hero-bg-shape.dots {
+      bottom: -20px; right: -20px;
+      width: 120px; height: 120px;
+      background-image: radial-gradient(circle, var(--teal) 1.5px, transparent 1.5px);
+      background-size: 16px 16px;
+      opacity: 0.4;
+    }
+    .hero-bg-shape.circle {
+      top: -30px; left: -30px;
+      width: 120px; height: 120px;
+      background: var(--navy);
+      border-radius: 50%;
+      opacity: 0.04;
     }
 
-    .cta-social {
-      display: flex;
+    /* ===================== SECTION COMMON ===================== */
+    .section {
+      padding: 100px 0;
+    }
+    .section.alt-bg {
+      background: var(--bg);
+    }
+    .section-eyebrow {
+      display: inline-block;
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--teal);
+      margin-bottom: 12px;
+    }
+    .section-title {
+      font-size: 40px;
+      font-weight: 800;
+      color: var(--navy);
+      line-height: 1.2;
+      margin-bottom: 16px;
+      letter-spacing: -0.5px;
+    }
+    .section-subtitle {
+      font-size: 17px;
+      color: var(--text-light);
+      line-height: 1.7;
+      max-width: 640px;
+    }
+    .section-head {
+      margin-bottom: 56px;
+    }
+    .section-head.center {
+      text-align: center;
+    }
+    .section-head.center .section-subtitle {
+      margin: 0 auto;
+    }
+
+    /* ===================== SERVICES ===================== */
+    .services-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
       gap: 20px;
+    }
+    .service-card {
+      background: var(--white);
+      border: 1px solid var(--border-light);
+      border-radius: 16px;
+      padding: 32px 26px;
+      transition: all 0.3s ease;
+      position: relative;
+      overflow: hidden;
+    }
+    .service-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 3px;
+      background: var(--teal);
+      transform: scaleX(0);
+      transform-origin: left;
+      transition: transform 0.3s ease;
+    }
+    .service-card:hover {
+      transform: translateY(-6px);
+      box-shadow: var(--shadow-lg);
+      border-color: transparent;
+    }
+    .service-card:hover::before { transform: scaleX(1); }
+    .service-icon {
+      width: 56px; height: 56px;
+      border-radius: 14px;
+      background: linear-gradient(135deg, var(--navy) 0%, #2d4174 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 24px;
+      color: var(--teal);
+    }
+    .service-icon svg { width: 26px; height: 26px; }
+    .service-title {
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--navy);
+      margin-bottom: 10px;
+    }
+    .service-desc {
+      font-size: 14px;
+      color: var(--text-light);
+      line-height: 1.7;
+      margin-bottom: 18px;
+    }
+    .service-link {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--teal-dark);
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: gap 0.2s;
+    }
+    .service-card:hover .service-link { gap: 10px; }
+
+    /* ===================== PRODUCTS ===================== */
+    .products-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 24px;
+    }
+    .product-card {
+      background: var(--white);
+      border-radius: 18px;
+      overflow: hidden;
+      box-shadow: var(--shadow);
+      transition: all 0.3s ease;
+      border: 1px solid var(--border-light);
+      display: flex;
+      flex-direction: column;
+    }
+    .product-card:hover {
+      transform: translateY(-6px);
+      box-shadow: var(--shadow-xl);
+    }
+    .product-image {
+      height: 220px;
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .product-image.gradient-1 {
+      background: linear-gradient(135deg, #1B2D52 0%, #2d4174 100%);
+    }
+    .product-image.gradient-2 {
+      background: linear-gradient(135deg, #4DC9D6 0%, #1F8B98 100%);
+    }
+    .product-image.gradient-3 {
+      background: linear-gradient(135deg, #2d4174 0%, #4DC9D6 100%);
+    }
+    .product-image-deco {
+      position: absolute;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(255,255,255,0.06) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,0.06) 1px, transparent 1px);
+      background-size: 24px 24px;
+    }
+    .product-mockup {
+      position: relative;
+      z-index: 1;
+      width: 80%;
+      max-width: 220px;
+      background: var(--white);
+      border-radius: 8px;
+      padding: 16px;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.25);
+      transform: rotate(-3deg);
+    }
+    .product-mockup-bar {
+      height: 4px;
+      background: var(--border);
+      border-radius: 2px;
+      margin-bottom: 8px;
+    }
+    .product-mockup-bar.short { width: 60%; }
+    .product-mockup-bar.green { background: var(--teal); width: 40%; }
+    .product-mockup-bar.long { width: 90%; }
+
+    .product-badge {
+      position: absolute;
+      top: 16px; left: 16px;
+      background: rgba(255,255,255,0.95);
+      color: var(--navy);
+      font-size: 11px;
+      font-weight: 700;
+      padding: 5px 12px;
+      border-radius: 20px;
+      letter-spacing: 0.5px;
+      z-index: 2;
+    }
+    .product-badge.free { background: var(--teal); color: var(--navy); }
+
+    .product-content {
+      padding: 26px;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+    }
+    .product-category {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      color: var(--teal-dark);
+      margin-bottom: 8px;
+    }
+    .product-title {
+      font-size: 19px;
+      font-weight: 700;
+      color: var(--navy);
+      line-height: 1.3;
+      margin-bottom: 10px;
+    }
+    .product-desc {
+      font-size: 14px;
+      color: var(--text-light);
+      line-height: 1.6;
+      margin-bottom: 18px;
+      flex: 1;
+    }
+    .product-foot {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding-top: 18px;
+      border-top: 1px solid var(--border-light);
+    }
+    .product-price {
+      font-size: 22px;
+      font-weight: 800;
+      color: var(--navy);
+    }
+    .product-price.free { color: var(--teal-dark); }
+    .product-price span {
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--gray);
+    }
+    .product-btn {
+      background: var(--navy);
+      color: var(--white);
+      padding: 9px 18px;
+      border-radius: 24px;
+      font-size: 13px;
+      font-weight: 600;
+      transition: all 0.2s;
+    }
+    .product-btn:hover {
+      background: var(--teal);
+      color: var(--navy);
+    }
+
+    /* ===================== ABOUT ===================== */
+    .about-grid {
+      display: grid;
+      grid-template-columns: 1fr 1.2fr;
+      gap: 64px;
       align-items: center;
     }
-    .cta-social-item { color: rgba(255,255,255,0.45); font-size: 13px; }
-    .cta-social-item span { color: var(--green); font-weight: 600; }
-
-    /* PRINT */
-    @media print {
-      body { background: white; }
-      .nav { display: none; }
-      .pages-wrapper { margin-top: 0; padding: 0; gap: 0; }
-      .page {
-        border-radius: 0;
-        box-shadow: none;
-        max-width: 100%;
-        page-break-after: always;
-        min-height: 100vh;
-      }
+    .about-image-wrap {
+      position: relative;
+    }
+    .about-image {
+      width: 100%;
+      aspect-ratio: 4/5;
+      background: linear-gradient(135deg, var(--navy) 0%, var(--teal) 120%);
+      border-radius: 20px;
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .about-image-placeholder {
+      color: rgba(255,255,255,0.6);
+      font-size: 14px;
+      text-align: center;
+      padding: 20px;
+    }
+    .about-image-placeholder-icon {
+      font-size: 64px;
+      margin-bottom: 12px;
+      opacity: 0.7;
+    }
+    .about-image-deco {
+      position: absolute;
+      bottom: -20px;
+      right: -20px;
+      width: 140px; height: 140px;
+      background-image: radial-gradient(circle, var(--teal) 1.5px, transparent 1.5px);
+      background-size: 14px 14px;
+      opacity: 0.5;
+      z-index: -1;
+    }
+    .about-stat-card {
+      position: absolute;
+      bottom: 24px;
+      left: -24px;
+      background: var(--white);
+      padding: 20px 24px;
+      border-radius: 14px;
+      box-shadow: var(--shadow-lg);
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+    .about-stat-icon {
+      width: 48px; height: 48px;
+      background: var(--teal-light);
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 24px;
+    }
+    .about-stat-num {
+      font-size: 24px;
+      font-weight: 800;
+      color: var(--navy);
+      line-height: 1;
+    }
+    .about-stat-label {
+      font-size: 12px;
+      color: var(--gray);
+      margin-top: 4px;
     }
 
-    @media (max-width: 860px) {
-      .cover-title { font-size: 30px; }
-      .cover-grid { display: none; }
-      .cover-spreadsheet { display: none; }
-      .chapter-title { font-size: 36px; }
-      .chapter-watermark { font-size: 120px; }
-      .page-inner, .content-body, .cta-inner { padding-left: 40px; padding-right: 32px; }
-      .content-header { padding-left: 48px; }
-      .two-col { grid-template-columns: 1fr; }
-      .cta-recap { grid-template-columns: 1fr 1fr; }
+    .about-bullets {
+      list-style: none;
+      margin: 28px 0 32px;
+    }
+    .about-bullets li {
+      display: flex;
+      gap: 14px;
+      padding: 14px 0;
+      border-bottom: 1px solid var(--border-light);
+    }
+    .about-bullets li:last-child { border-bottom: none; }
+    .about-bullet-icon {
+      width: 28px; height: 28px;
+      background: var(--teal-light);
+      color: var(--teal-dark);
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      font-size: 14px;
+      font-weight: 700;
+    }
+    .about-bullet-text strong {
+      display: block;
+      color: var(--navy);
+      font-weight: 700;
+      font-size: 15px;
+      margin-bottom: 2px;
+    }
+    .about-bullet-text span {
+      font-size: 14px;
+      color: var(--text-light);
+      line-height: 1.5;
+    }
+
+    /* ===================== WHY / FEATURES ===================== */
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 32px 40px;
+    }
+    .feature-item {
+      display: flex;
+      gap: 18px;
+    }
+    .feature-num {
+      width: 44px; height: 44px;
+      background: var(--white);
+      border: 2px solid var(--teal);
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 800;
+      color: var(--teal-dark);
+      font-size: 16px;
+      flex-shrink: 0;
+    }
+    .feature-content h4 {
+      font-size: 17px;
+      font-weight: 700;
+      color: var(--navy);
+      margin-bottom: 8px;
+    }
+    .feature-content p {
+      font-size: 14px;
+      color: var(--text-light);
+      line-height: 1.6;
+    }
+
+    /* ===================== TESTIMONIALS ===================== */
+    .testimonials-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 24px;
+    }
+    .testimonial {
+      background: var(--white);
+      border: 1px solid var(--border-light);
+      border-radius: 16px;
+      padding: 28px;
+      transition: all 0.3s ease;
+    }
+    .testimonial:hover {
+      box-shadow: var(--shadow-lg);
+      border-color: transparent;
+    }
+    .testimonial-stars {
+      display: flex;
+      gap: 2px;
+      margin-bottom: 16px;
+      color: #FFC107;
+      font-size: 16px;
+    }
+    .testimonial-quote {
+      font-size: 15px;
+      color: var(--text);
+      line-height: 1.7;
+      margin-bottom: 24px;
+      font-style: italic;
+    }
+    .testimonial-author {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding-top: 18px;
+      border-top: 1px solid var(--border-light);
+    }
+    .testimonial-avatar {
+      width: 48px; height: 48px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--navy), var(--teal));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--white);
+      font-weight: 700;
+      font-size: 16px;
+      flex-shrink: 0;
+    }
+    .testimonial-name {
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--navy);
+    }
+    .testimonial-role {
+      font-size: 12px;
+      color: var(--gray);
+    }
+
+    /* ===================== CTA ===================== */
+    .cta {
+      padding: 80px 0;
+      position: relative;
+    }
+    .cta-box {
+      background: linear-gradient(135deg, var(--navy) 0%, var(--navy-dark) 100%);
+      border-radius: 24px;
+      padding: 64px 56px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+    .cta-box::before {
+      content: '';
+      position: absolute;
+      top: 0; right: 0; bottom: 0;
+      width: 50%;
+      background-image:
+        linear-gradient(rgba(77,201,214,0.06) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(77,201,214,0.06) 1px, transparent 1px);
+      background-size: 32px 32px;
+      pointer-events: none;
+    }
+    .cta-box::after {
+      content: '';
+      position: absolute;
+      bottom: -100px; left: -100px;
+      width: 300px; height: 300px;
+      background: radial-gradient(circle, rgba(77,201,214,0.15) 0%, transparent 70%);
+      border-radius: 50%;
+      pointer-events: none;
+    }
+    .cta-inner {
+      position: relative;
+      z-index: 1;
+      max-width: 620px;
+      margin: 0 auto;
+    }
+    .cta-eyebrow {
+      color: var(--teal);
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      margin-bottom: 16px;
+    }
+    .cta-title {
+      font-size: 38px;
+      font-weight: 800;
+      color: var(--white);
+      line-height: 1.2;
+      margin-bottom: 18px;
+      letter-spacing: -0.5px;
+    }
+    .cta-subtitle {
+      font-size: 16px;
+      color: rgba(255,255,255,0.7);
+      line-height: 1.7;
+      margin-bottom: 32px;
+    }
+    .cta-actions {
+      display: flex;
+      gap: 14px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+    .cta-trust {
+      margin-top: 28px;
+      font-size: 13px;
+      color: rgba(255,255,255,0.5);
+      display: flex;
+      justify-content: center;
+      gap: 24px;
+      flex-wrap: wrap;
+    }
+    .cta-trust-item {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .cta-trust-item::before {
+      content: '✓';
+      color: var(--teal);
+      font-weight: 700;
+    }
+
+    /* ===================== FOOTER ===================== */
+    .footer {
+      background: var(--navy-dark);
+      color: rgba(255,255,255,0.7);
+      padding: 72px 0 32px;
+    }
+    .footer-grid {
+      display: grid;
+      grid-template-columns: 1.5fr 1fr 1fr 1fr;
+      gap: 48px;
+      margin-bottom: 48px;
+    }
+    .footer-brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      color: var(--white);
+      font-weight: 800;
+      font-size: 16px;
+      margin-bottom: 16px;
+    }
+    .footer-desc {
+      font-size: 14px;
+      line-height: 1.7;
+      margin-bottom: 20px;
+      max-width: 320px;
+    }
+    .footer-social {
+      display: flex;
+      gap: 10px;
+    }
+    .footer-social a {
+      width: 36px; height: 36px;
+      background: rgba(255,255,255,0.05);
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: rgba(255,255,255,0.7);
+      transition: all 0.2s;
+    }
+    .footer-social a:hover {
+      background: var(--teal);
+      color: var(--navy);
+    }
+    .footer-social svg { width: 16px; height: 16px; }
+    .footer h5 {
+      color: var(--white);
+      font-size: 14px;
+      font-weight: 700;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      margin-bottom: 18px;
+    }
+    .footer-links {
+      list-style: none;
+    }
+    .footer-links li {
+      margin-bottom: 10px;
+    }
+    .footer-links a {
+      font-size: 14px;
+      color: rgba(255,255,255,0.6);
+      transition: color 0.2s;
+    }
+    .footer-links a:hover { color: var(--teal); }
+    .footer-bottom {
+      border-top: 1px solid rgba(255,255,255,0.08);
+      padding-top: 28px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 13px;
+      color: rgba(255,255,255,0.4);
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+
+    /* ===================== ANIMATIONS ===================== */
+    @keyframes float {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-10px); }
+    }
+    .hero-card-formula {
+      animation: float 4s ease-in-out infinite;
+    }
+    .hero-card-stat {
+      animation: float 4s ease-in-out infinite;
+      animation-delay: 1s;
+    }
+
+    /* ===================== RESPONSIVE ===================== */
+    @media (max-width: 968px) {
+      .nav-links { display: none; }
+      .mobile-menu-btn { display: flex; }
+      .nav-cta .btn:not(.btn-primary) { display: none; }
+      .hero { padding: 110px 0 60px; }
+      .hero-grid { grid-template-columns: 1fr; gap: 48px; }
+      .hero-title { font-size: 38px; }
+      .hero-subtitle { font-size: 16px; }
+      .hero-visual { height: 380px; }
+      .hero-card-formula { left: 0; }
+      .hero-card-stat { right: 0; }
+      .section { padding: 70px 0; }
+      .section-title { font-size: 30px; }
+      .services-grid { grid-template-columns: repeat(2, 1fr); }
+      .products-grid { grid-template-columns: 1fr; }
+      .about-grid { grid-template-columns: 1fr; gap: 40px; }
+      .about-stat-card { left: 50%; transform: translateX(-50%); bottom: -30px; }
+      .features-grid { grid-template-columns: 1fr; }
+      .testimonials-grid { grid-template-columns: 1fr; }
+      .cta-box { padding: 48px 28px; }
+      .cta-title { font-size: 28px; }
+      .footer-grid { grid-template-columns: 1fr 1fr; }
+      .footer-bottom { flex-direction: column; text-align: center; }
+    }
+    @media (max-width: 560px) {
+      .services-grid { grid-template-columns: 1fr; }
+      .footer-grid { grid-template-columns: 1fr; }
+      .hero-trust { gap: 20px; }
+      .hero-trust-divider { display: none; }
+      .section-title { font-size: 26px; }
     }
   </style>
 </head>
 <body>
 
-<!-- NAV -->
-<nav class="nav">
-  <span class="nav-brand">CYBERNOR DIGITAL</span>
-  <div class="nav-controls">
-    <span class="page-indicator">Web Guide Percuma — 5 Formula Google Sheets</span>
-    <button class="nav-btn outline" onclick="window.print()">Cetak / Save PDF</button>
-  </div>
-</nav>
-
-<div class="pages-wrapper">
-
-  <!-- ==================== PAGE 1: COVER ==================== -->
-  <div class="page cover">
-    <div class="cover-top-bar"></div>
-    <div class="cover-badge">✦ PERCUMA</div>
-    <div class="cover-grid"></div>
-    <div class="cover-spreadsheet">
-      <table class="ss-table">
-        <tr><th>Nama</th><th>Markah</th><th>Status</th></tr>
-        <tr><td>Ahmad</td><td>85</td><td>Lulus</td></tr>
-        <tr><td>Siti</td><td>42</td><td>Gagal</td></tr>
-        <tr><td>Razif</td><td>91</td><td>Lulus</td></tr>
-        <tr><td>Farah</td><td>37</td><td>Gagal</td></tr>
-        <tr><td>Hafiz</td><td>78</td><td>Lulus</td></tr>
-      </table>
-    </div>
-    <div class="cover-content">
-      <div class="cover-label">Panduan Percuma · CyberNor Digital</div>
-      <h1 class="cover-title">5 Formula Google Sheets<br/>Yang <span>Jimatkan</span><br/>Masa Kerja Anda</h1>
-      <p class="cover-subtitle">Panduan praktikal untuk cikgu, admin, HR & pemilik bisnes — tanpa perlu latar belakang IT</p>
-      <div class="cover-tags">
-        <span class="cover-tag">🧑‍🏫 Cikgu</span>
-        <span class="cover-tag">📋 Admin</span>
-        <span class="cover-tag">👥 HR</span>
-        <span class="cover-tag">🏪 SME</span>
-      </div>
-    </div>
-    <div class="cover-footer">
-      <div class="cover-author">
-        <strong>Nor Mohamad Naim</strong>
-        Pengasas, CyberNor Digital
-      </div>
-      <div class="cover-web">cybernor.digital</div>
-    </div>
-  </div>
-
-  <!-- ==================== PAGE 2: TOC ==================== -->
-  <div class="page toc-page">
-    <div class="sidebar-accent"></div>
-    <div class="page-inner">
-      <div class="section-label">Kandungan Web Guide</div>
-      <h2 class="page-title">Isi Kandungan</h2>
-
-      <div class="toc-item">
-        <div class="toc-num">01</div>
-        <div class="toc-text">
-          <strong>Formula IF</strong>
-          <span>Biar Sheets Yang Buat Keputusan Untuk Anda</span>
-        </div>
-        <div class="toc-icon">⚡</div>
-      </div>
-      <div class="toc-item">
-        <div class="toc-num">02</div>
-        <div class="toc-text">
-          <strong>Formula COUNTIF</strong>
-          <span>Kira Tanpa Penat, Automatik & Tepat</span>
-        </div>
-        <div class="toc-icon">🔢</div>
-      </div>
-      <div class="toc-item">
-        <div class="toc-num">03</div>
-        <div class="toc-text">
-          <strong>Formula SUMIF</strong>
-          <span>Jumlah Yang Tepat Tanpa Kira Manual</span>
-        </div>
-        <div class="toc-icon">➕</div>
-      </div>
-      <div class="toc-item">
-        <div class="toc-num">04</div>
-        <div class="toc-text">
-          <strong>Formula VLOOKUP</strong>
-          <span>Cari Data Dari Mana-Mana, Sekelip Mata</span>
-        </div>
-        <div class="toc-icon">🔍</div>
-      </div>
-      <div class="toc-item">
-        <div class="toc-num">05</div>
-        <div class="toc-text">
-          <strong>Formula FILTER</strong>
-          <span>Extract Data Automatik, Real-Time</span>
-        </div>
-        <div class="toc-icon">🎯</div>
-      </div>
-      <div class="toc-item" style="border-bottom:none;">
-        <div class="toc-num" style="color:var(--navy);">→</div>
-        <div class="toc-text">
-          <strong>Langkah Seterusnya</strong>
-          <span>Cara Nak Belajar Lebih Lanjut & Course Berkaitan</span>
-        </div>
-        <div class="toc-icon">🚀</div>
-      </div>
-    </div>
-    <span class="page-brand-foot">cybernor.digital</span>
-    <span class="page-num">2</span>
-  </div>
-
-  <!-- ==================== PAGE 3: AUTHOR ==================== -->
-  <div class="page author-page">
-    <div class="sidebar-accent"></div>
-    <div class="page-inner">
-      <div class="author-avatar">👋</div>
-      <div class="section-label">Dari Penulis</div>
-      <h2 class="page-title">Salam Dari Penulis</h2>
-
-      <p class="body-text">Assalamualaikum dan salam sejahtera. Terima kasih kerana memuat turun Web Guide ini. Saya harap ia sampai ke tangan mereka yang betul-betul memerlukannya.</p>
-
-      <p class="body-text">Saya menulis Web Guide ini kerana saya melihat satu masalah yang sama berulang-ulang — ramai orang menghabiskan masa berjam-jam melakukan kerja yang sepatutnya boleh siap dalam beberapa minit sahaja. Copy paste data satu-satu. Mengira markah secara manual. Menyemak kehadiran baris demi baris.</p>
-
-      <div class="author-quote">
-        "Masalahnya bukan orang tu malas atau lambat. Masalahnya — mereka tak tahu tools yang betul."
-      </div>
-
-      <p class="body-text">Google Sheets bukan sekadar Excel versi online. Ia mempunyai formula dan fungsi yang boleh mengautomate hampir semua kerja repetitif anda. Dan anda tidak perlu menjadi programmer untuk menggunakannya.</p>
-
-      <p class="body-text">Dalam Web Guide ini, saya memilih 5 formula yang paling high-impact. Paling kerap digunakan. Paling mudah dipelajari. Dan paling besar kesannya kepada produktiviti harian anda.</p>
-
-      <div class="author-sig">
-        Dengan harapan ia membantu,<br/>
-        <strong>Nor Mohamad Naim</strong>
-        Pengasas, CyberNor Digital
-      </div>
-    </div>
-    <span class="page-brand-foot">cybernor.digital</span>
-    <span class="page-num">3</span>
-  </div>
-
-  <!-- ==================== PAGE 4: FORMULA 1 OPENER ==================== -->
-  <div class="page chapter-opener">
-    <div class="chapter-left-bar"></div>
-    <div class="chapter-inner">
-      <div class="chapter-watermark">01</div>
-      <div class="chapter-label">Formula Pertama</div>
-      <h2 class="chapter-title">Formula IF</h2>
-      <div class="chapter-subtitle">Biar Sheets Yang Buat Keputusan</div>
-      <div class="chapter-tagline">
-        "Kalau ini betul → buat ini.<br/>Kalau tidak → buat itu."
-      </div>
-      <p class="chapter-desc">IF adalah formula yang membuat keputusan automatik berdasarkan syarat yang anda tetapkan. Anda tidak perlu menyemak data satu-satu atau mengira secara manual lagi. Satu formula, semua keputusan keluar sekaligus.</p>
-    </div>
-    <span class="page-brand-foot chapter-brand-foot">cybernor.digital</span>
-    <span class="page-num chapter-page-num">4</span>
-  </div>
-
-  <!-- ==================== PAGE 5: FORMULA 1 CONTENT ==================== -->
-  <div class="page content-page">
-    <div class="sidebar-accent"></div>
-    <div class="content-header">
-      <div>
-        <div class="content-header-label">Formula 01</div>
-        <div class="content-header-title">IF — Keputusan Automatik</div>
-      </div>
-    </div>
-    <div class="content-body">
-      <div class="section-title">Syntax</div>
-      <div class="syntax-box">=IF( syarat, nilai_jika_betul, nilai_jika_salah )</div>
-
-      <div class="section-title">Contoh Penggunaan</div>
-      <div class="two-col">
-        <div>
-          <div class="code-group">
-            <div class="code-label">① Keputusan Peperiksaan</div>
-            <div class="code-box">=IF(B2&gt;=50, "Lulus", "Gagal")</div>
-          </div>
-          <div class="code-group">
-            <div class="code-label">② Status Payment</div>
-            <div class="code-box">=IF(C2="Paid", "Selesai", "Belum Bayar")</div>
-          </div>
-        </div>
-        <div>
-          <div class="code-group">
-            <div class="code-label">③ Amaran Stok Rendah</div>
-            <div class="code-box">=IF(D2&lt;10, "Perlu Restock", "Stok Cukup")</div>
-          </div>
-          <div class="code-group">
-            <div class="code-label">④ Kehadiran Cukup</div>
-            <div class="code-box">=IF(E2&gt;=80, "Layak", "Tidak Layak")</div>
-          </div>
-        </div>
-      </div>
-
-      <div class="tips-box">
-        <div class="tips-title">💡 Tips Power — Gabung Dua Syarat</div>
-        <div class="tips-code">=IF(AND(B2&gt;=50, C2="Hadir"), "Layak", "Tidak Layak")</div>
-        <div class="tips-desc">Pelajar kena markah 50 ke atas DAN hadir untuk dianggap layak.</div>
-      </div>
-
-      <div class="section-title">Bila Nak Guna IF</div>
-      <ul class="checklist">
-        <li><span class="check-icon">✅</span> Tentukan lulus atau gagal berdasarkan markah</li>
-        <li><span class="check-icon">✅</span> Check status payment — dah bayar atau belum</li>
-        <li><span class="check-icon">✅</span> Flag stok yang perlu restock</li>
-        <li><span class="check-icon">✅</span> Categorize data secara automatik mengikut syarat</li>
+  <!-- ===================== NAVIGATION ===================== -->
+  <nav class="nav">
+    <div class="nav-inner">
+      <a href="#" class="nav-brand">
+        <span class="nav-brand-mark"><img src="logo2.png" alt="CyberNor Digital Logo" /></span>
+        <span>CYBERNOR DIGITAL</span>
+      </a>
+      <ul class="nav-links">
+        <li><a href="#servis">Servis</a></li>
+        <li><a href="#produk">Produk</a></li>
+        <li><a href="#tentang">Tentang</a></li>
+        <li><a href="#testimoni">Testimoni</a></li>
+        <li><a href="#hubungi">Hubungi</a></li>
       </ul>
-    </div>
-    <span class="page-brand-foot">cybernor.digital</span>
-    <span class="page-num">5</span>
-  </div>
-
-  <!-- VISUAL PAGE: FORMULA IF -->
-  <div class="page visual-page">
-    <div class="sidebar-accent"></div>
-    <div class="content-header">
-      <div>
-        <div class="content-header-label">Contoh Visual · Formula IF</div>
-        <div class="content-header-title">Data Asal vs Selepas Menggunakan IF</div>
+      <div class="nav-cta">
+        <a href="#hubungi" class="btn btn-outline">Hubungi Kami</a>
+        <a href="panduan-google-sheets.html" class="btn btn-primary">Free Guide →</a>
+        <button class="mobile-menu-btn" aria-label="Menu">
+          <span></span><span></span><span></span>
+        </button>
       </div>
     </div>
-    <div class="visual-body">
-      <div class="visual-slot">
-        <div class="visual-slot-label">
-          <div class="visual-slot-num">1</div>
-          <div class="visual-slot-info">
-            <span class="visual-slot-title">Data Asal</span>
-            <span class="visual-slot-desc">Sebelum formula IF digunakan — tiada kolum keputusan</span>
+  </nav>
+
+  <!-- ===================== HERO ===================== -->
+  <section class="hero">
+    <div class="container">
+      <div class="hero-grid">
+        <div class="hero-text">
+          <div class="hero-eyebrow">Solusi Digital Untuk Anda</div>
+          <h1 class="hero-title">
+            Automate Kerja Harian Anda,<br/>
+            Tanpa Perlu Jadi <span class="highlight">Programmer.</span>
+          </h1>
+          <p class="hero-subtitle">
+            CyberNor Digital bantu cikgu, admin, HR & pemilik bisnes
+            transform cara kerja menggunakan Google Sheets, Apps Script,
+            automasi dan solusi data — semua dalam bahasa yang anda faham.
+          </p>
+          <div class="hero-cta">
+            <a href="#produk" class="btn btn-dark btn-lg">Terokai Produk →</a>
+            <a href="panduan-google-sheets.html" class="btn btn-outline btn-lg">Download Free Guide</a>
+          </div>
+          <div class="hero-trust">
+            <div class="hero-trust-item">
+              <span class="hero-trust-num"><span>2,500</span>+</span>
+              <span class="hero-trust-label">Pengguna Aktif</span>
+            </div>
+            <div class="hero-trust-divider"></div>
+            <div class="hero-trust-item">
+              <span class="hero-trust-num"><span>15</span>+</span>
+              <span class="hero-trust-label">Produk Digital</span>
+            </div>
+            <div class="hero-trust-divider"></div>
+            <div class="hero-trust-item">
+              <span class="hero-trust-num"><span>4.9</span>/5.0</span>
+              <span class="hero-trust-label">Rating Pengguna</span>
+            </div>
           </div>
         </div>
-        <div class="visual-img-box">
-          <!-- TUKAR GAMBAR: ganti baris di bawah dengan <img src="images/if-sebelum.png" alt="Data Asal IF" /> -->
-          <img src="images/1. if-sebelum.png" alt="Data Asal IF" />
-        </div>
-      </div>
-      <div class="visual-divider"></div>
-      <div class="visual-slot">
-        <div class="visual-slot-label">
-          <div class="visual-slot-num after">2</div>
-          <div class="visual-slot-info">
-            <span class="visual-slot-title">Selepas Menggunakan Formula IF</span>
-            <span class="visual-slot-desc">Kolum status Lulus / Gagal muncul automatik dalam sekelip mata</span>
+
+        <div class="hero-visual">
+          <div class="hero-bg-shape circle"></div>
+          <div class="hero-bg-shape dots"></div>
+
+          <div class="hero-card hero-card-main">
+            <div class="hero-card-header">
+              <div class="hero-card-title-text">📊 Sales Dashboard — Mei 2026</div>
+              <div class="hero-card-dots"><span></span><span></span><span></span></div>
+            </div>
+            <table class="mini-table">
+              <thead>
+                <tr><th>Nama</th><th>Sales</th><th>Status</th></tr>
+              </thead>
+              <tbody>
+                <tr><td>Ahmad Razif</td><td>RM 12,450</td><td><span class="status-pill green">Top</span></td></tr>
+                <tr><td>Siti Hafsah</td><td>RM 8,920</td><td><span class="status-pill green">Good</span></td></tr>
+                <tr><td>Farah Diana</td><td>RM 5,210</td><td><span class="status-pill yellow">OK</span></td></tr>
+                <tr><td>Hafiz Hakim</td><td>RM 2,100</td><td><span class="status-pill red">Low</span></td></tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div class="hero-card hero-card-formula">
+            <div class="label">FORMULA AUTOMATIK</div>
+            <div class="code">=IF(B2&gt;10000,<br/>&nbsp;&nbsp;<span>"Top"</span>, <span>"Good"</span>)</div>
+          </div>
+
+          <div class="hero-card hero-card-stat">
+            <div class="stat-icon">⚡</div>
+            <div class="stat-text">
+              <span class="stat-num">85% lagi pantas</span>
+              <span class="stat-label">vs kerja manual</span>
+            </div>
           </div>
         </div>
-        <div class="visual-img-box">
-          <!-- TUKAR GAMBAR: ganti baris di bawah dengan <img src="images/if-selepas.png" alt="Selepas IF" /> -->
-          <img src="images/1. if-selepas.png" alt="Data Selepas IF" />
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== SERVICES ===================== -->
+  <section class="section" id="servis">
+    <div class="container">
+      <div class="section-head center">
+        <span class="section-eyebrow">Apa Yang Kami Tawarkan</span>
+        <h2 class="section-title">Servis Yang Membantu Anda Bekerja Lebih Pantas</h2>
+        <p class="section-subtitle">
+          Empat tunjang utama servis kami — direka untuk membantu individu dan organisasi
+          memanfaatkan teknologi digital tanpa kerumitan teknikal.
+        </p>
+      </div>
+
+      <div class="services-grid">
+        <div class="service-card">
+          <div class="service-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M22 10v6M2 10l10-5 10 5-10 5z"/>
+              <path d="M6 12v5c3 3 9 3 12 0v-5"/>
+            </svg>
+          </div>
+          <h3 class="service-title">Digital Education</h3>
+          <p class="service-desc">Course, ebook & panduan praktikal dalam bahasa Melayu — dari Google Sheets hingga automasi lanjutan.</p>
+          <a href="#produk" class="service-link">Lihat Course →</a>
+        </div>
+
+        <div class="service-card">
+          <div class="service-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>
+            </svg>
+          </div>
+          <h3 class="service-title">Automasi & Apps Script</h3>
+          <p class="service-desc">Kami bangunkan automasi custom untuk Google Workspace anda — email auto, PDF auto, trigger automatik.</p>
+          <a href="#hubungi" class="service-link">Mula Konsultasi →</a>
+        </div>
+
+        <div class="service-card">
+          <div class="service-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="18" y1="20" x2="18" y2="10"/>
+              <line x1="12" y1="20" x2="12" y2="4"/>
+              <line x1="6" y1="20" x2="6" y2="14"/>
+              <line x1="3" y1="20" x2="21" y2="20"/>
+            </svg>
+          </div>
+          <h3 class="service-title">Data & Dashboard</h3>
+          <p class="service-desc">Bina dashboard real-time, laporan automatik dan sistem tracking — semua dalam Google Sheets.</p>
+          <a href="#hubungi" class="service-link">Tempah Servis →</a>
+        </div>
+
+        <div class="service-card">
+          <div class="service-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/>
+            </svg>
+          </div>
+          <h3 class="service-title">Custom Solutions</h3>
+          <p class="service-desc">Ada idea atau masalah tertentu? Kami bina solusi digital tailored mengikut keperluan spesifik anda.</p>
+          <a href="#hubungi" class="service-link">Bincang Idea →</a>
         </div>
       </div>
     </div>
-    <span class="page-brand-foot">cybernor.digital</span>
-    <span class="page-num">6</span>
-  </div>
+  </section>
 
-  <!-- ==================== PAGE 6: FORMULA 2 OPENER ==================== -->
-  <div class="page chapter-opener">
-    <div class="chapter-left-bar"></div>
-    <div class="chapter-inner">
-      <div class="chapter-watermark">02</div>
-      <div class="chapter-label">Formula Kedua</div>
-      <h2 class="chapter-title">Formula COUNTIF</h2>
-      <div class="chapter-subtitle">Kira Tanpa Penat</div>
-      <div class="chapter-tagline">
-        "Kira berapa kali sesuatu nilai muncul —<br/>berdasarkan syarat yang anda tetapkan."
+  <!-- ===================== PRODUCTS ===================== -->
+  <section class="section alt-bg" id="produk">
+    <div class="container">
+      <div class="section-head center">
+        <span class="section-eyebrow">Produk Pilihan</span>
+        <h2 class="section-title">Produk Digital Yang Sedia Untuk Anda</h2>
+        <p class="section-subtitle">
+          Dari panduan percuma hingga course premium — pilih yang sesuai dengan tahap dan keperluan anda hari ini.
+        </p>
       </div>
-      <p class="chapter-desc">COUNTIF mengira data secara automatik. Tidak perlu scroll panjang, highlight secara manual, atau mengira satu-satu. Satu formula, jawapan terus keluar. Sama ada untuk mengira kehadiran, status bayaran, atau kategori produk — COUNTIF boleh melakukan semua itu.</p>
-    </div>
-    <span class="page-brand-foot chapter-brand-foot">cybernor.digital</span>
-    <span class="page-num chapter-page-num">6</span>
-  </div>
 
-  <!-- ==================== PAGE 7: FORMULA 2 CONTENT ==================== -->
-  <div class="page content-page">
-    <div class="sidebar-accent"></div>
-    <div class="content-header">
-      <div>
-        <div class="content-header-label">Formula 02</div>
-        <div class="content-header-title">COUNTIF — Kira Berdasarkan Syarat</div>
+      <div class="products-grid">
+        <!-- Product 1: Free Ebook -->
+        <div class="product-card">
+          <div class="product-image gradient-1">
+            <div class="product-image-deco"></div>
+            <div class="product-badge free">PERCUMA</div>
+            <div class="product-mockup">
+              <div class="product-mockup-bar long"></div>
+              <div class="product-mockup-bar green"></div>
+              <div class="product-mockup-bar short"></div>
+              <div class="product-mockup-bar"></div>
+              <div class="product-mockup-bar long"></div>
+            </div>
+          </div>
+          <div class="product-content">
+            <span class="product-category">📘 Web Guide · Percuma</span>
+            <h3 class="product-title">5 Formula Google Sheets Yang Jimatkan Masa</h3>
+            <p class="product-desc">Panduan praktikal IF, COUNTIF, SUMIF, VLOOKUP & FILTER — dengan contoh visual sebelum/selepas.</p>
+            <div class="product-foot">
+              <div class="product-price free">FREE</div>
+              <a href="panduan-google-sheets.html" class="product-btn">Baca Sekarang</a>
+            </div>
+          </div>
+        </div>
+
+        <!-- Product 2: Apps Script Course -->
+        <div class="product-card">
+          <div class="product-image gradient-2">
+            <div class="product-image-deco"></div>
+            <div class="product-badge">BESTSELLER</div>
+            <div class="product-mockup">
+              <div class="product-mockup-bar long"></div>
+              <div class="product-mockup-bar short"></div>
+              <div class="product-mockup-bar green"></div>
+              <div class="product-mockup-bar long"></div>
+              <div class="product-mockup-bar"></div>
+              <div class="product-mockup-bar short"></div>
+            </div>
+          </div>
+          <div class="product-content">
+            <span class="product-category">🎓 Online Course</span>
+            <h3 class="product-title">Apps Script Untuk Beginner — Automate Kerja</h3>
+            <p class="product-desc">Belajar Apps Script dari zero tanpa background coding. Trigger automatik, auto email, generate PDF.</p>
+            <div class="product-foot">
+              <div class="product-price">RM67 <span>sahaja</span></div>
+              <a href="#" class="product-btn">Daftar →</a>
+            </div>
+          </div>
+        </div>
+
+        <!-- Product 3: Templates -->
+        <div class="product-card">
+          <div class="product-image gradient-3">
+            <div class="product-image-deco"></div>
+            <div class="product-badge">BARU</div>
+            <div class="product-mockup">
+              <div class="product-mockup-bar long"></div>
+              <div class="product-mockup-bar"></div>
+              <div class="product-mockup-bar green"></div>
+              <div class="product-mockup-bar short"></div>
+              <div class="product-mockup-bar long"></div>
+              <div class="product-mockup-bar"></div>
+            </div>
+          </div>
+          <div class="product-content">
+            <span class="product-category">📋 Template Pack</span>
+            <h3 class="product-title">Premium Template Pack — 10 Template Siap</h3>
+            <p class="product-desc">Template attendance, sales tracker, invoice, budget planner dan banyak lagi — siap pakai.</p>
+            <div class="product-foot">
+              <div class="product-price">RM47 <span>/ pack</span></div>
+              <a href="#" class="product-btn">Beli Pack</a>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
-    <div class="content-body">
-      <div class="section-title">Syntax</div>
-      <div class="syntax-box">=COUNTIF( range, syarat )</div>
+  </section>
 
-      <div class="section-title">Contoh Penggunaan</div>
-      <div class="two-col">
+  <!-- ===================== ABOUT ===================== -->
+  <section class="section" id="tentang">
+    <div class="container">
+      <div class="about-grid">
+        <div class="about-image-wrap">
+          <div class="about-image">
+            <!-- TUKAR GAMBAR: ganti div di bawah dengan <img src="images/founder.jpg" alt="Nor Mohamad Naim" style="width:100%; height:100%; object-fit:cover;" /> -->
+            <div class="about-image-placeholder">
+              <div class="about-image-placeholder-icon">👤</div>
+              <div>Gambar Pengasas<br/><small style="opacity:0.7">(tukar dengan gambar sebenar)</small></div>
+            </div>
+          </div>
+          <div class="about-image-deco"></div>
+          <div class="about-stat-card">
+            <div class="about-stat-icon">🏆</div>
+            <div>
+              <div class="about-stat-num">5+ Tahun</div>
+              <div class="about-stat-label">Pengalaman Digital</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="about-text">
+          <span class="section-eyebrow">Tentang CyberNor</span>
+          <h2 class="section-title">Misi Kami: Bantu Anda Bekerja Lebih Bijak, Bukan Lebih Penat</h2>
+          <p class="section-subtitle" style="margin-bottom: 20px;">
+            CyberNor Digital ditubuhkan kerana kami percaya — ramai orang habiskan masa
+            berjam-jam buat kerja yang sepatutnya boleh siap dalam beberapa minit sahaja.
+            Masalahnya bukan kerana mereka lambat. Mereka cuma tak tahu tools yang betul.
+          </p>
+
+          <ul class="about-bullets">
+            <li>
+              <div class="about-bullet-icon">✓</div>
+              <div class="about-bullet-text">
+                <strong>Bahasa Yang Anda Faham</strong>
+                <span>Semua kandungan dalam Bahasa Melayu — mudah ikut walaupun tiada background IT.</span>
+              </div>
+            </li>
+            <li>
+              <div class="about-bullet-icon">✓</div>
+              <div class="about-bullet-text">
+                <strong>Pendekatan Praktikal</strong>
+                <span>Setiap pelajaran ada contoh real-world yang anda boleh terus guna esok di pejabat atau sekolah.</span>
+              </div>
+            </li>
+            <li>
+              <div class="about-bullet-icon">✓</div>
+              <div class="about-bullet-text">
+                <strong>Fokus Pada Hasil</strong>
+                <span>Bukan teori panjang — kami tunjuk cara terus dapat outcome yang anda mahukan.</span>
+              </div>
+            </li>
+          </ul>
+
+          <a href="#hubungi" class="btn btn-dark btn-lg">Mula Bersama Kami →</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== WHY / FEATURES ===================== -->
+  <section class="section alt-bg">
+    <div class="container">
+      <div class="section-head center">
+        <span class="section-eyebrow">Kenapa Pilih CyberNor</span>
+        <h2 class="section-title">Apa Yang Membezakan Kami</h2>
+        <p class="section-subtitle">Enam sebab mengapa ribuan cikgu, admin dan pemilik bisnes memilih kami untuk belajar dan automate kerja mereka.</p>
+      </div>
+
+      <div class="features-grid">
+        <div class="feature-item">
+          <div class="feature-num">01</div>
+          <div class="feature-content">
+            <h4>Tiada Jargon Teknikal</h4>
+            <p>Kami terangkan konsep teknikal dengan bahasa harian — anda tak perlu kamus pun untuk faham.</p>
+          </div>
+        </div>
+        <div class="feature-item">
+          <div class="feature-num">02</div>
+          <div class="feature-content">
+            <h4>Real Project, Real Result</h4>
+            <p>Setiap course datang dengan project sebenar yang boleh anda terus guna dalam kerja harian.</p>
+          </div>
+        </div>
+        <div class="feature-item">
+          <div class="feature-num">03</div>
+          <div class="feature-content">
+            <h4>Support Komuniti Aktif</h4>
+            <p>Group eksklusif untuk pelajar — tanya soalan, kongsi project, dapat feedback dari mentor.</p>
+          </div>
+        </div>
+        <div class="feature-item">
+          <div class="feature-num">04</div>
+          <div class="feature-content">
+            <h4>Update Sepanjang Hayat</h4>
+            <p>Beli sekali, dapat update selamanya. Semua tambahan content baru anda akan terima percuma.</p>
+          </div>
+        </div>
+        <div class="feature-item">
+          <div class="feature-num">05</div>
+          <div class="feature-content">
+            <h4>Tested Pada Konteks Tempatan</h4>
+            <p>Contoh yang kami guna adalah konteks Malaysia — sekolah, syarikat tempatan, kedai SME.</p>
+          </div>
+        </div>
+        <div class="feature-item">
+          <div class="feature-num">06</div>
+          <div class="feature-content">
+            <h4>Harga Berpatutan</h4>
+            <p>Kami caj setakat yang patut — supaya lebih ramai orang boleh akses pengetahuan ini.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== TESTIMONIALS ===================== -->
+  <section class="section" id="testimoni">
+    <div class="container">
+      <div class="section-head center">
+        <span class="section-eyebrow">Apa Kata Pelanggan</span>
+        <h2 class="section-title">Cerita Sebenar Dari Pengguna Kami</h2>
+      </div>
+
+      <div class="testimonials-grid">
+        <div class="testimonial">
+          <div class="testimonial-stars">★★★★★</div>
+          <p class="testimonial-quote">"Saya cikgu Matematik. Dulu saya guna 2-3 jam setiap bulan untuk update markah pelajar. Lepas belajar formula CyberNor, semua siap dalam 10 minit. Game changer betul."</p>
+          <div class="testimonial-author">
+            <div class="testimonial-avatar">NS</div>
+            <div>
+              <div class="testimonial-name">Cikgu Nurul Syazwani</div>
+              <div class="testimonial-role">SMK Taman Universiti, Johor</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="testimonial">
+          <div class="testimonial-stars">★★★★★</div>
+          <p class="testimonial-quote">"Course Apps Script ni betul-betul bernilai. Saya berjaya automate invoice generation untuk kedai online saya. Dari 30 minit per hari, sekarang automatik je."</p>
+          <div class="testimonial-author">
+            <div class="testimonial-avatar">FR</div>
+            <div>
+              <div class="testimonial-name">Faizal Ramli</div>
+              <div class="testimonial-role">SME Owner, Selangor</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="testimonial">
+          <div class="testimonial-stars">★★★★★</div>
+          <p class="testimonial-quote">"Sebagai HR di syarikat 200 orang, dashboard yang CyberNor bina untuk kami jimatkan masa report bulanan yang dulunya ambil 2 hari. Highly recommended!"</p>
+          <div class="testimonial-author">
+            <div class="testimonial-avatar">SH</div>
+            <div>
+              <div class="testimonial-name">Siti Hajar Abdullah</div>
+              <div class="testimonial-role">HR Manager, KL</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== CTA ===================== -->
+  <section class="cta" id="hubungi">
+    <div class="container">
+      <div class="cta-box">
+        <div class="cta-inner">
+          <div class="cta-eyebrow">✦ Mulakan Hari Ini</div>
+          <h2 class="cta-title">Sedia Untuk Transform Cara Anda Bekerja?</h2>
+          <p class="cta-subtitle">
+            Mulakan dengan download Web Guide percuma kami, atau hubungi terus untuk
+            konsultasi servis custom. Kami sedia bantu anda.
+          </p>
+          <div class="cta-actions">
+            <a href="panduan-google-sheets.html" class="btn btn-primary btn-lg">Download Free Guide →</a>
+            <a href="https://wa.me/60123456789" class="btn btn-outline btn-lg" style="color:#fff; border-color:rgba(255,255,255,0.3);">💬 WhatsApp Kami</a>
+          </div>
+          <div class="cta-trust">
+            <span class="cta-trust-item">100% Bahasa Melayu</span>
+            <span class="cta-trust-item">Sokongan Pantas</span>
+            <span class="cta-trust-item">Refund Dijamin</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== FOOTER ===================== -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-grid">
         <div>
-          <div class="code-group">
-            <div class="code-label">① Kira Kehadiran Pelajar</div>
-            <div class="code-box">=COUNTIF(A2:A100, "Ahmad")</div>
+          <div class="footer-brand">
+            <span class="nav-brand-mark"><img src="logo2.png" alt="CyberNor Digital Logo" /></span>
+            <span>CYBERNOR DIGITAL</span>
           </div>
-          <div class="code-group">
-            <div class="code-label">② Kira Yang Dah Bayar</div>
-            <div class="code-box">=COUNTIF(C2:C50, "Paid")</div>
+          <p class="footer-desc">
+            Solusi digital untuk education, automasi, dan data — direka khas untuk
+            cikgu, admin, HR & pemilik bisnes di Malaysia.
+          </p>
+          <div class="footer-social">
+            <a href="#" aria-label="Instagram">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="2" y="2" width="20" height="20" rx="5"/>
+                <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/>
+                <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/>
+              </svg>
+            </a>
+            <a href="#" aria-label="TikTok">
+              <svg viewBox="0 0 24 24" fill="currentColor"><path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-5.2 1.74 2.89 2.89 0 0 1 2.31-4.64 2.93 2.93 0 0 1 .88.13V9.4a6.84 6.84 0 0 0-1-.05A6.33 6.33 0 0 0 5.8 20.1a6.34 6.34 0 0 0 10.86-4.43V9a8.16 8.16 0 0 0 4.77 1.52v-3.4a4.85 4.85 0 0 1-1.84-.43z"/></svg>
+            </a>
+            <a href="#" aria-label="Facebook">
+              <svg viewBox="0 0 24 24" fill="currentColor"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg>
+            </a>
+            <a href="#" aria-label="YouTube">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M22.54 6.42a2.78 2.78 0 0 0-1.94-2C18.88 4 12 4 12 4s-6.88 0-8.6.46a2.78 2.78 0 0 0-1.94 2A29 29 0 0 0 1 11.75a29 29 0 0 0 .46 5.33A2.78 2.78 0 0 0 3.4 19c1.72.46 8.6.46 8.6.46s6.88 0 8.6-.46a2.78 2.78 0 0 0 1.94-2 29 29 0 0 0 .46-5.25 29 29 0 0 0-.46-5.33z"/>
+                <polygon points="9.75 15.02 15.5 11.75 9.75 8.48 9.75 15.02"/>
+              </svg>
+            </a>
           </div>
         </div>
+
         <div>
-          <div class="code-group">
-            <div class="code-label">③ Kira Stok Bawah Had</div>
-            <div class="code-box">=COUNTIF(D2:D100, "&lt;10")</div>
-          </div>
-          <div class="code-group">
-            <div class="code-label">④ Kira Status Hadir</div>
-            <div class="code-box">=COUNTIF(B2:B100, "Hadir")</div>
-          </div>
+          <h5>Pautan</h5>
+          <ul class="footer-links">
+            <li><a href="#servis">Servis</a></li>
+            <li><a href="#produk">Produk</a></li>
+            <li><a href="#tentang">Tentang Kami</a></li>
+            <li><a href="#testimoni">Testimoni</a></li>
+          </ul>
         </div>
-      </div>
 
-      <div class="tips-box">
-        <div class="tips-title">💡 Tips Power — Wildcard Search</div>
-        <div class="tips-code">=COUNTIF(A2:A100, "Ah*")</div>
-        <div class="tips-desc">Kira semua nama yang bermula dengan "Ah" — Ahmad, Ahli, Ahamd. Guna * sebagai wildcard untuk cari sebahagian teks.</div>
-      </div>
-
-      <div class="section-title">Bila Nak Guna COUNTIF</div>
-      <ul class="checklist">
-        <li><span class="check-icon">✅</span> Kira kehadiran pelajar atau pekerja dalam sebulan</li>
-        <li><span class="check-icon">✅</span> Kira berapa orang yang dah bayar atau belum</li>
-        <li><span class="check-icon">✅</span> Kira berapa produk dalam sesebuah kategori</li>
-        <li><span class="check-icon">✅</span> Kira kekerapan sesuatu status atau kejadian berlaku</li>
-      </ul>
-    </div>
-    <span class="page-brand-foot">cybernor.digital</span>
-    <span class="page-num">7</span>
-  </div>
-
-  <!-- VISUAL PAGE: FORMULA COUNTIF -->
-  <div class="page visual-page">
-    <div class="sidebar-accent"></div>
-    <div class="content-header">
-      <div>
-        <div class="content-header-label">Contoh Visual · Formula COUNTIF</div>
-        <div class="content-header-title">Data Asal vs Selepas Menggunakan COUNTIF</div>
-      </div>
-    </div>
-    <div class="visual-body">
-      <div class="visual-slot">
-        <div class="visual-slot-label">
-          <div class="visual-slot-num">1</div>
-          <div class="visual-slot-info">
-            <span class="visual-slot-title">Data Asal</span>
-            <span class="visual-slot-desc">Sebelum formula COUNTIF — senarai status kehadiran belum dikira</span>
-          </div>
-        </div>
-        <div class="visual-img-box">
-          <!-- TUKAR GAMBAR: ganti baris di bawah dengan <img src="images/countif-sebelum.png" alt="Data Asal COUNTIF" /> -->
-          <img src="images/2. countif-sebelum.png" alt="Data Asal COUNTIF" />
-        </div>
-      </div>
-      <div class="visual-divider"></div>
-      <div class="visual-slot">
-        <div class="visual-slot-label">
-          <div class="visual-slot-num after">2</div>
-          <div class="visual-slot-info">
-            <span class="visual-slot-title">Selepas Menggunakan Formula COUNTIF</span>
-            <span class="visual-slot-desc">Jumlah kehadiran setiap pelajar dikira automatik</span>
-          </div>
-        </div>
-        <div class="visual-img-box">
-          <!-- TUKAR GAMBAR: ganti baris di bawah dengan <img src="images/countif-selepas.png" alt="Selepas COUNTIF" /> -->
-          <img src="images/2. countif-selepas.png" alt="Data Selepas COUNTIF" />
-        </div>
-      </div>
-    </div>
-    <span class="page-brand-foot">cybernor.digital</span>
-    <span class="page-num">9</span>
-  </div>
-
-  <!-- ==================== PAGE 8: FORMULA 3 OPENER ==================== -->
-  <div class="page chapter-opener">
-    <div class="chapter-left-bar"></div>
-    <div class="chapter-inner">
-      <div class="chapter-watermark">03</div>
-      <div class="chapter-label">Formula Ketiga</div>
-      <h2 class="chapter-title">Formula SUMIF</h2>
-      <div class="chapter-subtitle">Jumlah Yang Tepat, Tanpa Kira Manual</div>
-      <div class="chapter-tagline">
-        "Kalau COUNTIF kira berapa kali —<br/>SUMIF jumlahkan nilai berdasarkan syarat."
-      </div>
-      <p class="chapter-desc">SUMIF selesaikan masalah yang ramai hadapi — nak tahu jumlah sales seorang salesman, jumlah expenses satu kategori, atau yuran satu kelas tertentu. Semua boleh dibuat automatik tanpa kira manual.</p>
-    </div>
-    <span class="page-brand-foot chapter-brand-foot">cybernor.digital</span>
-    <span class="page-num chapter-page-num">8</span>
-  </div>
-
-  <!-- ==================== PAGE 9: FORMULA 3 CONTENT ==================== -->
-  <div class="page content-page">
-    <div class="sidebar-accent"></div>
-    <div class="content-header">
-      <div>
-        <div class="content-header-label">Formula 03</div>
-        <div class="content-header-title">SUMIF — Jumlah Berdasarkan Syarat</div>
-      </div>
-    </div>
-    <div class="content-body">
-      <div class="section-title">Syntax</div>
-      <div class="syntax-box">=SUMIF( range_syarat, syarat, range_jumlah )</div>
-
-      <div class="section-title">Contoh Penggunaan</div>
-      <div class="two-col">
         <div>
-          <div class="code-group">
-            <div class="code-label">① Jumlah Sales Ikut Salesman</div>
-            <div class="code-box">=SUMIF(A2:A100, "Ahmad", C2:C100)</div>
-          </div>
-          <div class="code-group">
-            <div class="code-label">② Jumlah Expenses Ikut Kategori</div>
-            <div class="code-box">=SUMIF(B2:B50, "Makanan", C2:C50)</div>
-          </div>
+          <h5>Produk</h5>
+          <ul class="footer-links">
+            <li><a href="panduan-google-sheets.html">Free Web Guide</a></li>
+            <li><a href="#">Apps Script Course</a></li>
+            <li><a href="#">Template Pack</a></li>
+            <li><a href="#">Konsultasi Custom</a></li>
+          </ul>
         </div>
+
         <div>
-          <div class="code-group">
-            <div class="code-label">③ Jumlah Yuran Ikut Kelas</div>
-            <div class="code-box">=SUMIF(D2:D100, "4A", E2:E100)</div>
-          </div>
-          <div class="code-group">
-            <div class="code-label">④ Jumlah Melebihi Had</div>
-            <div class="code-box">=SUMIF(C2:C100, "&gt;500", C2:C100)</div>
-          </div>
+          <h5>Hubungi</h5>
+          <ul class="footer-links">
+            <li><a href="mailto:hello@cybernor.digital">hello@cybernor.digital</a></li>
+            <li><a href="https://wa.me/60123456789">WhatsApp Kami</a></li>
+            <li><a href="#">Instagram</a></li>
+            <li><a href="#">Buat Pertanyaan</a></li>
+          </ul>
         </div>
       </div>
 
-      <div class="tips-box">
-        <div class="tips-title">💡 Tips Power — SUMIFS Untuk Dua Syarat</div>
-        <div class="tips-code">=SUMIFS(C2:C100, A2:A100, "Ahmad", B2:B100, "Januari")</div>
-        <div class="tips-desc">Jumlahkan sales Ahmad untuk bulan Januari sahaja. SUMIFS (dengan S) boleh handle lebih dari satu syarat serentak.</div>
-      </div>
-
-      <div class="section-title">Bila Nak Guna SUMIF</div>
-      <ul class="checklist">
-        <li><span class="check-icon">✅</span> Jumlah sales mengikut salesman atau produk tertentu</li>
-        <li><span class="check-icon">✅</span> Jumlah expenses mengikut kategori perbelanjaan</li>
-        <li><span class="check-icon">✅</span> Jumlah yuran atau bayaran mengikut kelas atau department</li>
-        <li><span class="check-icon">✅</span> Jumlah inventory mengikut supplier atau lokasi</li>
-      </ul>
-    </div>
-    <span class="page-brand-foot">cybernor.digital</span>
-    <span class="page-num">9</span>
-  </div>
-
-  <!-- VISUAL PAGE: FORMULA SUMIF -->
-  <div class="page visual-page">
-    <div class="sidebar-accent"></div>
-    <div class="content-header">
-      <div>
-        <div class="content-header-label">Contoh Visual · Formula SUMIF</div>
-        <div class="content-header-title">Data Asal vs Selepas Menggunakan SUMIF</div>
+      <div class="footer-bottom">
+        <div>© 2026 CyberNor Digital. Hakcipta Terpelihara.</div>
+        <div>Dibina dengan ❤ di Malaysia</div>
       </div>
     </div>
-    <div class="visual-body">
-      <div class="visual-slot">
-        <div class="visual-slot-label">
-          <div class="visual-slot-num">1</div>
-          <div class="visual-slot-info">
-            <span class="visual-slot-title">Data Asal</span>
-            <span class="visual-slot-desc">Sebelum formula SUMIF — data sales bercampur, belum dijumlahkan</span>
-          </div>
-        </div>
-        <div class="visual-img-box">
-          <!-- TUKAR GAMBAR: ganti baris di bawah dengan <img src="images/sumif-sebelum.png" alt="Data Asal SUMIF" /> -->
-          <img src="images/3. sumif-sebelum.png" alt="Data Asal SUMIF" />
-        </div>
-      </div>
-      <div class="visual-divider"></div>
-      <div class="visual-slot">
-        <div class="visual-slot-label">
-          <div class="visual-slot-num after">2</div>
-          <div class="visual-slot-info">
-            <span class="visual-slot-title">Selepas Menggunakan Formula SUMIF</span>
-            <span class="visual-slot-desc">Jumlah sales setiap salesman dikira automatik mengikut nama</span>
-          </div>
-        </div>
-        <div class="visual-img-box">
-          <!-- TUKAR GAMBAR: ganti baris di bawah dengan <img src="images/sumif-selepas.png" alt="Selepas SUMIF" /> -->
-          <img src="images/3. sumif-selepas.png" alt="Data Selepas SUMIF" />
-        </div>
-      </div>
-    </div>
-    <span class="page-brand-foot">cybernor.digital</span>
-    <span class="page-num">12</span>
-  </div>
+  </footer>
 
-  <!-- ==================== PAGE 10: FORMULA 4 OPENER ==================== -->
-  <div class="page chapter-opener">
-    <div class="chapter-left-bar"></div>
-    <div class="chapter-inner">
-      <div class="chapter-watermark">04</div>
-      <div class="chapter-label">Formula Keempat</div>
-      <h2 class="chapter-title">Formula VLOOKUP</h2>
-      <div class="chapter-subtitle">Cari Data Dari Mana-Mana, Sekelip Mata</div>
-      <div class="chapter-tagline">
-        "Bayangkan buku telefon digital —<br/>cari nama, dapat nombor. Automatik."
-      </div>
-      <p class="chapter-desc">VLOOKUP mencari nilai dalam satu column dan mengambil data dari column lain dalam row yang sama. Tarik nama dari ID, harga dari kod produk, maklumat pekerja dari nombor staf — semua tanpa cari manual.</p>
-    </div>
-    <span class="page-brand-foot chapter-brand-foot">cybernor.digital</span>
-    <span class="page-num chapter-page-num">10</span>
-  </div>
+  <script>
+    // Smooth nav shadow on scroll
+    const nav = document.querySelector('.nav');
+    window.addEventListener('scroll', () => {
+      if (window.scrollY > 20) {
+        nav.style.boxShadow = '0 2px 16px rgba(0,0,0,0.06)';
+      } else {
+        nav.style.boxShadow = 'none';
+      }
+    });
 
-  <!-- ==================== PAGE 11: FORMULA 4 CONTENT ==================== -->
-  <div class="page content-page">
-    <div class="sidebar-accent"></div>
-    <div class="content-header">
-      <div>
-        <div class="content-header-label">Formula 04</div>
-        <div class="content-header-title">VLOOKUP — Cari & Ambil Data</div>
-      </div>
-    </div>
-    <div class="content-body">
-      <div class="section-title">Syntax</div>
-      <div class="syntax-box">=VLOOKUP( nilai_cari, range_table, nombor_column, FALSE )</div>
-
-      <div class="section-title">Pecahan Formula</div>
-      <div class="breakdown-box">
-        <div class="breakdown-item">
-          <div class="breakdown-key">nilai_cari</div>
-          <div class="breakdown-val">Nilai yang nak dicari — contoh: ID pelajar, kod produk</div>
-        </div>
-        <div class="breakdown-item">
-          <div class="breakdown-key">range_table</div>
-          <div class="breakdown-val">Mana nak cari — contoh: Sheet1!A:B atau A2:D100</div>
-        </div>
-        <div class="breakdown-item">
-          <div class="breakdown-key">nombor_column</div>
-          <div class="breakdown-val">Ambil data dari column ke berapa dalam range table</div>
-        </div>
-        <div class="breakdown-item">
-          <div class="breakdown-key">FALSE</div>
-          <div class="breakdown-val">Cari exact match — hampir selalu guna FALSE</div>
-        </div>
-      </div>
-
-      <div class="section-title">Contoh Penggunaan</div>
-      <div class="code-group">
-        <div class="code-label">① Tarik Nama Pelajar Dari ID</div>
-        <div class="code-box">=VLOOKUP(A2, Sheet1!A:B, 2, FALSE)</div>
-      </div>
-      <div class="code-group">
-        <div class="code-label">② Tarik Harga Dari Senarai Produk</div>
-        <div class="code-box">=VLOOKUP(A2, PriceList!A:C, 3, FALSE)</div>
-      </div>
-
-      <div class="tips-box">
-        <div class="tips-title">💡 Tips Power — Elak Error #N/A</div>
-        <div class="tips-code">=IFERROR(VLOOKUP(A2, Sheet1!A:B, 2, FALSE), "Tidak Dijumpai")</div>
-        <div class="tips-desc">Balut VLOOKUP dengan IFERROR supaya apabila data tidak dijumpai, ia akan memaparkan teks yang anda tetapkan — bukan ralat merah.</div>
-      </div>
-
-      <div class="section-title">Bila Nak Guna VLOOKUP</div>
-      <ul class="checklist">
-        <li><span class="check-icon">✅</span> Tarik nama atau maklumat pelajar/pekerja dari ID</li>
-        <li><span class="check-icon">✅</span> Match nombor invoice dengan rekod client</li>
-        <li><span class="check-icon">✅</span> Cari harga produk dari price list secara automatik</li>
-        <li><span class="check-icon">✅</span> Gabungkan data dari beberapa sheet berbeza</li>
-      </ul>
-    </div>
-    <span class="page-brand-foot">cybernor.digital</span>
-    <span class="page-num">11</span>
-  </div>
-
-  <!-- VISUAL PAGE: FORMULA VLOOKUP -->
-  <div class="page visual-page">
-    <div class="sidebar-accent"></div>
-    <div class="content-header">
-      <div>
-        <div class="content-header-label">Contoh Visual · Formula VLOOKUP</div>
-        <div class="content-header-title">Data Asal vs Selepas Menggunakan VLOOKUP</div>
-      </div>
-    </div>
-    <div class="visual-body">
-      <div class="visual-slot">
-        <div class="visual-slot-label">
-          <div class="visual-slot-num">1</div>
-          <div class="visual-slot-info">
-            <span class="visual-slot-title">Data Asal</span>
-            <span class="visual-slot-desc">Sebelum VLOOKUP — dua sheet berasingan, nama belum ditarik</span>
-          </div>
-        </div>
-        <div class="visual-img-box">
-          <!-- TUKAR GAMBAR: ganti baris di bawah dengan <img src="images/vlookup-sebelum.png" alt="Data Asal VLOOKUP" /> -->
-          <img src="images/4. vlookup-sebelum.png" alt="Data Asal VLOOKUP" />
-        </div>
-      </div>
-      <div class="visual-divider"></div>
-      <div class="visual-slot">
-        <div class="visual-slot-label">
-          <div class="visual-slot-num after">2</div>
-          <div class="visual-slot-info">
-            <span class="visual-slot-title">Selepas Menggunakan Formula VLOOKUP</span>
-            <span class="visual-slot-desc">Nama pelajar atau pekerja ditarik automatik berdasarkan ID</span>
-          </div>
-        </div>
-        <div class="visual-img-box">
-          <!-- TUKAR GAMBAR: ganti baris di bawah dengan <img src="images/vlookup-selepas.png" alt="Selepas VLOOKUP" /> -->
-          <img src="images/4. vlookup-selepas.png" alt="Data Selepas VLOOKUP" />
-        </div>
-      </div>
-    </div>
-    <span class="page-brand-foot">cybernor.digital</span>
-    <span class="page-num">15</span>
-  </div>
-
-  <!-- ==================== PAGE 12: FORMULA 5 OPENER ==================== -->
-  <div class="page chapter-opener">
-    <div class="chapter-left-bar"></div>
-    <div class="chapter-inner">
-      <div class="chapter-watermark">05</div>
-      <div class="chapter-label">Formula Kelima</div>
-      <h2 class="chapter-title">Formula FILTER</h2>
-      <div class="chapter-subtitle">Extract Data Automatik, Real-Time</div>
-      <div class="chapter-tagline">
-        "Sekali setup — update sendiri<br/>setiap kali data berubah."
-      </div>
-      <p class="chapter-desc">FILTER berbeza dari filter biasa di toolbar. Filter toolbar — anda perlu lakukan secara manual setiap kali. FILTER formula — ia dikemas kini secara automatik apabila data asal berubah. Bina dashboard, ekstrak laporan, tapis data — semua secara real-time tanpa usaha tambahan.</p>
-    </div>
-    <span class="page-brand-foot chapter-brand-foot">cybernor.digital</span>
-    <span class="page-num chapter-page-num">12</span>
-  </div>
-
-  <!-- ==================== PAGE 13: FORMULA 5 CONTENT ==================== -->
-  <div class="page content-page">
-    <div class="sidebar-accent"></div>
-    <div class="content-header">
-      <div>
-        <div class="content-header-label">Formula 05</div>
-        <div class="content-header-title">FILTER — Extract Data Real-Time</div>
-      </div>
-    </div>
-    <div class="content-body">
-      <div class="section-title">Syntax</div>
-      <div class="syntax-box">=FILTER( range_data, syarat )</div>
-
-      <div class="section-title">Contoh Penggunaan</div>
-      <div class="two-col">
-        <div>
-          <div class="code-group">
-            <div class="code-label">① Extract Pekerja Dari Department HR</div>
-            <div class="code-box">=FILTER(A2:C100, B2:B100="HR")</div>
-          </div>
-          <div class="code-group">
-            <div class="code-label">② Extract Pelajar Yang Gagal</div>
-            <div class="code-box">=FILTER(A2:C50, C2:C50&lt;50)</div>
-          </div>
-        </div>
-        <div>
-          <div class="code-group">
-            <div class="code-label">③ Extract Sales Bulan Ini</div>
-            <div class="code-box">=FILTER(A2:D100, B2:B100="Mei 2026")</div>
-          </div>
-          <div class="code-group">
-            <div class="code-label">④ Extract Stok Yang Habis</div>
-            <div class="code-box">=FILTER(A2:C100, D2:D100=0)</div>
-          </div>
-        </div>
-      </div>
-
-      <div class="tips-box">
-        <div class="tips-title">💡 Tips Power — Dua Syarat Serentak</div>
-        <div class="tips-code">=FILTER(A2:C100, (B2:B100="HR")*(C2:C100&gt;3000))</div>
-        <div class="tips-desc">Extract pekerja HR yang gaji melebihi RM3,000. Guna * antara dua syarat untuk bermaksud AND. Guna + untuk bermaksud OR.</div>
-      </div>
-
-      <div class="section-title">Bila Nak Guna FILTER</div>
-      <ul class="checklist">
-        <li><span class="check-icon">✅</span> Bina dashboard automatik yang update sendiri</li>
-        <li><span class="check-icon">✅</span> Extract senarai ikut kelas, department, atau kategori</li>
-        <li><span class="check-icon">✅</span> Hasilkan laporan real-time tanpa manual filtering</li>
-        <li><span class="check-icon">✅</span> Tunjuk data spesifik tanpa ubah atau kacau data asal</li>
-      </ul>
-    </div>
-    <span class="page-brand-foot">cybernor.digital</span>
-    <span class="page-num">13</span>
-  </div>
-
-  <!-- VISUAL PAGE: FORMULA FILTER -->
-  <div class="page visual-page">
-    <div class="sidebar-accent"></div>
-    <div class="content-header">
-      <div>
-        <div class="content-header-label">Contoh Visual · Formula FILTER</div>
-        <div class="content-header-title">Data Asal vs Selepas Menggunakan FILTER</div>
-      </div>
-    </div>
-    <div class="visual-body">
-      <div class="visual-slot">
-        <div class="visual-slot-label">
-          <div class="visual-slot-num">1</div>
-          <div class="visual-slot-info">
-            <span class="visual-slot-title">Data Asal</span>
-            <span class="visual-slot-desc">Sebelum FILTER — semua data bercampur pelbagai department</span>
-          </div>
-        </div>
-        <div class="visual-img-box">
-          <!-- TUKAR GAMBAR: ganti baris di bawah dengan <img src="images/filter-sebelum.png" alt="Data Asal FILTER" /> -->
-          <img src="images/5. filter-sebelum.png" alt="Data Asal FILTER" />
-        </div>
-      </div>
-      <div class="visual-divider"></div>
-      <div class="visual-slot">
-        <div class="visual-slot-label">
-          <div class="visual-slot-num after">2</div>
-          <div class="visual-slot-info">
-            <span class="visual-slot-title">Selepas Menggunakan Formula FILTER</span>
-            <span class="visual-slot-desc">Hanya data department yang dipilih dipaparkan secara automatik</span>
-          </div>
-        </div>
-        <div class="visual-img-box">
-          <!-- TUKAR GAMBAR: ganti baris di bawah dengan <img src="images/filter-selepas.png" alt="Selepas FILTER" /> -->
-          <img src="images/5. filter-selepas.png" alt="Data Selepas FILTER" />
-        </div>
-      </div>
-    </div>
-    <span class="page-brand-foot">cybernor.digital</span>
-    <span class="page-num">18</span>
-  </div>
-
-  <!-- ==================== PAGE 14: CTA ==================== -->
-  <div class="page cta-page">
-    <div class="cta-inner">
-      <div class="cta-top-label">✦ Anda Telah Mempelajari</div>
-      <h2 class="cta-title">5 Formula Yang Boleh<br/>Transform Cara Anda Bekerja</h2>
-
-      <div class="cta-recap">
-        <div class="cta-recap-item">
-          <span class="cta-recap-icon">⚡</span>
-          <span class="cta-recap-text">Formula IF</span>
-        </div>
-        <div class="cta-recap-item">
-          <span class="cta-recap-icon">🔢</span>
-          <span class="cta-recap-text">Formula COUNTIF</span>
-        </div>
-        <div class="cta-recap-item">
-          <span class="cta-recap-icon">➕</span>
-          <span class="cta-recap-text">Formula SUMIF</span>
-        </div>
-        <div class="cta-recap-item">
-          <span class="cta-recap-icon">🔍</span>
-          <span class="cta-recap-text">Formula VLOOKUP</span>
-        </div>
-        <div class="cta-recap-item">
-          <span class="cta-recap-icon">🎯</span>
-          <span class="cta-recap-text">Formula FILTER</span>
-        </div>
-        <div class="cta-recap-item" style="background:rgba(255,255,255,0.05); border-color:rgba(255,255,255,0.1);">
-          <span class="cta-recap-icon">🚀</span>
-          <span class="cta-recap-text" style="color:rgba(255,255,255,0.4);">Ingin Lebih?</span>
-        </div>
-      </div>
-
-      <div class="cta-divider"></div>
-
-      <div class="cta-card">
-        <div class="cta-card-question">LANGKAH SETERUSNYA</div>
-        <div class="cta-card-title">Automate Kerja Harian Guna<br/>Google Sheets & Apps Script</div>
-        <ul class="cta-card-features">
-          <li>✔ Apps Script dari zero — tanpa background coding</li>
-          <li>✔ Buat trigger automatik — run sendiri tanpa klik</li>
-          <li>✔ Auto hantar email dengan data dari Sheets</li>
-          <li>✔ Generate PDF laporan secara automatik</li>
-          <li>✔ Real project yang boleh terus guna dalam kerja</li>
-        </ul>
-        <div class="cta-card-bottom">
-          <div class="cta-price">RM67 <span>sahaja</span></div>
-          <div class="cta-btn-fake">→ DAFTAR SEKARANG</div>
-        </div>
-      </div>
-
-      <div class="cta-social">
-        <div class="cta-social-item">Instagram: <span>@cybernordigital</span></div>
-        <div class="cta-social-item">TikTok: <span>@cybernordigital</span></div>
-        <div class="cta-social-item">Web: <span>cybernor.digital</span></div>
-      </div>
-    </div>
-    <span class="page-brand-foot chapter-brand-foot">cybernor.digital</span>
-    <span class="page-num chapter-page-num">14</span>
-  </div>
-
-</div><!-- end pages-wrapper -->
+    // Mobile menu toggle (placeholder — for future expansion)
+    const mobileBtn = document.querySelector('.mobile-menu-btn');
+    if (mobileBtn) {
+      mobileBtn.addEventListener('click', () => {
+        alert('Mobile menu — to be wired up. For now, scroll the page or rotate landscape.');
+      });
+    }
+  </script>
 
 </body>
 </html>

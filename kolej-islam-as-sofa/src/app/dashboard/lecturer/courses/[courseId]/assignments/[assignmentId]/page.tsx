@@ -27,7 +27,7 @@ export default async function AssignmentGradingPage({
           },
         },
       },
-      submissions: true,
+      submissions: { include: { attachments: { orderBy: { createdAt: 'asc' } } } },
     },
   })
   if (!assignment) notFound()
@@ -47,8 +47,13 @@ export default async function AssignmentGradingPage({
             score: sub.score ?? null,
             feedback: sub.feedback ?? null,
             submittedAt: sub.submittedAt.toISOString(),
-            fileUrl: sub.fileUrl ?? null,
             notes: sub.notes ?? null,
+            attachments: sub.attachments.map(a => ({
+              id: a.id,
+              type: a.type as 'FILE' | 'LINK',
+              url: a.url,
+              filename: a.filename ?? null,
+            })),
           }
         : null,
     }

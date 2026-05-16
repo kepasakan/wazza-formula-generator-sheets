@@ -12,71 +12,104 @@ const ALLOWED_TYPES = [
   'image/webp',
 ]
 
-const MAX_SIZE = 20 * 1024 * 1024 // 20MB
+const MAX_SIZE = 20 * 1024 * 1024
 
 export async function POST(
   req: NextRequest,
   { params }: { params: Promise<{ assignmentId: string }> }
 ) {
-  const session = await getSession()
-  if (!session || session.role !== 'STUDENT') {
-    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
-  }
-
-  const { assignmentId } = await params
-
-  const assignment = await prisma.assignment.findFirst({
-    where: {
-      id: assignmentId,
-      course: { enrollments: { some: { studentId: session.userId } } },
-    },
-  })
-  if (!assignment) return NextResponse.json({ error: 'Tugasan tidak dijumpai' }, { status: 404 })
-
-  const formData = await req.formData()
-  const file = formData.get('file') as File | null
-  const notes = formData.get('notes') as string | null
-
-  if ((!file || file.size === 0) && !notes?.trim()) {
-    return NextResponse.json({ error: 'Fail atau nota diperlukan' }, { status: 400 })
-  }
-
-  let fileUrl: string | null = null
-
-  if (file && file.size > 0) {
-    if (!ALLOWED_TYPES.includes(file.type)) {
-      return NextResponse.json({ error: 'Jenis fail tidak dibenarkan (PDF, Word, atau gambar sahaja)' }, { status: 400 })
-    }
-    if (file.size > MAX_SIZE) {
-      return NextResponse.json({ error: 'Fail terlalu besar (maks 20MB)' }, { status: 400 })
+  try {
+    const session = await getSession()
+    if (!session || session.role !== 'STUDENT') {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
-    const blob = await put(`lms/submissions/${Date.now()}-${file.name}`, file, {
-      access: 'public',
+    const { assignmentId } = await params
+
+    const assignment = await prisma.assignment.findFirst({
+      where: {
+        id: assignmentId,
+        course: { enrollments: { some: { studentId: session.userId } } },
+      },
     })
-    fileUrl = blob.url
+    if (!assignment) return NextResponse.json({ error: 'Tugasan tidak dijumpai' }, { status: 404 })
+
+    const formData = await req.formData()
+    const files = formData.getAll('files') as File[]
+    const links = formData.getAll('links') as string[]
+    const notes = formData.get('notes') as string | null
+
+    const validFiles = files.filter(f => f && f.size > 0)
+    const validLinks = links.map(l => l.trim()).filter(Boolean)
+    const hasNotes = !!(notes?.trim())
+
+    if (validFiles.length === 0 && validLinks.length === 0 && !hasNotes) {
+      return NextResponse.json({ error: 'Sila tulis jawapan, lampirkan fail, atau masukkan pautan' }, { status: 400 })
+    }
+
+    // Validate files before uploading
+    for (const file of validFiles) {
+      if (!ALLOWED_TYPES.includes(file.type)) {
+        return NextResponse.json({ error: `Fail "${file.name}" tidak dibenarkan. PDF, Word, atau gambar sahaja.` }, { status: 400 })
+      }
+      if (file.size > MAX_SIZE) {
+        return NextResponse.json({ error: `Fail "${file.name}" terlalu besar (maks 20MB)` }, { status: 400 })
+      }
+    }
+
+    const isLate = new Date() > new Date(assignment.dueDate)
+
+    // Upsert submission record
+    const submission = await prisma.assignmentSubmission.upsert({
+      where: { assignmentId_studentId: { assignmentId, studentId: session.userId } },
+      create: {
+        assignmentId,
+        studentId: session.userId,
+        notes: hasNotes ? notes!.trim() : null,
+        status: isLate ? 'LATE' : 'SUBMITTED',
+      },
+      update: {
+        notes: hasNotes ? notes!.trim() : null,
+        status: isLate ? 'LATE' : 'SUBMITTED',
+        submittedAt: new Date(),
+        score: null,
+        feedback: null,
+      },
+    })
+
+    // Delete old attachments
+    await prisma.submissionAttachment.deleteMany({ where: { submissionId: submission.id } })
+
+    // Upload files to Vercel Blob & create attachment records
+    for (const file of validFiles) {
+      if (!process.env.BLOB_READ_WRITE_TOKEN) {
+        return NextResponse.json({ error: 'Perkhidmatan upload fail tidak dikonfigurasi. Sila hubungi pentadbir.' }, { status: 500 })
+      }
+      const blob = await put(`lms/submissions/${Date.now()}-${file.name}`, file, { access: 'public' })
+      await prisma.submissionAttachment.create({
+        data: { submissionId: submission.id, type: 'FILE', url: blob.url, filename: file.name },
+      })
+    }
+
+    // Create link attachment records
+    for (const link of validLinks) {
+      await prisma.submissionAttachment.create({
+        data: { submissionId: submission.id, type: 'LINK', url: link, filename: null },
+      })
+    }
+
+    const result = await prisma.assignmentSubmission.findUnique({
+      where: { id: submission.id },
+      include: { attachments: { orderBy: { createdAt: 'asc' } } },
+    })
+
+    return NextResponse.json(result, { status: 201 })
+
+  } catch (err) {
+    console.error('[SUBMIT ASSIGNMENT ERROR]', err)
+    return NextResponse.json(
+      { error: 'Ralat dalaman berlaku. Sila cuba lagi.' },
+      { status: 500 }
+    )
   }
-
-  const isLate = new Date() > new Date(assignment.dueDate)
-
-  const submission = await prisma.assignmentSubmission.upsert({
-    where: { assignmentId_studentId: { assignmentId, studentId: session.userId } },
-    create: {
-      assignmentId,
-      studentId: session.userId,
-      fileUrl,
-      notes: notes?.trim() || null,
-      status: isLate ? 'LATE' : 'SUBMITTED',
-    },
-    update: {
-      fileUrl: fileUrl ?? undefined,
-      notes: notes?.trim() || null,
-      status: isLate ? 'LATE' : 'SUBMITTED',
-      submittedAt: new Date(),
-      score: null,
-      feedback: null,
-    },
-  })
-
-  return NextResponse.json(submission, { status: 201 })
 }

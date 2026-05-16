@@ -9,7 +9,7 @@ type Option = { id: string; optionText: string; isCorrect: boolean; orderIndex: 
 type Question = {
   id: string
   questionText: string
-  type: 'MCQ' | 'TRUE_FALSE'
+  type: 'MCQ' | 'TRUE_FALSE' | 'ESSAY'
   marks: number
   orderIndex: number
   options: Option[]
@@ -33,7 +33,7 @@ export default function QuestionBuilder({ quizId, initialQuestions, totalMarks: 
 
   // New question form state
   const [qText, setQText] = useState('')
-  const [qType, setQType] = useState<'MCQ' | 'TRUE_FALSE'>('MCQ')
+  const [qType, setQType] = useState<'MCQ' | 'TRUE_FALSE' | 'ESSAY'>('MCQ')
   const [qMarks, setQMarks] = useState(1)
   const [draftOptions, setDraftOptions] = useState<DraftOption[]>([
     { text: '', isCorrect: false },
@@ -66,6 +66,7 @@ export default function QuestionBuilder({ quizId, initialQuestions, totalMarks: 
   }
 
   const buildOptions = () => {
+    if (qType === 'ESSAY') return []
     if (qType === 'TRUE_FALSE') {
       return [
         { optionText: 'Betul', isCorrect: tfCorrect === 'true' },
@@ -77,6 +78,7 @@ export default function QuestionBuilder({ quizId, initialQuestions, totalMarks: 
 
   const canSubmit = () => {
     if (!qText.trim()) return false
+    if (qType === 'ESSAY') return true
     if (qType === 'MCQ') {
       const valid = draftOptions.every((o) => o.text.trim())
       const hasCorrect = draftOptions.some((o) => o.isCorrect)
@@ -173,7 +175,7 @@ export default function QuestionBuilder({ quizId, initialQuestions, totalMarks: 
                   <div className="flex-1 min-w-0">
                     <p className="text-sm font-medium text-gray-900 leading-relaxed">{q.questionText}</p>
                     <div className="flex items-center gap-3 mt-1">
-                      <span className="text-xs text-gray-400">{q.type === 'MCQ' ? 'MCQ' : 'Betul/Salah'}</span>
+                      <span className="text-xs text-gray-400">{q.type === 'MCQ' ? 'MCQ' : q.type === 'TRUE_FALSE' ? 'Betul/Salah' : 'Subjektif'}</span>
                       <span className="text-xs text-gray-400">{q.marks} markah</span>
                       <span className="text-xs text-gray-400">{q.options.length} pilihan</span>
                     </div>
@@ -189,16 +191,23 @@ export default function QuestionBuilder({ quizId, initialQuestions, totalMarks: 
 
                 {isExpanded && (
                   <div className="border-t border-gray-100 px-5 py-3 space-y-2">
-                    {q.options.map((opt) => (
-                      <div key={opt.id} className={`flex items-center gap-3 px-3 py-2 rounded-lg ${opt.isCorrect ? 'bg-green-50' : 'bg-gray-50'}`}>
-                        {opt.isCorrect && <CheckCircle className="w-3.5 h-3.5 text-green-600 flex-shrink-0" />}
-                        {!opt.isCorrect && <div className="w-3.5 h-3.5 rounded-full border-2 border-gray-300 flex-shrink-0" />}
-                        <span className={`text-sm ${opt.isCorrect ? 'text-green-800 font-medium' : 'text-gray-600'}`}>
-                          {opt.optionText}
-                        </span>
-                        {opt.isCorrect && <span className="text-xs text-green-600 ml-auto">Jawapan betul</span>}
+                    {q.type === 'ESSAY' ? (
+                      <div className="flex items-center gap-2 px-3 py-2.5 rounded-lg bg-blue-50">
+                        <CheckCircle className="w-3.5 h-3.5 text-blue-500 flex-shrink-0" />
+                        <span className="text-sm text-blue-700 font-medium">Jawapan Subjektif — Dinilai oleh Pensyarah</span>
                       </div>
-                    ))}
+                    ) : (
+                      q.options.map((opt) => (
+                        <div key={opt.id} className={`flex items-center gap-3 px-3 py-2 rounded-lg ${opt.isCorrect ? 'bg-green-50' : 'bg-gray-50'}`}>
+                          {opt.isCorrect && <CheckCircle className="w-3.5 h-3.5 text-green-600 flex-shrink-0" />}
+                          {!opt.isCorrect && <div className="w-3.5 h-3.5 rounded-full border-2 border-gray-300 flex-shrink-0" />}
+                          <span className={`text-sm ${opt.isCorrect ? 'text-green-800 font-medium' : 'text-gray-600'}`}>
+                            {opt.optionText}
+                          </span>
+                          {opt.isCorrect && <span className="text-xs text-green-600 ml-auto">Jawapan betul</span>}
+                        </div>
+                      ))
+                    )}
                   </div>
                 )}
               </div>
@@ -222,16 +231,16 @@ export default function QuestionBuilder({ quizId, initialQuestions, totalMarks: 
               {/* Type selector */}
               <div>
                 <label className="text-sm font-medium text-gray-700 block mb-2">Jenis Soalan</label>
-                <div className="grid grid-cols-2 gap-2">
-                  {(['MCQ', 'TRUE_FALSE'] as const).map((t) => (
+                <div className="grid grid-cols-3 gap-2">
+                  {(['MCQ', 'TRUE_FALSE', 'ESSAY'] as const).map((t) => (
                     <button
                       key={t}
                       onClick={() => setQType(t)}
-                      className={`py-2.5 px-4 rounded-xl border-2 text-sm font-medium transition-all ${
+                      className={`py-2.5 px-3 rounded-xl border-2 text-sm font-medium transition-all ${
                         qType === t ? 'border-green-600 bg-green-50 text-green-700' : 'border-gray-200 text-gray-500 hover:border-gray-300'
                       }`}
                     >
-                      {t === 'MCQ' ? 'Pelbagai Pilihan (MCQ)' : 'Betul / Salah'}
+                      {t === 'MCQ' ? 'Pelbagai Pilihan' : t === 'TRUE_FALSE' ? 'Betul / Salah' : 'Subjektif'}
                     </button>
                   ))}
                 </div>
@@ -264,7 +273,15 @@ export default function QuestionBuilder({ quizId, initialQuestions, totalMarks: 
               </div>
 
               {/* Options */}
-              {qType === 'MCQ' ? (
+              {qType === 'ESSAY' ? (
+                <div className="flex items-start gap-3 px-4 py-3 rounded-xl bg-blue-50 border border-blue-100">
+                  <CheckCircle className="w-4 h-4 text-blue-500 flex-shrink-0 mt-0.5" />
+                  <div>
+                    <p className="text-sm font-medium text-blue-700">Soalan Subjektif</p>
+                    <p className="text-xs text-blue-500 mt-0.5">Pelajar akan menaip jawapan mereka. Pensyarah perlu menilai dan memberi markah secara manual.</p>
+                  </div>
+                </div>
+              ) : qType === 'MCQ' ? (
                 <div>
                   <label className="text-sm font-medium text-gray-700 block mb-2">
                     Pilihan Jawapan{' '}

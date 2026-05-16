@@ -14,6 +14,9 @@ import {
   LogOut,
   ChevronRight,
   BookMarked,
+  Link2,
+  Megaphone,
+  Building2,
 } from 'lucide-react'
 
 type Role = 'ADMIN' | 'LECTURER' | 'STUDENT'
@@ -30,6 +33,9 @@ const navByRole: Record<Role, NavItem[]> = {
     { label: 'Pengguna', href: '/dashboard/admin/users', icon: <Users className="w-5 h-5" /> },
     { label: 'Kursus', href: '/dashboard/admin/courses', icon: <BookMarked className="w-5 h-5" /> },
     { label: 'Laporan', href: '/dashboard/admin/reports', icon: <BarChart3 className="w-5 h-5" /> },
+    { label: 'Bidang', href: '/dashboard/admin/departments', icon: <Building2 className="w-5 h-5" /> },
+    { label: 'Hebahan', href: '/dashboard/admin/announcements', icon: <Megaphone className="w-5 h-5" /> },
+    { label: 'Pautan Bantuan', href: '/dashboard/admin/support-links', icon: <Link2 className="w-5 h-5" /> },
   ],
   LECTURER: [
     { label: 'Dashboard', href: '/dashboard', icon: <LayoutDashboard className="w-5 h-5" /> },
@@ -37,6 +43,8 @@ const navByRole: Record<Role, NavItem[]> = {
     { label: 'Tugasan', href: '/dashboard/lecturer/assignments', icon: <FileText className="w-5 h-5" /> },
     { label: 'Kuiz', href: '/dashboard/lecturer/quizzes', icon: <ClipboardList className="w-5 h-5" /> },
     { label: 'Kehadiran', href: '/dashboard/lecturer/attendance', icon: <CalendarCheck className="w-5 h-5" /> },
+    { label: 'Hebahan', href: '/dashboard/lecturer/announcements', icon: <Megaphone className="w-5 h-5" /> },
+    { label: 'Pautan Bantuan', href: '/dashboard/lecturer/support-links', icon: <Link2 className="w-5 h-5" /> },
   ],
   STUDENT: [
     { label: 'Dashboard', href: '/dashboard', icon: <LayoutDashboard className="w-5 h-5" /> },
@@ -45,6 +53,8 @@ const navByRole: Record<Role, NavItem[]> = {
     { label: 'Kuiz', href: '/dashboard/student/quizzes', icon: <ClipboardList className="w-5 h-5" /> },
     { label: 'Kehadiran', href: '/dashboard/student/attendance', icon: <CalendarCheck className="w-5 h-5" /> },
     { label: 'Keputusan', href: '/dashboard/student/results', icon: <GraduationCap className="w-5 h-5" /> },
+    { label: 'Hebahan', href: '/dashboard/student/announcements', icon: <Megaphone className="w-5 h-5" /> },
+    { label: 'Pautan Bantuan', href: '/dashboard/student/support-links', icon: <Link2 className="w-5 h-5" /> },
   ],
 }
 

@@ -1,0 +1,1487 @@
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>5 Formula Google Sheets | CyberNor Digital</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700;800&family=Fira+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --navy: #1B2A4A;
+      --green: #00C896;
+      --green-light: #E8FFF6;
+      --bg: #F8F9FA;
+      --text: #2D2D2D;
+      --white: #FFFFFF;
+      --gray: #6B7280;
+      --border: #E5E7EB;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: #e5e7eb;
+      color: var(--text);
+    }
+
+    /* NAV */
+    .nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      background: var(--navy);
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 24px;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.3);
+    }
+    .nav-brand { color: var(--green); font-weight: 700; font-size: 15px; letter-spacing: 1px; }
+    .nav-controls { display: flex; align-items: center; gap: 10px; }
+    .nav-btn {
+      background: var(--green);
+      color: var(--navy);
+      border: none;
+      padding: 6px 16px;
+      border-radius: 20px;
+      font-family: 'Poppins', sans-serif;
+      font-weight: 600;
+      font-size: 13px;
+      cursor: pointer;
+      transition: opacity 0.2s;
+    }
+    .nav-btn:hover { opacity: 0.85; }
+    .nav-btn.outline {
+      background: transparent;
+      border: 1px solid var(--green);
+      color: var(--green);
+    }
+    .page-indicator { color: #9CA3AF; font-size: 13px; }
+
+    /* PAGES WRAPPER */
+    .pages-wrapper {
+      margin-top: 56px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 32px 16px 64px;
+      gap: 24px;
+    }
+
+    /* SINGLE PAGE */
+    .page {
+      width: 100%;
+      max-width: 794px;
+      min-height: 1123px;
+      background: var(--white);
+      border-radius: 4px;
+      box-shadow: 0 4px 24px rgba(0,0,0,0.12);
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .page-num {
+      position: absolute;
+      bottom: 20px;
+      right: 28px;
+      font-size: 11px;
+      color: var(--gray);
+      font-weight: 500;
+    }
+    .page-brand-foot {
+      position: absolute;
+      bottom: 20px;
+      left: 28px;
+      font-size: 11px;
+      color: var(--gray);
+      font-weight: 500;
+    }
+
+    /* ==================== COVER PAGE ==================== */
+    .cover {
+      background: linear-gradient(145deg, #1B2A4A 0%, #0f1d36 100%);
+      flex-direction: column;
+      justify-content: space-between;
+      padding: 0;
+    }
+    .cover-top-bar {
+      background: var(--green);
+      height: 6px;
+      width: 100%;
+    }
+    .cover-badge {
+      position: absolute;
+      top: 28px;
+      right: 28px;
+      background: var(--green);
+      color: var(--navy);
+      font-weight: 800;
+      font-size: 13px;
+      padding: 6px 18px;
+      border-radius: 20px;
+      letter-spacing: 1px;
+    }
+    .cover-content {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: 60px 64px;
+    }
+    .cover-label {
+      color: var(--green);
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      margin-bottom: 24px;
+    }
+    .cover-title {
+      font-size: 46px;
+      font-weight: 800;
+      color: var(--white);
+      line-height: 1.15;
+      margin-bottom: 24px;
+    }
+    .cover-title span { color: var(--green); }
+    .cover-subtitle {
+      font-size: 16px;
+      color: rgba(255,255,255,0.65);
+      line-height: 1.6;
+      max-width: 480px;
+      margin-bottom: 48px;
+    }
+    .cover-tags {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+    .cover-tag {
+      border: 1px solid rgba(0,200,150,0.4);
+      color: var(--green);
+      font-size: 12px;
+      padding: 4px 14px;
+      border-radius: 20px;
+    }
+    .cover-illustration {
+      position: absolute;
+      right: 48px;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 240px;
+      opacity: 0.15;
+    }
+    .cover-footer {
+      padding: 28px 64px;
+      border-top: 1px solid rgba(255,255,255,0.1);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .cover-author { color: rgba(255,255,255,0.6); font-size: 13px; }
+    .cover-author strong { color: var(--white); display: block; font-size: 15px; }
+    .cover-web { color: var(--green); font-size: 13px; font-weight: 600; }
+
+    /* COVER GRID DECORATION */
+    .cover-grid {
+      position: absolute;
+      right: 0; top: 0; bottom: 0;
+      width: 45%;
+      background-image:
+        linear-gradient(rgba(0,200,150,0.06) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0,200,150,0.06) 1px, transparent 1px);
+      background-size: 32px 32px;
+    }
+    .cover-spreadsheet {
+      position: absolute;
+      right: 48px;
+      top: 50%;
+      transform: translateY(-50%);
+    }
+    .ss-table {
+      border-collapse: collapse;
+      opacity: 0.18;
+    }
+    .ss-table th, .ss-table td {
+      border: 1px solid rgba(0,200,150,0.5);
+      padding: 8px 16px;
+      font-size: 12px;
+      color: var(--green);
+      text-align: center;
+    }
+    .ss-table th { background: rgba(0,200,150,0.1); font-weight: 700; }
+
+    /* ==================== TOC PAGE ==================== */
+    .toc-page { background: var(--bg); }
+    .sidebar-accent {
+      position: absolute;
+      left: 0; top: 0; bottom: 0;
+      width: 6px;
+      background: var(--navy);
+    }
+    .page-inner { padding: 60px 64px 60px 80px; flex: 1; }
+    .section-label {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      color: var(--green);
+      margin-bottom: 8px;
+    }
+    .page-title {
+      font-size: 34px;
+      font-weight: 800;
+      color: var(--navy);
+      margin-bottom: 8px;
+      border-bottom: 3px solid var(--green);
+      padding-bottom: 16px;
+      margin-bottom: 40px;
+    }
+    .toc-item {
+      display: flex;
+      align-items: center;
+      padding: 16px 0;
+      border-bottom: 1px dashed var(--border);
+      gap: 20px;
+    }
+    .toc-num {
+      font-size: 28px;
+      font-weight: 800;
+      color: var(--green);
+      min-width: 48px;
+      line-height: 1;
+    }
+    .toc-text { flex: 1; }
+    .toc-text strong { display: block; font-size: 16px; color: var(--navy); font-weight: 700; }
+    .toc-text span { font-size: 13px; color: var(--gray); }
+    .toc-icon { font-size: 22px; }
+
+    /* ==================== AUTHOR PAGE ==================== */
+    .author-page { background: var(--white); }
+    .author-quote {
+      background: var(--green-light);
+      border-left: 4px solid var(--green);
+      padding: 20px 24px;
+      border-radius: 0 8px 8px 0;
+      margin: 32px 0;
+      font-size: 16px;
+      font-style: italic;
+      color: var(--navy);
+      font-weight: 600;
+      line-height: 1.6;
+    }
+    .author-avatar {
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--navy), var(--green));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 32px;
+      margin-bottom: 16px;
+      border: 3px solid var(--green);
+    }
+    .body-text {
+      font-size: 15px;
+      line-height: 1.8;
+      color: var(--text);
+      margin-bottom: 16px;
+    }
+    .author-sig {
+      margin-top: 32px;
+      font-size: 15px;
+      color: var(--navy);
+    }
+    .author-sig strong { color: var(--green); font-size: 17px; display: block; }
+
+    /* ==================== CHAPTER OPENER ==================== */
+    .chapter-opener { background: var(--navy); }
+    .chapter-left-bar {
+      position: absolute;
+      left: 0; top: 0; bottom: 0;
+      width: 8px;
+      background: var(--green);
+    }
+    .chapter-inner {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: 80px 80px;
+      position: relative;
+    }
+    .chapter-watermark {
+      position: absolute;
+      right: 48px;
+      bottom: 60px;
+      font-size: 200px;
+      font-weight: 900;
+      color: rgba(255,255,255,0.04);
+      line-height: 1;
+      user-select: none;
+    }
+    .chapter-label {
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 4px;
+      text-transform: uppercase;
+      color: var(--green);
+      margin-bottom: 20px;
+    }
+    .chapter-title {
+      font-size: 52px;
+      font-weight: 800;
+      color: var(--white);
+      margin-bottom: 8px;
+      line-height: 1.1;
+    }
+    .chapter-subtitle {
+      font-size: 20px;
+      color: rgba(255,255,255,0.55);
+      margin-bottom: 40px;
+    }
+    .chapter-tagline {
+      background: rgba(0,200,150,0.12);
+      border: 1px solid rgba(0,200,150,0.3);
+      border-radius: 10px;
+      padding: 20px 24px;
+      color: var(--green);
+      font-size: 16px;
+      font-weight: 600;
+      line-height: 1.6;
+      max-width: 520px;
+      margin-bottom: 32px;
+    }
+    .chapter-desc {
+      font-size: 15px;
+      color: rgba(255,255,255,0.6);
+      line-height: 1.8;
+      max-width: 520px;
+    }
+    .chapter-page-num { color: rgba(255,255,255,0.25) !important; }
+    .chapter-brand-foot { color: rgba(255,255,255,0.25) !important; }
+
+    /* ==================== CONTENT PAGE ==================== */
+    .content-page { background: var(--bg); }
+    .content-header {
+      background: var(--navy);
+      padding: 22px 64px 22px 80px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+    .content-header-label {
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--green);
+    }
+    .content-header-title {
+      font-size: 20px;
+      font-weight: 800;
+      color: var(--white);
+    }
+    .content-body { padding: 40px 64px 80px 80px; }
+
+    .section-title {
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--gray);
+      margin-bottom: 10px;
+      margin-top: 28px;
+    }
+    .section-title:first-child { margin-top: 0; }
+
+    .code-box {
+      background: var(--green-light);
+      border: 1px solid var(--green);
+      border-left: 4px solid var(--green);
+      border-radius: 0 8px 8px 0;
+      padding: 14px 20px;
+      font-family: 'Fira Mono', monospace;
+      font-size: 15px;
+      color: #0a6b50;
+      margin-bottom: 10px;
+      word-break: break-all;
+    }
+    .code-label {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--gray);
+      margin-bottom: 4px;
+      letter-spacing: 0.5px;
+    }
+    .code-group { margin-bottom: 16px; }
+
+    .syntax-box {
+      background: var(--navy);
+      border-radius: 10px;
+      padding: 18px 22px;
+      font-family: 'Fira Mono', monospace;
+      font-size: 16px;
+      color: var(--green);
+      margin-bottom: 28px;
+      letter-spacing: 0.3px;
+    }
+
+    .tips-box {
+      background: #FFF8E1;
+      border: 1px solid #FFC107;
+      border-left: 4px solid #FFC107;
+      border-radius: 0 8px 8px 0;
+      padding: 16px 20px;
+      margin: 24px 0;
+    }
+    .tips-box .tips-title {
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      color: #B8860B;
+      margin-bottom: 8px;
+    }
+    .tips-box .tips-code {
+      font-family: 'Fira Mono', monospace;
+      font-size: 13px;
+      color: #7a5c00;
+    }
+    .tips-box .tips-desc {
+      font-size: 13px;
+      color: #7a5c00;
+      margin-top: 6px;
+      line-height: 1.5;
+    }
+
+    .breakdown-box {
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 18px 22px;
+      margin-bottom: 24px;
+    }
+    .breakdown-item {
+      display: flex;
+      gap: 12px;
+      padding: 8px 0;
+      border-bottom: 1px solid var(--border);
+      font-size: 14px;
+      align-items: flex-start;
+    }
+    .breakdown-item:last-child { border-bottom: none; }
+    .breakdown-key {
+      font-family: 'Fira Mono', monospace;
+      color: var(--green);
+      font-weight: 600;
+      min-width: 160px;
+      font-size: 13px;
+    }
+    .breakdown-val { color: var(--text); line-height: 1.5; }
+
+    .checklist { list-style: none; margin-top: 8px; }
+    .checklist li {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      font-size: 14px;
+      color: var(--text);
+      padding: 7px 0;
+      border-bottom: 1px solid var(--border);
+      line-height: 1.5;
+    }
+    .checklist li:last-child { border-bottom: none; }
+    .check-icon { color: var(--green); font-size: 16px; flex-shrink: 0; margin-top: 1px; }
+
+    .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+
+    /* VISUAL PAGE */
+    .visual-page { background: var(--bg); }
+    .visual-body {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      padding-bottom: 48px;
+    }
+    .visual-slot {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      padding: 20px 64px 16px 80px;
+      min-height: 0;
+    }
+    .visual-slot-label {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 12px;
+    }
+    .visual-slot-num {
+      width: 28px; height: 28px;
+      border-radius: 50%;
+      background: var(--navy);
+      color: var(--white);
+      font-size: 13px;
+      font-weight: 800;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+    }
+    .visual-slot-num.after { background: var(--green); color: var(--navy); }
+    .visual-slot-info { display: flex; flex-direction: column; }
+    .visual-slot-title { font-size: 15px; font-weight: 700; color: var(--navy); }
+    .visual-slot-desc { font-size: 12px; color: var(--gray); }
+    .visual-img-box {
+      flex: 1;
+      border: 2px dashed #D1D5DB;
+      border-radius: 12px;
+      background: var(--white);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      position: relative;
+      overflow: hidden;
+      min-height: 300px;
+      transition: border-color 0.2s;
+    }
+    .visual-img-box:hover { border-color: var(--green); }
+    .visual-img-box img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      position: absolute;
+      inset: 0;
+    }
+    .visual-img-icon { font-size: 52px; opacity: 0.15; }
+    .visual-img-text { font-size: 14px; color: #9CA3AF; font-weight: 600; }
+    .visual-img-hint {
+      font-size: 11px;
+      color: #C4C9D4;
+      background: var(--bg);
+      padding: 4px 14px;
+      border-radius: 20px;
+      font-family: 'Fira Mono', monospace;
+    }
+    .visual-divider {
+      height: 1px;
+      background: var(--border);
+      margin: 0 64px 0 80px;
+      flex-shrink: 0;
+    }
+
+    /* ==================== CTA PAGE ==================== */
+    .cta-page { background: var(--navy); }
+    .cta-inner {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      padding: 60px 64px 80px;
+    }
+    .cta-top-label {
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 3px;
+      color: var(--green);
+      text-transform: uppercase;
+      margin-bottom: 10px;
+    }
+    .cta-title {
+      font-size: 34px;
+      font-weight: 800;
+      color: var(--white);
+      line-height: 1.2;
+      margin-bottom: 32px;
+    }
+    .cta-recap {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 12px;
+      margin-bottom: 40px;
+    }
+    .cta-recap-item {
+      background: rgba(0,200,150,0.1);
+      border: 1px solid rgba(0,200,150,0.25);
+      border-radius: 10px;
+      padding: 14px 16px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .cta-recap-icon { font-size: 20px; }
+    .cta-recap-text { font-size: 13px; font-weight: 600; color: var(--white); }
+
+    .cta-divider {
+      height: 1px;
+      background: rgba(255,255,255,0.1);
+      margin-bottom: 36px;
+    }
+
+    .cta-card {
+      background: var(--green);
+      border-radius: 16px;
+      padding: 32px;
+      margin-bottom: 28px;
+    }
+    .cta-card-question {
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      color: var(--navy);
+      margin-bottom: 8px;
+    }
+    .cta-card-title {
+      font-size: 22px;
+      font-weight: 800;
+      color: var(--navy);
+      line-height: 1.3;
+      margin-bottom: 16px;
+    }
+    .cta-card-features {
+      list-style: none;
+      margin-bottom: 24px;
+    }
+    .cta-card-features li {
+      font-size: 13px;
+      color: var(--navy);
+      padding: 4px 0;
+      display: flex;
+      gap: 8px;
+    }
+    .cta-card-bottom {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .cta-price { font-size: 28px; font-weight: 800; color: var(--navy); }
+    .cta-price span { font-size: 14px; font-weight: 500; opacity: 0.7; }
+    .cta-btn-fake {
+      background: var(--navy);
+      color: var(--green);
+      font-weight: 700;
+      font-size: 13px;
+      padding: 12px 24px;
+      border-radius: 30px;
+      letter-spacing: 0.5px;
+    }
+
+    .cta-social {
+      display: flex;
+      gap: 20px;
+      align-items: center;
+    }
+    .cta-social-item { color: rgba(255,255,255,0.45); font-size: 13px; }
+    .cta-social-item span { color: var(--green); font-weight: 600; }
+
+    /* PRINT */
+    @media print {
+      body { background: white; }
+      .nav { display: none; }
+      .pages-wrapper { margin-top: 0; padding: 0; gap: 0; }
+      .page {
+        border-radius: 0;
+        box-shadow: none;
+        max-width: 100%;
+        page-break-after: always;
+        min-height: 100vh;
+      }
+    }
+
+    @media (max-width: 860px) {
+      .cover-title { font-size: 30px; }
+      .cover-grid { display: none; }
+      .cover-spreadsheet { display: none; }
+      .chapter-title { font-size: 36px; }
+      .chapter-watermark { font-size: 120px; }
+      .page-inner, .content-body, .cta-inner { padding-left: 40px; padding-right: 32px; }
+      .content-header { padding-left: 48px; }
+      .two-col { grid-template-columns: 1fr; }
+      .cta-recap { grid-template-columns: 1fr 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav class="nav">
+  <span class="nav-brand">CYBERNOR DIGITAL</span>
+  <div class="nav-controls">
+    <span class="page-indicator">Web Guide Percuma — 5 Formula Google Sheets</span>
+    <button class="nav-btn outline" onclick="window.print()">Cetak / Save PDF</button>
+  </div>
+</nav>
+
+<div class="pages-wrapper">
+
+  <!-- ==================== PAGE 1: COVER ==================== -->
+  <div class="page cover">
+    <div class="cover-top-bar"></div>
+    <div class="cover-badge">✦ PERCUMA</div>
+    <div class="cover-grid"></div>
+    <div class="cover-spreadsheet">
+      <table class="ss-table">
+        <tr><th>Nama</th><th>Markah</th><th>Status</th></tr>
+        <tr><td>Ahmad</td><td>85</td><td>Lulus</td></tr>
+        <tr><td>Siti</td><td>42</td><td>Gagal</td></tr>
+        <tr><td>Razif</td><td>91</td><td>Lulus</td></tr>
+        <tr><td>Farah</td><td>37</td><td>Gagal</td></tr>
+        <tr><td>Hafiz</td><td>78</td><td>Lulus</td></tr>
+      </table>
+    </div>
+    <div class="cover-content">
+      <div class="cover-label">Panduan Percuma · CyberNor Digital</div>
+      <h1 class="cover-title">5 Formula Google Sheets<br/>Yang <span>Jimatkan</span><br/>Masa Kerja Anda</h1>
+      <p class="cover-subtitle">Panduan praktikal untuk cikgu, admin, HR & pemilik bisnes — tanpa perlu latar belakang IT</p>
+      <div class="cover-tags">
+        <span class="cover-tag">🧑‍🏫 Cikgu</span>
+        <span class="cover-tag">📋 Admin</span>
+        <span class="cover-tag">👥 HR</span>
+        <span class="cover-tag">🏪 SME</span>
+      </div>
+    </div>
+    <div class="cover-footer">
+      <div class="cover-author">
+        <strong>Nor Mohamad Naim</strong>
+        Pengasas, CyberNor Digital
+      </div>
+      <div class="cover-web">cybernor.digital</div>
+    </div>
+  </div>
+
+  <!-- ==================== PAGE 2: TOC ==================== -->
+  <div class="page toc-page">
+    <div class="sidebar-accent"></div>
+    <div class="page-inner">
+      <div class="section-label">Kandungan Web Guide</div>
+      <h2 class="page-title">Isi Kandungan</h2>
+
+      <div class="toc-item">
+        <div class="toc-num">01</div>
+        <div class="toc-text">
+          <strong>Formula IF</strong>
+          <span>Biar Sheets Yang Buat Keputusan Untuk Anda</span>
+        </div>
+        <div class="toc-icon">⚡</div>
+      </div>
+      <div class="toc-item">
+        <div class="toc-num">02</div>
+        <div class="toc-text">
+          <strong>Formula COUNTIF</strong>
+          <span>Kira Tanpa Penat, Automatik & Tepat</span>
+        </div>
+        <div class="toc-icon">🔢</div>
+      </div>
+      <div class="toc-item">
+        <div class="toc-num">03</div>
+        <div class="toc-text">
+          <strong>Formula SUMIF</strong>
+          <span>Jumlah Yang Tepat Tanpa Kira Manual</span>
+        </div>
+        <div class="toc-icon">➕</div>
+      </div>
+      <div class="toc-item">
+        <div class="toc-num">04</div>
+        <div class="toc-text">
+          <strong>Formula VLOOKUP</strong>
+          <span>Cari Data Dari Mana-Mana, Sekelip Mata</span>
+        </div>
+        <div class="toc-icon">🔍</div>
+      </div>
+      <div class="toc-item">
+        <div class="toc-num">05</div>
+        <div class="toc-text">
+          <strong>Formula FILTER</strong>
+          <span>Extract Data Automatik, Real-Time</span>
+        </div>
+        <div class="toc-icon">🎯</div>
+      </div>
+      <div class="toc-item" style="border-bottom:none;">
+        <div class="toc-num" style="color:var(--navy);">→</div>
+        <div class="toc-text">
+          <strong>Langkah Seterusnya</strong>
+          <span>Cara Nak Belajar Lebih Lanjut & Course Berkaitan</span>
+        </div>
+        <div class="toc-icon">🚀</div>
+      </div>
+    </div>
+    <span class="page-brand-foot">cybernor.digital</span>
+    <span class="page-num">2</span>
+  </div>
+
+  <!-- ==================== PAGE 3: AUTHOR ==================== -->
+  <div class="page author-page">
+    <div class="sidebar-accent"></div>
+    <div class="page-inner">
+      <div class="author-avatar">👋</div>
+      <div class="section-label">Dari Penulis</div>
+      <h2 class="page-title">Salam Dari Penulis</h2>
+
+      <p class="body-text">Assalamualaikum dan salam sejahtera. Terima kasih kerana memuat turun Web Guide ini. Saya harap ia sampai ke tangan mereka yang betul-betul memerlukannya.</p>
+
+      <p class="body-text">Saya menulis Web Guide ini kerana saya melihat satu masalah yang sama berulang-ulang — ramai orang menghabiskan masa berjam-jam melakukan kerja yang sepatutnya boleh siap dalam beberapa minit sahaja. Copy paste data satu-satu. Mengira markah secara manual. Menyemak kehadiran baris demi baris.</p>
+
+      <div class="author-quote">
+        "Masalahnya bukan orang tu malas atau lambat. Masalahnya — mereka tak tahu tools yang betul."
+      </div>
+
+      <p class="body-text">Google Sheets bukan sekadar Excel versi online. Ia mempunyai formula dan fungsi yang boleh mengautomate hampir semua kerja repetitif anda. Dan anda tidak perlu menjadi programmer untuk menggunakannya.</p>
+
+      <p class="body-text">Dalam Web Guide ini, saya memilih 5 formula yang paling high-impact. Paling kerap digunakan. Paling mudah dipelajari. Dan paling besar kesannya kepada produktiviti harian anda.</p>
+
+      <div class="author-sig">
+        Dengan harapan ia membantu,<br/>
+        <strong>Nor Mohamad Naim</strong>
+        Pengasas, CyberNor Digital
+      </div>
+    </div>
+    <span class="page-brand-foot">cybernor.digital</span>
+    <span class="page-num">3</span>
+  </div>
+
+  <!-- ==================== PAGE 4: FORMULA 1 OPENER ==================== -->
+  <div class="page chapter-opener">
+    <div class="chapter-left-bar"></div>
+    <div class="chapter-inner">
+      <div class="chapter-watermark">01</div>
+      <div class="chapter-label">Formula Pertama</div>
+      <h2 class="chapter-title">Formula IF</h2>
+      <div class="chapter-subtitle">Biar Sheets Yang Buat Keputusan</div>
+      <div class="chapter-tagline">
+        "Kalau ini betul → buat ini.<br/>Kalau tidak → buat itu."
+      </div>
+      <p class="chapter-desc">IF adalah formula yang membuat keputusan automatik berdasarkan syarat yang anda tetapkan. Anda tidak perlu menyemak data satu-satu atau mengira secara manual lagi. Satu formula, semua keputusan keluar sekaligus.</p>
+    </div>
+    <span class="page-brand-foot chapter-brand-foot">cybernor.digital</span>
+    <span class="page-num chapter-page-num">4</span>
+  </div>
+
+  <!-- ==================== PAGE 5: FORMULA 1 CONTENT ==================== -->
+  <div class="page content-page">
+    <div class="sidebar-accent"></div>
+    <div class="content-header">
+      <div>
+        <div class="content-header-label">Formula 01</div>
+        <div class="content-header-title">IF — Keputusan Automatik</div>
+      </div>
+    </div>
+    <div class="content-body">
+      <div class="section-title">Syntax</div>
+      <div class="syntax-box">=IF( syarat, nilai_jika_betul, nilai_jika_salah )</div>
+
+      <div class="section-title">Contoh Penggunaan</div>
+      <div class="two-col">
+        <div>
+          <div class="code-group">
+            <div class="code-label">① Keputusan Peperiksaan</div>
+            <div class="code-box">=IF(B2&gt;=50, "Lulus", "Gagal")</div>
+          </div>
+          <div class="code-group">
+            <div class="code-label">② Status Payment</div>
+            <div class="code-box">=IF(C2="Paid", "Selesai", "Belum Bayar")</div>
+          </div>
+        </div>
+        <div>
+          <div class="code-group">
+            <div class="code-label">③ Amaran Stok Rendah</div>
+            <div class="code-box">=IF(D2&lt;10, "Perlu Restock", "Stok Cukup")</div>
+          </div>
+          <div class="code-group">
+            <div class="code-label">④ Kehadiran Cukup</div>
+            <div class="code-box">=IF(E2&gt;=80, "Layak", "Tidak Layak")</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="tips-box">
+        <div class="tips-title">💡 Tips Power — Gabung Dua Syarat</div>
+        <div class="tips-code">=IF(AND(B2&gt;=50, C2="Hadir"), "Layak", "Tidak Layak")</div>
+        <div class="tips-desc">Pelajar kena markah 50 ke atas DAN hadir untuk dianggap layak.</div>
+      </div>
+
+      <div class="section-title">Bila Nak Guna IF</div>
+      <ul class="checklist">
+        <li><span class="check-icon">✅</span> Tentukan lulus atau gagal berdasarkan markah</li>
+        <li><span class="check-icon">✅</span> Check status payment — dah bayar atau belum</li>
+        <li><span class="check-icon">✅</span> Flag stok yang perlu restock</li>
+        <li><span class="check-icon">✅</span> Categorize data secara automatik mengikut syarat</li>
+      </ul>
+    </div>
+    <span class="page-brand-foot">cybernor.digital</span>
+    <span class="page-num">5</span>
+  </div>
+
+  <!-- VISUAL PAGE: FORMULA IF -->
+  <div class="page visual-page">
+    <div class="sidebar-accent"></div>
+    <div class="content-header">
+      <div>
+        <div class="content-header-label">Contoh Visual · Formula IF</div>
+        <div class="content-header-title">Data Asal vs Selepas Menggunakan IF</div>
+      </div>
+    </div>
+    <div class="visual-body">
+      <div class="visual-slot">
+        <div class="visual-slot-label">
+          <div class="visual-slot-num">1</div>
+          <div class="visual-slot-info">
+            <span class="visual-slot-title">Data Asal</span>
+            <span class="visual-slot-desc">Sebelum formula IF digunakan — tiada kolum keputusan</span>
+          </div>
+        </div>
+        <div class="visual-img-box">
+          <!-- TUKAR GAMBAR: ganti baris di bawah dengan <img src="images/if-sebelum.png" alt="Data Asal IF" /> -->
+          <img src="images/1. if-sebelum.png" alt="Data Asal IF" />
+        </div>
+      </div>
+      <div class="visual-divider"></div>
+      <div class="visual-slot">
+        <div class="visual-slot-label">
+          <div class="visual-slot-num after">2</div>
+          <div class="visual-slot-info">
+            <span class="visual-slot-title">Selepas Menggunakan Formula IF</span>
+            <span class="visual-slot-desc">Kolum status Lulus / Gagal muncul automatik dalam sekelip mata</span>
+          </div>
+        </div>
+        <div class="visual-img-box">
+          <!-- TUKAR GAMBAR: ganti baris di bawah dengan <img src="images/if-selepas.png" alt="Selepas IF" /> -->
+          <img src="images/1. if-selepas.png" alt="Data Selepas IF" />
+        </div>
+      </div>
+    </div>
+    <span class="page-brand-foot">cybernor.digital</span>
+    <span class="page-num">6</span>
+  </div>
+
+  <!-- ==================== PAGE 6: FORMULA 2 OPENER ==================== -->
+  <div class="page chapter-opener">
+    <div class="chapter-left-bar"></div>
+    <div class="chapter-inner">
+      <div class="chapter-watermark">02</div>
+      <div class="chapter-label">Formula Kedua</div>
+      <h2 class="chapter-title">Formula COUNTIF</h2>
+      <div class="chapter-subtitle">Kira Tanpa Penat</div>
+      <div class="chapter-tagline">
+        "Kira berapa kali sesuatu nilai muncul —<br/>berdasarkan syarat yang anda tetapkan."
+      </div>
+      <p class="chapter-desc">COUNTIF mengira data secara automatik. Tidak perlu scroll panjang, highlight secara manual, atau mengira satu-satu. Satu formula, jawapan terus keluar. Sama ada untuk mengira kehadiran, status bayaran, atau kategori produk — COUNTIF boleh melakukan semua itu.</p>
+    </div>
+    <span class="page-brand-foot chapter-brand-foot">cybernor.digital</span>
+    <span class="page-num chapter-page-num">6</span>
+  </div>
+
+  <!-- ==================== PAGE 7: FORMULA 2 CONTENT ==================== -->
+  <div class="page content-page">
+    <div class="sidebar-accent"></div>
+    <div class="content-header">
+      <div>
+        <div class="content-header-label">Formula 02</div>
+        <div class="content-header-title">COUNTIF — Kira Berdasarkan Syarat</div>
+      </div>
+    </div>
+    <div class="content-body">
+      <div class="section-title">Syntax</div>
+      <div class="syntax-box">=COUNTIF( range, syarat )</div>
+
+      <div class="section-title">Contoh Penggunaan</div>
+      <div class="two-col">
+        <div>
+          <div class="code-group">
+            <div class="code-label">① Kira Kehadiran Pelajar</div>
+            <div class="code-box">=COUNTIF(A2:A100, "Ahmad")</div>
+          </div>
+          <div class="code-group">
+            <div class="code-label">② Kira Yang Dah Bayar</div>
+            <div class="code-box">=COUNTIF(C2:C50, "Paid")</div>
+          </div>
+        </div>
+        <div>
+          <div class="code-group">
+            <div class="code-label">③ Kira Stok Bawah Had</div>
+            <div class="code-box">=COUNTIF(D2:D100, "&lt;10")</div>
+          </div>
+          <div class="code-group">
+            <div class="code-label">④ Kira Status Hadir</div>
+            <div class="code-box">=COUNTIF(B2:B100, "Hadir")</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="tips-box">
+        <div class="tips-title">💡 Tips Power — Wildcard Search</div>
+        <div class="tips-code">=COUNTIF(A2:A100, "Ah*")</div>
+        <div class="tips-desc">Kira semua nama yang bermula dengan "Ah" — Ahmad, Ahli, Ahamd. Guna * sebagai wildcard untuk cari sebahagian teks.</div>
+      </div>
+
+      <div class="section-title">Bila Nak Guna COUNTIF</div>
+      <ul class="checklist">
+        <li><span class="check-icon">✅</span> Kira kehadiran pelajar atau pekerja dalam sebulan</li>
+        <li><span class="check-icon">✅</span> Kira berapa orang yang dah bayar atau belum</li>
+        <li><span class="check-icon">✅</span> Kira berapa produk dalam sesebuah kategori</li>
+        <li><span class="check-icon">✅</span> Kira kekerapan sesuatu status atau kejadian berlaku</li>
+      </ul>
+    </div>
+    <span class="page-brand-foot">cybernor.digital</span>
+    <span class="page-num">7</span>
+  </div>
+
+  <!-- VISUAL PAGE: FORMULA COUNTIF -->
+  <div class="page visual-page">
+    <div class="sidebar-accent"></div>
+    <div class="content-header">
+      <div>
+        <div class="content-header-label">Contoh Visual · Formula COUNTIF</div>
+        <div class="content-header-title">Data Asal vs Selepas Menggunakan COUNTIF</div>
+      </div>
+    </div>
+    <div class="visual-body">
+      <div class="visual-slot">
+        <div class="visual-slot-label">
+          <div class="visual-slot-num">1</div>
+          <div class="visual-slot-info">
+            <span class="visual-slot-title">Data Asal</span>
+            <span class="visual-slot-desc">Sebelum formula COUNTIF — senarai status kehadiran belum dikira</span>
+          </div>
+        </div>
+        <div class="visual-img-box">
+          <!-- TUKAR GAMBAR: ganti baris di bawah dengan <img src="images/countif-sebelum.png" alt="Data Asal COUNTIF" /> -->
+          <img src="images/2. countif-sebelum.png" alt="Data Asal COUNTIF" />
+        </div>
+      </div>
+      <div class="visual-divider"></div>
+      <div class="visual-slot">
+        <div class="visual-slot-label">
+          <div class="visual-slot-num after">2</div>
+          <div class="visual-slot-info">
+            <span class="visual-slot-title">Selepas Menggunakan Formula COUNTIF</span>
+            <span class="visual-slot-desc">Jumlah kehadiran setiap pelajar dikira automatik</span>
+          </div>
+        </div>
+        <div class="visual-img-box">
+          <!-- TUKAR GAMBAR: ganti baris di bawah dengan <img src="images/countif-selepas.png" alt="Selepas COUNTIF" /> -->
+          <img src="images/2. countif-selepas.png" alt="Data Selepas COUNTIF" />
+        </div>
+      </div>
+    </div>
+    <span class="page-brand-foot">cybernor.digital</span>
+    <span class="page-num">9</span>
+  </div>
+
+  <!-- ==================== PAGE 8: FORMULA 3 OPENER ==================== -->
+  <div class="page chapter-opener">
+    <div class="chapter-left-bar"></div>
+    <div class="chapter-inner">
+      <div class="chapter-watermark">03</div>
+      <div class="chapter-label">Formula Ketiga</div>
+      <h2 class="chapter-title">Formula SUMIF</h2>
+      <div class="chapter-subtitle">Jumlah Yang Tepat, Tanpa Kira Manual</div>
+      <div class="chapter-tagline">
+        "Kalau COUNTIF kira berapa kali —<br/>SUMIF jumlahkan nilai berdasarkan syarat."
+      </div>
+      <p class="chapter-desc">SUMIF selesaikan masalah yang ramai hadapi — nak tahu jumlah sales seorang salesman, jumlah expenses satu kategori, atau yuran satu kelas tertentu. Semua boleh dibuat automatik tanpa kira manual.</p>
+    </div>
+    <span class="page-brand-foot chapter-brand-foot">cybernor.digital</span>
+    <span class="page-num chapter-page-num">8</span>
+  </div>
+
+  <!-- ==================== PAGE 9: FORMULA 3 CONTENT ==================== -->
+  <div class="page content-page">
+    <div class="sidebar-accent"></div>
+    <div class="content-header">
+      <div>
+        <div class="content-header-label">Formula 03</div>
+        <div class="content-header-title">SUMIF — Jumlah Berdasarkan Syarat</div>
+      </div>
+    </div>
+    <div class="content-body">
+      <div class="section-title">Syntax</div>
+      <div class="syntax-box">=SUMIF( range_syarat, syarat, range_jumlah )</div>
+
+      <div class="section-title">Contoh Penggunaan</div>
+      <div class="two-col">
+        <div>
+          <div class="code-group">
+            <div class="code-label">① Jumlah Sales Ikut Salesman</div>
+            <div class="code-box">=SUMIF(A2:A100, "Ahmad", C2:C100)</div>
+          </div>
+          <div class="code-group">
+            <div class="code-label">② Jumlah Expenses Ikut Kategori</div>
+            <div class="code-box">=SUMIF(B2:B50, "Makanan", C2:C50)</div>
+          </div>
+        </div>
+        <div>
+          <div class="code-group">
+            <div class="code-label">③ Jumlah Yuran Ikut Kelas</div>
+            <div class="code-box">=SUMIF(D2:D100, "4A", E2:E100)</div>
+          </div>
+          <div class="code-group">
+            <div class="code-label">④ Jumlah Melebihi Had</div>
+            <div class="code-box">=SUMIF(C2:C100, "&gt;500", C2:C100)</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="tips-box">
+        <div class="tips-title">💡 Tips Power — SUMIFS Untuk Dua Syarat</div>
+        <div class="tips-code">=SUMIFS(C2:C100, A2:A100, "Ahmad", B2:B100, "Januari")</div>
+        <div class="tips-desc">Jumlahkan sales Ahmad untuk bulan Januari sahaja. SUMIFS (dengan S) boleh handle lebih dari satu syarat serentak.</div>
+      </div>
+
+      <div class="section-title">Bila Nak Guna SUMIF</div>
+      <ul class="checklist">
+        <li><span class="check-icon">✅</span> Jumlah sales mengikut salesman atau produk tertentu</li>
+        <li><span class="check-icon">✅</span> Jumlah expenses mengikut kategori perbelanjaan</li>
+        <li><span class="check-icon">✅</span> Jumlah yuran atau bayaran mengikut kelas atau department</li>
+        <li><span class="check-icon">✅</span> Jumlah inventory mengikut supplier atau lokasi</li>
+      </ul>
+    </div>
+    <span class="page-brand-foot">cybernor.digital</span>
+    <span class="page-num">9</span>
+  </div>
+
+  <!-- VISUAL PAGE: FORMULA SUMIF -->
+  <div class="page visual-page">
+    <div class="sidebar-accent"></div>
+    <div class="content-header">
+      <div>
+        <div class="content-header-label">Contoh Visual · Formula SUMIF</div>
+        <div class="content-header-title">Data Asal vs Selepas Menggunakan SUMIF</div>
+      </div>
+    </div>
+    <div class="visual-body">
+      <div class="visual-slot">
+        <div class="visual-slot-label">
+          <div class="visual-slot-num">1</div>
+          <div class="visual-slot-info">
+            <span class="visual-slot-title">Data Asal</span>
+            <span class="visual-slot-desc">Sebelum formula SUMIF — data sales bercampur, belum dijumlahkan</span>
+          </div>
+        </div>
+        <div class="visual-img-box">
+          <!-- TUKAR GAMBAR: ganti baris di bawah dengan <img src="images/sumif-sebelum.png" alt="Data Asal SUMIF" /> -->
+          <img src="images/3. sumif-sebelum.png" alt="Data Asal SUMIF" />
+        </div>
+      </div>
+      <div class="visual-divider"></div>
+      <div class="visual-slot">
+        <div class="visual-slot-label">
+          <div class="visual-slot-num after">2</div>
+          <div class="visual-slot-info">
+            <span class="visual-slot-title">Selepas Menggunakan Formula SUMIF</span>
+            <span class="visual-slot-desc">Jumlah sales setiap salesman dikira automatik mengikut nama</span>
+          </div>
+        </div>
+        <div class="visual-img-box">
+          <!-- TUKAR GAMBAR: ganti baris di bawah dengan <img src="images/sumif-selepas.png" alt="Selepas SUMIF" /> -->
+          <img src="images/3. sumif-selepas.png" alt="Data Selepas SUMIF" />
+        </div>
+      </div>
+    </div>
+    <span class="page-brand-foot">cybernor.digital</span>
+    <span class="page-num">12</span>
+  </div>
+
+  <!-- ==================== PAGE 10: FORMULA 4 OPENER ==================== -->
+  <div class="page chapter-opener">
+    <div class="chapter-left-bar"></div>
+    <div class="chapter-inner">
+      <div class="chapter-watermark">04</div>
+      <div class="chapter-label">Formula Keempat</div>
+      <h2 class="chapter-title">Formula VLOOKUP</h2>
+      <div class="chapter-subtitle">Cari Data Dari Mana-Mana, Sekelip Mata</div>
+      <div class="chapter-tagline">
+        "Bayangkan buku telefon digital —<br/>cari nama, dapat nombor. Automatik."
+      </div>
+      <p class="chapter-desc">VLOOKUP mencari nilai dalam satu column dan mengambil data dari column lain dalam row yang sama. Tarik nama dari ID, harga dari kod produk, maklumat pekerja dari nombor staf — semua tanpa cari manual.</p>
+    </div>
+    <span class="page-brand-foot chapter-brand-foot">cybernor.digital</span>
+    <span class="page-num chapter-page-num">10</span>
+  </div>
+
+  <!-- ==================== PAGE 11: FORMULA 4 CONTENT ==================== -->
+  <div class="page content-page">
+    <div class="sidebar-accent"></div>
+    <div class="content-header">
+      <div>
+        <div class="content-header-label">Formula 04</div>
+        <div class="content-header-title">VLOOKUP — Cari & Ambil Data</div>
+      </div>
+    </div>
+    <div class="content-body">
+      <div class="section-title">Syntax</div>
+      <div class="syntax-box">=VLOOKUP( nilai_cari, range_table, nombor_column, FALSE )</div>
+
+      <div class="section-title">Pecahan Formula</div>
+      <div class="breakdown-box">
+        <div class="breakdown-item">
+          <div class="breakdown-key">nilai_cari</div>
+          <div class="breakdown-val">Nilai yang nak dicari — contoh: ID pelajar, kod produk</div>
+        </div>
+        <div class="breakdown-item">
+          <div class="breakdown-key">range_table</div>
+          <div class="breakdown-val">Mana nak cari — contoh: Sheet1!A:B atau A2:D100</div>
+        </div>
+        <div class="breakdown-item">
+          <div class="breakdown-key">nombor_column</div>
+          <div class="breakdown-val">Ambil data dari column ke berapa dalam range table</div>
+        </div>
+        <div class="breakdown-item">
+          <div class="breakdown-key">FALSE</div>
+          <div class="breakdown-val">Cari exact match — hampir selalu guna FALSE</div>
+        </div>
+      </div>
+
+      <div class="section-title">Contoh Penggunaan</div>
+      <div class="code-group">
+        <div class="code-label">① Tarik Nama Pelajar Dari ID</div>
+        <div class="code-box">=VLOOKUP(A2, Sheet1!A:B, 2, FALSE)</div>
+      </div>
+      <div class="code-group">
+        <div class="code-label">② Tarik Harga Dari Senarai Produk</div>
+        <div class="code-box">=VLOOKUP(A2, PriceList!A:C, 3, FALSE)</div>
+      </div>
+
+      <div class="tips-box">
+        <div class="tips-title">💡 Tips Power — Elak Error #N/A</div>
+        <div class="tips-code">=IFERROR(VLOOKUP(A2, Sheet1!A:B, 2, FALSE), "Tidak Dijumpai")</div>
+        <div class="tips-desc">Balut VLOOKUP dengan IFERROR supaya apabila data tidak dijumpai, ia akan memaparkan teks yang anda tetapkan — bukan ralat merah.</div>
+      </div>
+
+      <div class="section-title">Bila Nak Guna VLOOKUP</div>
+      <ul class="checklist">
+        <li><span class="check-icon">✅</span> Tarik nama atau maklumat pelajar/pekerja dari ID</li>
+        <li><span class="check-icon">✅</span> Match nombor invoice dengan rekod client</li>
+        <li><span class="check-icon">✅</span> Cari harga produk dari price list secara automatik</li>
+        <li><span class="check-icon">✅</span> Gabungkan data dari beberapa sheet berbeza</li>
+      </ul>
+    </div>
+    <span class="page-brand-foot">cybernor.digital</span>
+    <span class="page-num">11</span>
+  </div>
+
+  <!-- VISUAL PAGE: FORMULA VLOOKUP -->
+  <div class="page visual-page">
+    <div class="sidebar-accent"></div>
+    <div class="content-header">
+      <div>
+        <div class="content-header-label">Contoh Visual · Formula VLOOKUP</div>
+        <div class="content-header-title">Data Asal vs Selepas Menggunakan VLOOKUP</div>
+      </div>
+    </div>
+    <div class="visual-body">
+      <div class="visual-slot">
+        <div class="visual-slot-label">
+          <div class="visual-slot-num">1</div>
+          <div class="visual-slot-info">
+            <span class="visual-slot-title">Data Asal</span>
+            <span class="visual-slot-desc">Sebelum VLOOKUP — dua sheet berasingan, nama belum ditarik</span>
+          </div>
+        </div>
+        <div class="visual-img-box">
+          <!-- TUKAR GAMBAR: ganti baris di bawah dengan <img src="images/vlookup-sebelum.png" alt="Data Asal VLOOKUP" /> -->
+          <img src="images/4. vlookup-sebelum.png" alt="Data Asal VLOOKUP" />
+        </div>
+      </div>
+      <div class="visual-divider"></div>
+      <div class="visual-slot">
+        <div class="visual-slot-label">
+          <div class="visual-slot-num after">2</div>
+          <div class="visual-slot-info">
+            <span class="visual-slot-title">Selepas Menggunakan Formula VLOOKUP</span>
+            <span class="visual-slot-desc">Nama pelajar atau pekerja ditarik automatik berdasarkan ID</span>
+          </div>
+        </div>
+        <div class="visual-img-box">
+          <!-- TUKAR GAMBAR: ganti baris di bawah dengan <img src="images/vlookup-selepas.png" alt="Selepas VLOOKUP" /> -->
+          <img src="images/4. vlookup-selepas.png" alt="Data Selepas VLOOKUP" />
+        </div>
+      </div>
+    </div>
+    <span class="page-brand-foot">cybernor.digital</span>
+    <span class="page-num">15</span>
+  </div>
+
+  <!-- ==================== PAGE 12: FORMULA 5 OPENER ==================== -->
+  <div class="page chapter-opener">
+    <div class="chapter-left-bar"></div>
+    <div class="chapter-inner">
+      <div class="chapter-watermark">05</div>
+      <div class="chapter-label">Formula Kelima</div>
+      <h2 class="chapter-title">Formula FILTER</h2>
+      <div class="chapter-subtitle">Extract Data Automatik, Real-Time</div>
+      <div class="chapter-tagline">
+        "Sekali setup — update sendiri<br/>setiap kali data berubah."
+      </div>
+      <p class="chapter-desc">FILTER berbeza dari filter biasa di toolbar. Filter toolbar — anda perlu lakukan secara manual setiap kali. FILTER formula — ia dikemas kini secara automatik apabila data asal berubah. Bina dashboard, ekstrak laporan, tapis data — semua secara real-time tanpa usaha tambahan.</p>
+    </div>
+    <span class="page-brand-foot chapter-brand-foot">cybernor.digital</span>
+    <span class="page-num chapter-page-num">12</span>
+  </div>
+
+  <!-- ==================== PAGE 13: FORMULA 5 CONTENT ==================== -->
+  <div class="page content-page">
+    <div class="sidebar-accent"></div>
+    <div class="content-header">
+      <div>
+        <div class="content-header-label">Formula 05</div>
+        <div class="content-header-title">FILTER — Extract Data Real-Time</div>
+      </div>
+    </div>
+    <div class="content-body">
+      <div class="section-title">Syntax</div>
+      <div class="syntax-box">=FILTER( range_data, syarat )</div>
+
+      <div class="section-title">Contoh Penggunaan</div>
+      <div class="two-col">
+        <div>
+          <div class="code-group">
+            <div class="code-label">① Extract Pekerja Dari Department HR</div>
+            <div class="code-box">=FILTER(A2:C100, B2:B100="HR")</div>
+          </div>
+          <div class="code-group">
+            <div class="code-label">② Extract Pelajar Yang Gagal</div>
+            <div class="code-box">=FILTER(A2:C50, C2:C50&lt;50)</div>
+          </div>
+        </div>
+        <div>
+          <div class="code-group">
+            <div class="code-label">③ Extract Sales Bulan Ini</div>
+            <div class="code-box">=FILTER(A2:D100, B2:B100="Mei 2026")</div>
+          </div>
+          <div class="code-group">
+            <div class="code-label">④ Extract Stok Yang Habis</div>
+            <div class="code-box">=FILTER(A2:C100, D2:D100=0)</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="tips-box">
+        <div class="tips-title">💡 Tips Power — Dua Syarat Serentak</div>
+        <div class="tips-code">=FILTER(A2:C100, (B2:B100="HR")*(C2:C100&gt;3000))</div>
+        <div class="tips-desc">Extract pekerja HR yang gaji melebihi RM3,000. Guna * antara dua syarat untuk bermaksud AND. Guna + untuk bermaksud OR.</div>
+      </div>
+
+      <div class="section-title">Bila Nak Guna FILTER</div>
+      <ul class="checklist">
+        <li><span class="check-icon">✅</span> Bina dashboard automatik yang update sendiri</li>
+        <li><span class="check-icon">✅</span> Extract senarai ikut kelas, department, atau kategori</li>
+        <li><span class="check-icon">✅</span> Hasilkan laporan real-time tanpa manual filtering</li>
+        <li><span class="check-icon">✅</span> Tunjuk data spesifik tanpa ubah atau kacau data asal</li>
+      </ul>
+    </div>
+    <span class="page-brand-foot">cybernor.digital</span>
+    <span class="page-num">13</span>
+  </div>
+
+  <!-- VISUAL PAGE: FORMULA FILTER -->
+  <div class="page visual-page">
+    <div class="sidebar-accent"></div>
+    <div class="content-header">
+      <div>
+        <div class="content-header-label">Contoh Visual · Formula FILTER</div>
+        <div class="content-header-title">Data Asal vs Selepas Menggunakan FILTER</div>
+      </div>
+    </div>
+    <div class="visual-body">
+      <div class="visual-slot">
+        <div class="visual-slot-label">
+          <div class="visual-slot-num">1</div>
+          <div class="visual-slot-info">
+            <span class="visual-slot-title">Data Asal</span>
+            <span class="visual-slot-desc">Sebelum FILTER — semua data bercampur pelbagai department</span>
+          </div>
+        </div>
+        <div class="visual-img-box">
+          <!-- TUKAR GAMBAR: ganti baris di bawah dengan <img src="images/filter-sebelum.png" alt="Data Asal FILTER" /> -->
+          <img src="images/5. filter-sebelum.png" alt="Data Asal FILTER" />
+        </div>
+      </div>
+      <div class="visual-divider"></div>
+      <div class="visual-slot">
+        <div class="visual-slot-label">
+          <div class="visual-slot-num after">2</div>
+          <div class="visual-slot-info">
+            <span class="visual-slot-title">Selepas Menggunakan Formula FILTER</span>
+            <span class="visual-slot-desc">Hanya data department yang dipilih dipaparkan secara automatik</span>
+          </div>
+        </div>
+        <div class="visual-img-box">
+          <!-- TUKAR GAMBAR: ganti baris di bawah dengan <img src="images/filter-selepas.png" alt="Selepas FILTER" /> -->
+          <img src="images/5. filter-selepas.png" alt="Data Selepas FILTER" />
+        </div>
+      </div>
+    </div>
+    <span class="page-brand-foot">cybernor.digital</span>
+    <span class="page-num">18</span>
+  </div>
+
+  <!-- ==================== PAGE 14: CTA ==================== -->
+  <div class="page cta-page">
+    <div class="cta-inner">
+      <div class="cta-top-label">✦ Anda Telah Mempelajari</div>
+      <h2 class="cta-title">5 Formula Yang Boleh<br/>Transform Cara Anda Bekerja</h2>
+
+      <div class="cta-recap">
+        <div class="cta-recap-item">
+          <span class="cta-recap-icon">⚡</span>
+          <span class="cta-recap-text">Formula IF</span>
+        </div>
+        <div class="cta-recap-item">
+          <span class="cta-recap-icon">🔢</span>
+          <span class="cta-recap-text">Formula COUNTIF</span>
+        </div>
+        <div class="cta-recap-item">
+          <span class="cta-recap-icon">➕</span>
+          <span class="cta-recap-text">Formula SUMIF</span>
+        </div>
+        <div class="cta-recap-item">
+          <span class="cta-recap-icon">🔍</span>
+          <span class="cta-recap-text">Formula VLOOKUP</span>
+        </div>
+        <div class="cta-recap-item">
+          <span class="cta-recap-icon">🎯</span>
+          <span class="cta-recap-text">Formula FILTER</span>
+        </div>
+        <div class="cta-recap-item" style="background:rgba(255,255,255,0.05); border-color:rgba(255,255,255,0.1);">
+          <span class="cta-recap-icon">🚀</span>
+          <span class="cta-recap-text" style="color:rgba(255,255,255,0.4);">Ingin Lebih?</span>
+        </div>
+      </div>
+
+      <div class="cta-divider"></div>
+
+      <div class="cta-card">
+        <div class="cta-card-question">LANGKAH SETERUSNYA</div>
+        <div class="cta-card-title">Automate Kerja Harian Guna<br/>Google Sheets & Apps Script</div>
+        <ul class="cta-card-features">
+          <li>✔ Apps Script dari zero — tanpa background coding</li>
+          <li>✔ Buat trigger automatik — run sendiri tanpa klik</li>
+          <li>✔ Auto hantar email dengan data dari Sheets</li>
+          <li>✔ Generate PDF laporan secara automatik</li>
+          <li>✔ Real project yang boleh terus guna dalam kerja</li>
+        </ul>
+        <div class="cta-card-bottom">
+          <div class="cta-price">RM67 <span>sahaja</span></div>
+          <div class="cta-btn-fake">→ DAFTAR SEKARANG</div>
+        </div>
+      </div>
+
+      <div class="cta-social">
+        <div class="cta-social-item">Instagram: <span>@cybernordigital</span></div>
+        <div class="cta-social-item">TikTok: <span>@cybernordigital</span></div>
+        <div class="cta-social-item">Web: <span>cybernor.digital</span></div>
+      </div>
+    </div>
+    <span class="page-brand-foot chapter-brand-foot">cybernor.digital</span>
+    <span class="page-num chapter-page-num">14</span>
+  </div>
+
+</div><!-- end pages-wrapper -->
+
+</body>
+</html>

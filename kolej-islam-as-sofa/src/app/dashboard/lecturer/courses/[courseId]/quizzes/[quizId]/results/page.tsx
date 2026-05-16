@@ -2,7 +2,8 @@ import { prisma } from '@/lib/db'
 import { getSession } from '@/lib/auth'
 import { redirect, notFound } from 'next/navigation'
 import Link from 'next/link'
-import { ArrowLeft, Clock, Users, CheckCircle, XCircle, ChevronDown } from 'lucide-react'
+import { ArrowLeft, Clock, Users, CheckCircle, XCircle, ChevronDown, AlertCircle } from 'lucide-react'
+import EssayGrader from './EssayGrader'
 
 export default async function QuizResultsPage({
   params,
@@ -42,6 +43,7 @@ export default async function QuizResultsPage({
   })
   if (!quiz) notFound()
 
+  const hasEssay = quiz.questions.some((q) => q.type === 'ESSAY')
   const totalMarks = quiz.questions.reduce((s, q) => s + q.marks, 0)
   const attemptMap = new Map(quiz.attempts.map((a) => [a.studentId, a]))
   const enrolled = quiz.course.enrollments
@@ -56,7 +58,6 @@ export default async function QuizResultsPage({
 
   return (
     <div className="space-y-6 max-w-4xl">
-      {/* Back */}
       <div>
         <Link
           href={`/dashboard/lecturer/courses/${courseId}/quizzes/${quizId}`}
@@ -66,16 +67,19 @@ export default async function QuizResultsPage({
           Kembali ke Pembina Soalan
         </Link>
 
-        {/* Quiz summary */}
         <div className="bg-white rounded-xl border border-gray-200 p-5">
           <h2 className="text-xl font-bold text-gray-900">{quiz.title}</h2>
           {quiz.description && <p className="text-gray-500 text-sm mt-0.5">{quiz.description}</p>}
           <div className="flex flex-wrap items-center gap-4 mt-3 text-xs text-gray-400">
             <span className="flex items-center gap-1"><Clock className="w-3.5 h-3.5" />{quiz.duration} minit</span>
             <span>{quiz.questions.length} soalan · {totalMarks} markah</span>
+            {hasEssay && (
+              <span className="flex items-center gap-1 text-blue-600 bg-blue-50 px-2 py-0.5 rounded-full">
+                <AlertCircle className="w-3 h-3" /> Ada soalan subjektif
+              </span>
+            )}
           </div>
 
-          {/* Stats */}
           <div className="grid grid-cols-4 gap-3 mt-4">
             {[
               { label: 'Pelajar', value: enrolled.length, color: 'text-gray-700', bg: 'bg-gray-50' },
@@ -97,7 +101,6 @@ export default async function QuizResultsPage({
         </div>
       </div>
 
-      {/* Attempted students */}
       {attempted.length > 0 && (
         <div>
           <h3 className="font-semibold text-gray-900 mb-3 flex items-center gap-2">
@@ -111,6 +114,9 @@ export default async function QuizResultsPage({
             {attempted.map((e) => {
               const attempt = attemptMap.get(e.student.id)!
               const pct = totalMarks > 0 ? Math.round(((attempt.score ?? 0) / totalMarks) * 100) : 0
+              const hasUngraded = attempt.answers.some(
+                (a) => a.question.type === 'ESSAY' && a.marksAwarded === null
+              )
 
               return (
                 <details key={e.student.id} className="bg-white rounded-xl border border-gray-200 overflow-hidden group">
@@ -125,6 +131,11 @@ export default async function QuizResultsPage({
                       {e.student.matricNo && <p className="text-xs text-gray-400">{e.student.matricNo}</p>}
                     </div>
                     <div className="flex items-center gap-3 flex-shrink-0">
+                      {hasUngraded && (
+                        <span className="text-xs bg-blue-100 text-blue-600 px-2 py-0.5 rounded-full flex items-center gap-1">
+                          <AlertCircle className="w-3 h-3" /> Perlu dinilai
+                        </span>
+                      )}
                       <div className="text-right">
                         <p className={`text-sm font-bold ${pct >= 70 ? 'text-green-700' : pct >= 50 ? 'text-orange-600' : 'text-red-600'}`}>
                           {attempt.score ?? 0}/{totalMarks}
@@ -141,9 +152,8 @@ export default async function QuizResultsPage({
                     </div>
                   </summary>
 
-                  {/* Per-question breakdown */}
-                  <div className="border-t border-gray-100 px-5 py-3 space-y-2">
-                    <p className="text-xs text-gray-400 mb-3">
+                  <div className="border-t border-gray-100 px-5 py-3 space-y-3">
+                    <p className="text-xs text-gray-400">
                       Dihantar:{' '}
                       {attempt.submittedAt
                         ? new Date(attempt.submittedAt).toLocaleDateString('ms-MY', { dateStyle: 'medium' })
@@ -151,9 +161,37 @@ export default async function QuizResultsPage({
                     </p>
                     {quiz.questions.map((q, idx) => {
                       const ans = attempt.answers.find((a) => a.questionId === q.id)
+
+                      if (q.type === 'ESSAY') {
+                        const graded = ans?.marksAwarded !== null && ans?.marksAwarded !== undefined
+                        return (
+                          <div key={q.id} className="px-3 py-3 rounded-xl bg-blue-50 border border-blue-100">
+                            <div className="flex items-start gap-2 mb-2">
+                              <AlertCircle className="w-4 h-4 text-blue-500 flex-shrink-0 mt-0.5" />
+                              <p className="text-gray-700 font-medium text-xs">S{idx + 1}. {q.questionText}</p>
+                              <span className="ml-auto text-xs text-blue-600 flex-shrink-0">Subjektif · {q.marks} markah</span>
+                            </div>
+                            {ans?.essayAnswer ? (
+                              <div className="bg-white rounded-lg px-3 py-2 text-sm text-gray-700 whitespace-pre-wrap mb-2 border border-blue-100">
+                                {ans.essayAnswer}
+                              </div>
+                            ) : (
+                              <p className="text-xs text-gray-400 italic mb-2">Tidak dijawab</p>
+                            )}
+                            {ans && (
+                              <EssayGrader
+                                answerId={ans.id}
+                                maxMarks={q.marks}
+                                initialMarks={graded ? (ans.marksAwarded ?? null) : null}
+                                initialFeedback={ans.essayFeedback ?? null}
+                              />
+                            )}
+                          </div>
+                        )
+                      }
+
                       const correct = q.options.find((o) => o.isCorrect)
                       const isCorrect = ans?.isCorrect ?? false
-
                       return (
                         <div key={q.id} className={`flex items-start gap-3 px-3 py-2.5 rounded-xl text-sm ${isCorrect ? 'bg-green-50' : 'bg-red-50'}`}>
                           {isCorrect
@@ -187,7 +225,6 @@ export default async function QuizResultsPage({
         </div>
       )}
 
-      {/* Not attempted */}
       {notAttempted.length > 0 && (
         <div>
           <h3 className="font-semibold text-gray-900 mb-3 flex items-center gap-2">

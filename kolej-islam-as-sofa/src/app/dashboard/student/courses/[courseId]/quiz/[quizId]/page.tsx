@@ -59,12 +59,18 @@ export default async function QuizPage({
     dbAnswers.sort((a, b) => a.question.orderIndex - b.question.orderIndex)
 
     initialResults = dbAnswers.map((a) => {
-      const correctOption = a.question.options.find((o) => o.isCorrect)
+      const correctOption = a.question.type !== 'ESSAY'
+        ? a.question.options.find((o) => o.isCorrect)
+        : null
       return {
         questionId: a.questionId,
         questionText: a.question.questionText,
+        type: a.question.type,
         marks: a.question.marks,
-        isCorrect: a.isCorrect ?? false,
+        isCorrect: a.isCorrect ?? null,
+        marksAwarded: a.marksAwarded ?? null,
+        essayAnswer: a.essayAnswer ?? null,
+        essayFeedback: a.essayFeedback ?? null,
         selectedOptionId: a.selectedOptionId ?? null,
         selectedOptionText: a.selectedOption?.optionText ?? null,
         correctOptionId: correctOption?.id ?? null,

@@ -13,6 +13,7 @@ export default async function AdminCoursesPage() {
     prisma.course.findMany({
       include: {
         lecturer: { select: { name: true } },
+        department: { select: { name: true, code: true } },
         enrollments: {
           include: { student: { select: { id: true, name: true, matricNo: true } } },
           orderBy: { enrolledAt: 'asc' },
@@ -62,9 +63,12 @@ export default async function AdminCoursesPage() {
                     <BookMarked className="w-5 h-5 text-green-700" />
                   </div>
                   <div className="flex-1 min-w-0">
-                    <div className="flex items-center gap-2 mb-0.5">
+                    <div className="flex items-center gap-2 mb-0.5 flex-wrap">
                       <span className="text-xs font-bold text-green-700 bg-green-50 px-2 py-0.5 rounded-full">{c.code}</span>
                       <span className="text-xs text-gray-400">{c.semester} · {c.year}</span>
+                      {c.department && (
+                        <span className="text-xs px-2 py-0.5 rounded-full bg-teal-50 text-teal-700 font-medium">{c.department.name}</span>
+                      )}
                     </div>
                     <p className="font-medium text-gray-900 truncate">{c.title}</p>
                     <p className="text-xs text-gray-400 mt-0.5">Pensyarah: {c.lecturer.name}</p>

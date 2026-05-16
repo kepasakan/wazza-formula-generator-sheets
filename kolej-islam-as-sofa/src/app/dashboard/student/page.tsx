@@ -2,6 +2,7 @@ import { prisma } from '@/lib/db'
 import { getSession } from '@/lib/auth'
 import { redirect } from 'next/navigation'
 import Link from 'next/link'
+import AnnouncementBanner from '@/components/AnnouncementBanner'
 import {
   BookMarked,
   FileText,
@@ -23,6 +24,7 @@ async function getStudentData(studentId: string) {
           lecturer: { select: { name: true } },
           modules: { where: { isPublished: true } },
           assignments: {
+            where: { isPublished: true },
             include: {
               submissions: { where: { studentId } },
             },
@@ -94,10 +96,24 @@ export default async function StudentDashboard() {
   const session = await getSession()
   if (!session || session.role !== 'STUDENT') redirect('/dashboard')
 
-  const { enrollments, upcomingAssignments, recentAttendance } = await getStudentData(session.userId)
+  const [{ enrollments, upcomingAssignments, recentAttendance }, latestAnnouncement] = await Promise.all([
+    getStudentData(session.userId),
+    prisma.announcement.findFirst({
+      where: { isPublished: true },
+      orderBy: { createdAt: 'desc' },
+      select: { id: true, title: true, content: true, imageUrl: true, createdAt: true },
+    }),
+  ])
 
   return (
     <div className="space-y-6">
+      {latestAnnouncement && (
+        <AnnouncementBanner
+          announcement={{ ...latestAnnouncement, createdAt: latestAnnouncement.createdAt.toISOString(), imageUrl: latestAnnouncement.imageUrl ?? null }}
+          readHref={`/dashboard/student/announcements/${latestAnnouncement.id}`}
+          userId={session.userId}
+        />
+      )}
       <div>
         <h2 className="text-2xl font-bold text-gray-900">Selamat Datang, {session.name.split(' ')[0]}</h2>
         <p className="text-gray-500 text-sm mt-1">Semester 2 — Sesi Akademik 2025/2026</p>

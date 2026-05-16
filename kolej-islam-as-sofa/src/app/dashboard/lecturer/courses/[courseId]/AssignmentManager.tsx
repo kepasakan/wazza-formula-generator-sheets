@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import Link from 'next/link'
-import { Plus, FileText, Loader2, X, ExternalLink, Pencil } from 'lucide-react'
+import { Plus, FileText, Loader2, X, ExternalLink, Pencil, Eye, EyeOff } from 'lucide-react'
 
 type Assignment = {
   id: string
@@ -10,6 +10,7 @@ type Assignment = {
   description: string | null
   dueDate: string
   maxScore: number
+  isPublished: boolean
   submissions: { id: string; status: string }[]
 }
 
@@ -23,6 +24,26 @@ export default function AssignmentManager({ courseId, totalEnrolled, initialAssi
   const [assignments, setAssignments] = useState<Assignment[]>(initialAssignments)
   const [showModal, setShowModal] = useState(false)
   const [loading, setLoading] = useState(false)
+  const [togglingId, setTogglingId] = useState<string | null>(null)
+
+  const handleTogglePublish = async (a: Assignment) => {
+    if (togglingId) return
+    setTogglingId(a.id)
+    try {
+      const res = await fetch(`/api/assignments/${a.id}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ isPublished: !a.isPublished }),
+      })
+      if (!res.ok) throw new Error()
+      const { isPublished } = await res.json()
+      setAssignments((prev) => prev.map((item) => item.id === a.id ? { ...item, isPublished } : item))
+    } catch {
+      alert('Gagal menukar status tugasan.')
+    } finally {
+      setTogglingId(null)
+    }
+  }
 
   const [title, setTitle] = useState('')
   const [description, setDescription] = useState('')
@@ -133,6 +154,24 @@ export default function AssignmentManager({ courseId, totalEnrolled, initialAssi
                     </div>
                   </div>
                   <div className="flex items-center gap-2 flex-shrink-0">
+                    <button
+                      onClick={() => handleTogglePublish(a)}
+                      disabled={togglingId === a.id}
+                      title={a.isPublished ? 'Disiarkan — klik untuk sembunyikan' : 'Draf — klik untuk siarkan'}
+                      className={`flex items-center gap-1.5 text-xs px-2.5 py-1.5 rounded-full font-medium transition-all ${
+                        a.isPublished
+                          ? 'bg-green-100 text-green-700 hover:bg-green-200'
+                          : 'bg-gray-100 text-gray-500 hover:bg-gray-200'
+                      }`}
+                    >
+                      {togglingId === a.id
+                        ? <Loader2 className="w-3 h-3 animate-spin" />
+                        : a.isPublished
+                          ? <Eye className="w-3 h-3" />
+                          : <EyeOff className="w-3 h-3" />
+                      }
+                      {a.isPublished ? 'Siar' : 'Draf'}
+                    </button>
                     <Link
                       href={`/dashboard/lecturer/courses/${courseId}/assignments/${a.id}/edit`}
                       className="flex items-center gap-1.5 text-sm border border-gray-200 text-gray-600 px-3 py-2 rounded-xl hover:bg-gray-50 transition"

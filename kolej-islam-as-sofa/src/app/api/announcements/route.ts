@@ -23,7 +23,7 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   }
 
-  const { title, content, isPublished } = await req.json()
+  const { title, content, isPublished, imageUrl } = await req.json()
 
   if (!title?.trim() || !content?.trim()) {
     return NextResponse.json({ error: 'Tajuk dan kandungan diperlukan' }, { status: 400 })
@@ -34,6 +34,7 @@ export async function POST(req: NextRequest) {
       title: title.trim(),
       content: content.trim(),
       isPublished: isPublished ?? false,
+      imageUrl: imageUrl ?? null,
     },
   })
 

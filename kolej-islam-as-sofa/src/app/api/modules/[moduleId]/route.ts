@@ -21,17 +21,43 @@ export async function PUT(
   const mod = await verifyLecturerOwnsModule(moduleId, session.userId)
   if (!mod) return NextResponse.json({ error: 'Not found' }, { status: 404 })
 
-  const { title, description } = await req.json()
+  const { title, description, isPublished } = await req.json()
   if (!title?.trim()) {
     return NextResponse.json({ error: 'Title required' }, { status: 400 })
   }
 
   const updated = await prisma.module.update({
     where: { id: moduleId },
-    data: { title: title.trim(), description: description ?? null },
+    data: {
+      title: title.trim(),
+      description: description ?? null,
+      ...(typeof isPublished === 'boolean' && { isPublished }),
+    },
   })
 
   return NextResponse.json(updated)
+}
+
+export async function PATCH(
+  req: NextRequest,
+  { params }: { params: Promise<{ moduleId: string }> }
+) {
+  const session = await getSession()
+  if (!session || session.role !== 'LECTURER') {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+  }
+
+  const { moduleId } = await params
+  const mod = await verifyLecturerOwnsModule(moduleId, session.userId)
+  if (!mod) return NextResponse.json({ error: 'Not found' }, { status: 404 })
+
+  const { isPublished } = await req.json()
+  const updated = await prisma.module.update({
+    where: { id: moduleId },
+    data: { isPublished },
+  })
+
+  return NextResponse.json({ isPublished: updated.isPublished })
 }
 
 export async function DELETE(

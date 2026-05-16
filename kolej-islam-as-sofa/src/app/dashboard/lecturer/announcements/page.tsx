@@ -2,6 +2,7 @@ import { getSession } from '@/lib/auth'
 import { prisma } from '@/lib/db'
 import { redirect } from 'next/navigation'
 import Link from 'next/link'
+import Image from 'next/image'
 import { Megaphone, ChevronRight } from 'lucide-react'
 
 export default async function LecturerAnnouncementsPage() {
@@ -11,7 +12,7 @@ export default async function LecturerAnnouncementsPage() {
   const announcements = await prisma.announcement.findMany({
     where: { isPublished: true },
     orderBy: { createdAt: 'desc' },
-    select: { id: true, title: true, createdAt: true },
+    select: { id: true, title: true, imageUrl: true, createdAt: true },
   })
 
   return (
@@ -35,8 +36,12 @@ export default async function LecturerAnnouncementsPage() {
                 href={`/dashboard/lecturer/announcements/${a.id}`}
                 className="flex items-center gap-4 px-6 py-4 hover:bg-gray-50 transition-colors group"
               >
-                <div className="w-9 h-9 rounded-lg flex items-center justify-center flex-shrink-0" style={{ backgroundColor: '#e6f7f6' }}>
-                  <Megaphone className="w-4 h-4" style={{ color: '#0d9488' }} />
+                <div className="w-14 h-10 rounded-lg overflow-hidden flex-shrink-0 bg-teal-50 border border-teal-100 flex items-center justify-center">
+                  {a.imageUrl ? (
+                    <Image src={a.imageUrl} alt="" width={56} height={40} className="w-full h-full object-cover" unoptimized />
+                  ) : (
+                    <Megaphone className="w-4 h-4 text-teal-500" />
+                  )}
                 </div>
                 <div className="flex-1 min-w-0">
                   <p className="text-sm font-medium text-gray-900 group-hover:text-teal-700 transition-colors">{a.title}</p>

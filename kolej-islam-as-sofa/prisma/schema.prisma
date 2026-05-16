@@ -112,6 +112,7 @@ model Assignment {
   description String?
   dueDate     DateTime
   maxScore    Int      @default(100)
+  isPublished Boolean  @default(true)
   createdAt   DateTime @default(now())
 
   submissions AssignmentSubmission[]
@@ -283,6 +284,7 @@ model Announcement {
   id          String   @id @default(cuid())
   title       String
   content     String
+  imageUrl    String?
   isPublished Boolean  @default(false)
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt

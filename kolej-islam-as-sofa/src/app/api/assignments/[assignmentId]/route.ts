@@ -33,3 +33,28 @@ export async function PUT(
 
   return NextResponse.json(updated)
 }
+
+export async function PATCH(
+  req: NextRequest,
+  { params }: { params: Promise<{ assignmentId: string }> }
+) {
+  const session = await getSession()
+  if (!session || session.role !== 'LECTURER') {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+  }
+
+  const { assignmentId } = await params
+
+  const assignment = await prisma.assignment.findFirst({
+    where: { id: assignmentId, course: { lecturerId: session.userId } },
+  })
+  if (!assignment) return NextResponse.json({ error: 'Tidak dijumpai' }, { status: 404 })
+
+  const { isPublished } = await req.json()
+  const updated = await prisma.assignment.update({
+    where: { id: assignmentId },
+    data: { isPublished },
+  })
+
+  return NextResponse.json({ isPublished: updated.isPublished })
+}

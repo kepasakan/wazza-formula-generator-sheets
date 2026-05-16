@@ -2,7 +2,7 @@ import { prisma } from '@/lib/db'
 import { getSession } from '@/lib/auth'
 import { redirect, notFound } from 'next/navigation'
 import Link from 'next/link'
-import { ArrowLeft, Users, BookOpen, FileText, ClipboardList, CalendarCheck } from 'lucide-react'
+import { ArrowLeft, Users, BookOpen, FileText, ClipboardList, CalendarCheck, ChevronRight, Eye } from 'lucide-react'
 import ModuleManager from './ModuleManager'
 import AssignmentManager from './AssignmentManager'
 import QuizManager from './QuizManager'
@@ -77,6 +77,13 @@ export default async function LecturerCoursePage({
               <p className="text-gray-500 text-sm mt-1">{course.description}</p>
             )}
           </div>
+          <Link
+            href={`/dashboard/lecturer/courses/${courseId}/preview`}
+            className="flex-shrink-0 flex items-center gap-2 text-sm border border-gray-200 text-gray-600 px-4 py-2 rounded-xl hover:bg-gray-50 hover:border-gray-300 transition font-medium"
+          >
+            <Eye className="w-4 h-4" />
+            Pratonton Pelajar
+          </Link>
         </div>
 
         {/* Quick stats */}
@@ -100,39 +107,22 @@ export default async function LecturerCoursePage({
         </div>
       </div>
 
-      {/* Enrolled students */}
-      <div className="bg-white rounded-xl border border-gray-200">
-        <div className="px-5 py-4 border-b border-gray-100 flex items-center gap-2">
-          <Users className="w-4 h-4 text-gray-400" />
-          <h3 className="font-semibold text-gray-900 text-sm">
-            Senarai Pelajar
-            <span className="ml-2 text-xs font-normal text-gray-400 bg-gray-100 px-2 py-0.5 rounded-full">
-              {course.enrollments.length}
-            </span>
-          </h3>
+      {/* Student list link card */}
+      <Link
+        href={`/dashboard/lecturer/courses/${courseId}/students`}
+        className="flex items-center gap-4 bg-white rounded-xl border border-gray-200 px-5 py-4 hover:border-green-300 hover:bg-green-50/30 transition-colors group"
+      >
+        <div className="w-10 h-10 bg-green-100 rounded-xl flex items-center justify-center flex-shrink-0">
+          <Users className="w-5 h-5 text-green-700" />
         </div>
-        {course.enrollments.length === 0 ? (
-          <div className="px-5 py-6 text-center text-sm text-gray-400">Tiada pelajar berdaftar</div>
-        ) : (
-          <div className="divide-y divide-gray-50">
-            {course.enrollments.map((e) => (
-              <div key={e.id} className="px-5 py-3 flex items-center gap-3">
-                <div className="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center flex-shrink-0">
-                  <span className="text-green-700 text-xs font-semibold">
-                    {e.student.name.charAt(0).toUpperCase()}
-                  </span>
-                </div>
-                <div>
-                  <p className="text-sm font-medium text-gray-900">{e.student.name}</p>
-                  {e.student.matricNo && (
-                    <p className="text-xs text-gray-400">{e.student.matricNo}</p>
-                  )}
-                </div>
-              </div>
-            ))}
-          </div>
-        )}
-      </div>
+        <div className="flex-1">
+          <p className="font-semibold text-gray-900 group-hover:text-green-700 transition-colors">
+            Senarai Pelajar
+          </p>
+          <p className="text-sm text-gray-400 mt-0.5">{course.enrollments.length} pelajar berdaftar dalam kursus ini</p>
+        </div>
+        <ChevronRight className="w-5 h-5 text-gray-300 group-hover:text-green-600 transition-colors flex-shrink-0" />
+      </Link>
 
       {/* Module Manager */}
       <ModuleManager
@@ -159,6 +149,7 @@ export default async function LecturerCoursePage({
           description: a.description ?? null,
           dueDate: a.dueDate.toISOString(),
           maxScore: a.maxScore,
+          isPublished: a.isPublished,
           submissions: a.submissions.map((s) => ({ id: s.id, status: s.status })),
         }))}
       />

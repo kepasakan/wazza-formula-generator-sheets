@@ -42,6 +42,7 @@ export default async function StudentCoursePage({
             },
           },
           assignments: {
+            where: { isPublished: true },
             include: { submissions: { where: { studentId: session.userId } } },
           },
           quizzes: {
